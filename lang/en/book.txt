@@ -1,0 +1,3 @@
+btnNav=Table of contents
+btnNext=Next
+btnPrev=Previous

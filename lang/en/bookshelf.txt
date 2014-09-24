@@ -1,0 +1,14 @@
+Bookshelf=Bookshelf
+BookTitle=Title
+BookAuthors=Author(s)
+Actions=Actions
+AddToBookshelf=Add books
+UploadFile=Upload file
+UploadFailed=The book couldn't have been added to your bookshelf.
+UploadSuccess=The book has been added to your bookshelf.
+DeleteFailed=The book couldn't ahve been removed from your bookshelf.
+DeleteSuccess=The book has been removed from your bookshelf.
+Send=Send
+btnDelete=Delete
+btnEdit=Edit
+btnView=View
