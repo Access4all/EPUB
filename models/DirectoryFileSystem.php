@@ -10,11 +10,12 @@ function getFromName ($name) {
 return @file_get_contents($this->dir .$name);
 }
 
-function getStream ($fileName) {
-return @fopen($this->dir .$name);
-}
-
 function isExtracted () { return true; }
+function close () {}
+
+function directEcho ($name) {
+@readfile($this->dir .$name);
+}
 
 }
 ?>

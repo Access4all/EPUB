@@ -7,5 +7,13 @@ parent::open($fn, $flags);
 
 function isExtracted () { return false; }
 
+function directEcho ($file) {
+$stream = $this->getStream($file);
+if (!$stream) return;
+while(!feof($stream)) echo fread($stream, 4096);
+@fclose($stream);
+}
+
+
 }
 ?>
