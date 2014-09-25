@@ -1,6 +1,15 @@
 <?php
 require_once('core/kernel.php');
 
+function zipaddDir ($z, $archivePath, $dir) {
+foreach(glob("$dir*") as $path) {
+$file = basename($path);
+if ($file=='mimetype') continue;
+if(is_dir($path)) zipAddDir($z, "$archivePath$file/", "$path/");
+else $z->addFile($path, "$archivePath$file");
+}
+}
+
 class BookItem {
 }
 
@@ -27,9 +36,10 @@ $this->fs = null;
 $name = $this->name;
 $fn = "$booksdir/$name";
 if (is_dir($fn)) $this->fs = new DirectoryFileSystem($fn);
+else {
 $fn = "$booksdir/$name.epub";
 if (is_file($fn)) $this->fs = new ZipFileSystem($fn);
-}
+}}
 return $this->fs;
 }
 
@@ -63,6 +73,23 @@ $dn = "$booksdir/{$this->name}/";
 $fs->extractTo($dn);
 $this->close();
 $this->getFileSystem();
+}
+
+function export ($format) {
+global $booksdir, $root;
+if ($format!='epub3') return null;
+$fs = $this->getFileSystem();
+$fn = "$booksdir/{$this->name}.epub.zip";
+$dir = "$booksdir/{$this->name}/";
+if ($fs->isExtracted() && is_dir($dir)) {
+$z = new ZipArchive();
+$z->open($fn, ZipArchive::CREATE | ZipArchive::CM_REDUCE_4 | ZipArchive::CM_DEFLATE);
+$z->addFromString('mimetype', 'application/epub+zip');
+zipAddDir($z, '', $dir);
+$z->close();
+}
+if (file_exists($fn)) return array('application/epub+zip', $fn);
+else return null;
 }
 
 function getOpfFileName () {

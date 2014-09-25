@@ -30,6 +30,7 @@ echo <<<END
 END;
 foreach($bookList as $b) {
 $viewUrl = "$root/book/{$b->name}/view/";
+$exportUrl = "$root/book/{$b->name}/export/epub3";
 $deleteUrl = "$root/bookshelf/{$b->id}/delete";
 $editUrl = "$root/editor/{$b->name}/home/";
 echo <<<END
@@ -39,6 +40,7 @@ echo <<<END
 <td>
 <a href="$viewUrl" role="button">{$t('btnView')}</a>
 <a href="$editUrl" role="button">{$t('btnEdit')}</a>
+<a href="$exportUrl" role="button">{$t('btnExport')}</a>
 <a href="$deleteUrl" role="button">{$t('btnDelete')}</a>
 </td>
 </tr>

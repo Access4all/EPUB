@@ -8,6 +8,27 @@ function index ($name) {
 $this->view($name);
 }
 
+function export ($bookName, $format) {
+if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
+else  $b = new Book(array('name'=>$bookName));
+$_SESSION['curBook'] = $b;
+$_SESSION['curBookName'] = $bookName;
+if (!$b || !$bookName || !$b->exists()) exit404();
+@list($contentType, $fileName) = $b->export($format);
+if (!$fileName || !$contentType) {
+global $root;
+loadTranslation('bookshelf');
+$_SESSION['alertmsg'] = getTranslation('ExportFailed');
+$_SESSION['failed'] = true;
+header("Location:$root/bookshelf/index");
+exit();
+}
+ob_end_clean();
+header("Content-Type: $contentType");
+readfile($fileName);
+exit();
+}
+
 function view ($bookName, $fileName) {
 if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
 else  $b = new Book(array('name'=>$bookName));
