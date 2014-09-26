@@ -32,7 +32,7 @@ foreach($bookList as $b) {
 $viewUrl = "$root/book/{$b->name}/view/";
 $exportUrl = "$root/book/{$b->name}/export/epub3";
 $deleteUrl = "$root/bookshelf/{$b->id}/delete";
-$editUrl = "$root/editor/{$b->name}/home/";
+$editUrl = "$root/editor/{$b->name}/index/";
 echo <<<END
 <tr>
 <th scope="row"><a href="$viewUrl">{$b->title}</a></th>

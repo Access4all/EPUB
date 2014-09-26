@@ -1,0 +1,79 @@
+function TreeView_update (tree, ol, initial) {
+if (!tree) tree = {};
+tree.items = [];
+tree.root = ol;
+ol.setAttribute('role', 'tree');
+var lis = ol.querySelectorAll('li');
+for (var i=0; i<lis.length; i++) {
+var li = lis[i];
+var item = li.firstChild;
+var subitem = li.querySelector('ol,ul');
+item.setAttribute('role', 'treeitem');
+item.setAttribute('tabindex', tree.curitem==item?0:-1);
+item.setAttribute('data-index', i);
+item.onclick = TreeView_itemClick.bind(item, tree);
+item.onkeydown = TreeView_itemKeyDown.bind(item, tree);
+tree.items.push(item);
+if (subitem) {
+if (initial) subitem.style.display = 'none';
+item.setAttribute('aria-expanded', subitem.style.display=='block');
+subitem.setAttribute('role', 'group');
+}
+if (!domIsVisible(item)) item.setAttribute('data-hidden', true);
+}
+if (!tree.curitem) tree.curitem = ol.querySelector('li').firstChild;
+TreeView_updateFocus(tree.curitem, tree);
+return tree;
+}
+
+function TreeView_updateFocus (item, tree) {
+if (!item.id) item.id = domGenerateId();
+if (tree.curitem) tree.curitem.setAttribute('tabindex', -1);
+item.setAttribute('tabindex', 0);
+tree.root.setAttribute('aria-activedescendant', item.id);
+tree.curitem = item;
+}
+
+function TreeView_itemKeyDown (tree, e) {
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (k==vk.enter) { 
+this.click(); 
+return false; 
+}
+else if (k==vk.down) {
+var idx = 1+parseInt(this.getAttribute('data-index'));
+console.log(idx);
+var item = null;
+if (idx>=0 && idx<tree.items.length) item = tree.items[idx];
+TreeView_updateFocus(item, tree);
+return false;
+}
+else if (k==vk.up) {
+var idx = parseInt(this.getAttribute('data-index')) -1;
+var item = null;
+if (idx>=0 && idx<tree.items.length) item = tree.items[idx];
+TreeView_updateFocus(item, tree);
+return false;
+}
+else if (k==vk.right) {
+var subitem = this.parentNode.querySelector('ol,ul');
+if (!subitem) return false;
+this.setAttribute('aria-expanded', true);
+subitem.style.display = 'block';
+TreeView-updateFocus(subitem.querySelector('li').firstChild);
+}
+else if (k==vk.left || k==vk.escape) {
+var ol = this.parentNode.parentNode;
+if (ol==this.tree) return false;
+ol.style.display='none';
+var item = ol.previousElementSibling;
+item.setAttribute('aria-expanded', false);
+TreeView_updateFocus(item);
+}
+return true;
+}
+
+function TreeView_itemClick (tree) {
+if (tree.onItemActivate) tree.onItemActivate.call(tree, this);
+}

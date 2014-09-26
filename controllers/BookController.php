@@ -9,10 +9,7 @@ $this->view($name);
 }
 
 function export ($bookName, $format) {
-if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
-else  $b = new Book(array('name'=>$bookName));
-$_SESSION['curBook'] = $b;
-$_SESSION['curBookName'] = $bookName;
+$b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 @list($contentType, $fileName) = $b->export($format);
 if (!$fileName || !$contentType) {
@@ -30,10 +27,7 @@ exit();
 }
 
 function view ($bookName, $fileName) {
-if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
-else  $b = new Book(array('name'=>$bookName));
-$_SESSION['curBook'] = $b;
-$_SESSION['curBookName'] = $bookName;
+$b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 if (!$fileName) {
 $fileName = $b->getNavFileName();

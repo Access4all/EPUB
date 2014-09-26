@@ -15,6 +15,14 @@ class BookItem {
 
 class Book{
 
+static function getWorkingBook ($bookName) {
+if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
+else  $b = new Book(array('name'=>$bookName));
+$_SESSION['curBook'] = $b;
+$_SESSION['curBookName'] = $bookName;
+return $b;
+}
+
 function __construct ($a=null) {
 if ($a) autofill($this,$a);
 }
@@ -79,11 +87,11 @@ function export ($format) {
 global $booksdir, $root;
 if ($format!='epub3') return null;
 $fs = $this->getFileSystem();
-$fn = "$booksdir/{$this->name}.epub.zip";
+$fn = "$booksdir/{$this->name}.epub";
 $dir = "$booksdir/{$this->name}/";
 if ($fs->isExtracted() && is_dir($dir)) {
 $z = new ZipArchive();
-$z->open($fn, ZipArchive::CREATE | ZipArchive::CM_REDUCE_4 | ZipArchive::CM_DEFLATE);
+$z->open($fn, ZipArchive::CREATE | ZipArchive::CM_STORE);
 $z->addFromString('mimetype', 'application/epub+zip');
 zipAddDir($z, '', $dir);
 $z->close();

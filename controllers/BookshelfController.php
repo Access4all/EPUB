@@ -7,8 +7,7 @@ class BookshelfController {
 function index () {
 $bs = new Bookshelf();
 $books = $bs->getBookList();
-$view = new BookshelfView();
-$view->index($books);
+(new BookshelfView()) ->index($books);
 }
 
 function delete ($id) {

@@ -1,0 +1,28 @@
+.hidden {
+display: none;
+}
+
+.leftPanel {
+display: inline-block;
+width: 24%;
+}
+
+.rightPanel {
+display: inline-block;
+width: 75%;
+margin-left: 5px;
+}
+
+.menul {
+list-style-type: none;
+}
+
+.menul li {
+list-style-type: none;
+display: inline;
+}
+
+a.button, .menul a {
+display: inline-block;
+margin-left: 7px;
+}

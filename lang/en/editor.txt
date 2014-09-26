@@ -1,0 +1,5 @@
+JavaScriptNeeded=JavaScript is mandatory in order for this application to work properly. Please enable it or use another browser. You need at least IE8 or firefox.
+BackToBookshelf=Back to bookshelf
+BookOptions=General book settings
+PageOptions=Page settings
+PageEditor=Edition
