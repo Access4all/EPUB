@@ -55,7 +55,7 @@ if (LOCAL) $db = GDBA::MySQL(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD);
 $db->exec('set names utf8');
 } catch (Exception $e) { exit503(); }
 
-@session_start();
+session_start();
 $langs = array('en'=>'English');
 $lang = 'en';
 if (isset($_GET['language'])) $lang = $_GET['language'];

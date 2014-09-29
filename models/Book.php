@@ -1,5 +1,7 @@
 <?php
 require_once('core/kernel.php');
+define('NS_EPUB', 'http://www.idpf.org/2007/ops');
+define('NS_DC', 'http://purl.org/dc/elements/1.1/');
 
 function zipaddDir ($z, $archivePath, $dir) {
 foreach(glob("$dir*") as $path) {
@@ -8,9 +10,6 @@ if ($file=='mimetype') continue;
 if(is_dir($path)) zipAddDir($z, "$archivePath$file/", "$path/");
 else $z->addFile($path, "$archivePath$file");
 }
-}
-
-class BookItem {
 }
 
 class Book{
@@ -117,24 +116,24 @@ return $re;
 }
 
 private function readOpf () {
-$dcns = 'http://purl.org/dc/elements/1.1/';
 $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($this->getOpfFileName()));
 
 // read book metadata
-$metas = DOM::firstChild($opf, 'metadata');
+$metas = $opf->getFirstElementByTagName('metadata');
 $a = array();
-foreach($metas->getElementsByTagNameNs($dcns, 'creator') as $x) $a[]=$x->nodeValue;
+foreach($metas->getElementsByTagNameNs(NS_DC, 'creator') as $x) $a[]=$x->nodeValue;
 $this->authors = implode(', ', $a);
-$this->title = DOM::nodeValue(DOM::firstChildNs($metas, $dcns, 'title') );
-$this->identifier = DOM::nodeValue(DOM::firstChildNs($metas, $dcns, 'identifier') );
+$this->title = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'title') );
+$this->identifier = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'identifier') );
 
 // read manifest
-$manifest = DOM::firstChild($opf, 'manifest');
+$manifest = $opf->getFirstElementByTagName('manifest');
 if (!$manifest) return null;
 $idmap = array();
 $fnmap = array();
 foreach($manifest->getElementsByTagName('item') as $item) {
-$o = new BookItem();
+$o = new BookPage();
+$o->book = $this;
 $o->id = $item->getAttribute('id');
 $o->href = $item->getAttribute('href');
 $o->mediaType = $item->getAttribute('media-type');
@@ -150,7 +149,7 @@ $this->itemFileNameMap = $fnmap;
 
 // Read spine
 $a = array();
-$spine = DOM::firstChild($opf, 'spine');
+$spine = $opf->getFirstElementByTagName('spine');
 if (!$spine) return null;
 foreach($spine->getElementsByTagName('itemref') as $itemref) {
 $id = $itemref->getAttribute('idref');
@@ -170,6 +169,20 @@ if (!@$this->authors) $this->readOpf();
 return $this->authors;
 }
 
+function updateBookMetadata ($info) {
+$opfFile = $this->getFileSystem()->getFromName($this->getOpfFileName());
+$opf = DOM::loadXMLString($opfFile);
+if (isset($info['title'])) {
+$title = $opf->getFirstElementByTagNameNs(NS_DC, 'title');
+$this->title = $title->nodeValue = $info['title'];
+}
+if (isset($info['authors'])) {
+$authors = preg_split("/\r\n|\n|\r/", $info['authors']);
+//todo
+}
+$this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() );
+}
+
 function getNavFileName () {
 if (!@$this->navFileName) $this->readOpf();
 return @$this->navFileName;
@@ -177,6 +190,13 @@ return @$this->navFileName;
 
 function getNavItem () {
 return $this->getItemByFileName($this->getNavFileName());
+}
+
+function getNavRelativeFileName ($fn) {
+$dir = dirname($this->getNavFileName());
+$re = "$dir/$fn";
+if (substr($re,0,2)=='./') $re = substr($re,2);
+return $re;
 }
 
 function getFirstPageFileName () {

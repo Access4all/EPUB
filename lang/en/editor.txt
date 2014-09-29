@@ -1,5 +1,15 @@
 JavaScriptNeeded=JavaScript is mandatory in order for this application to work properly. Please enable it or use another browser. You need at least IE8 or firefox.
 BackToBookshelf=Back to bookshelf
-BookOptions=General book settings
+BookOptions=Book settings
 PageOptions=Page settings
 PageEditor=Edition
+FileView=Files
+TocView=Table of contents
+FileName=File path
+PageIdentifier=Identifier
+PageTitle=Page title
+BookTitle=Book title
+Authors=Author(s)
+General=General
+Save=Save
+Reset=Reset

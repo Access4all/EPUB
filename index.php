@@ -6,7 +6,7 @@ $action = 'index';
 $param = null;
 $param2 = null;
 if (isset($_GET['controller']) && ctype_alnum($_GET['controller'])) $controller = $_GET['controller'];
-if (isset($_GET['action']) && ctype_alnum($_GET['action'])) $action = $_GET['action'];
+if (isset($_GET['action']) && preg_match('/^[a-zA-Z_0-9]+$/', $_GET['action'])) $action = $_GET['action'];
 if (isset($_GET['param'])) $param = $_GET['param'];
 if (isset($_GET['param2'])) $param2 = $_GET['param2'];
 try {
