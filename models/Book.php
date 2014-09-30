@@ -122,7 +122,7 @@ $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($this->getOpfFileN
 $metas = $opf->getFirstElementByTagName('metadata');
 $a = array();
 foreach($metas->getElementsByTagNameNs(NS_DC, 'creator') as $x) $a[]=$x->nodeValue;
-$this->authors = implode(', ', $a);
+$this->authors = $a;
 $this->title = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'title') );
 $this->identifier = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'identifier') );
 
@@ -166,21 +166,101 @@ return $this->title;
 
 function getAuthors () {
 if (!@$this->authors) $this->readOpf();
-return $this->authors;
+return implode(', ', $this->authors);
 }
 
-function updateBookMetadata ($info) {
-$opfFile = $this->getFileSystem()->getFromName($this->getOpfFileName());
-$opf = DOM::loadXMLString($opfFile);
+function updateBookSettings ($info) {
 if (isset($info['title'])) {
-$title = $opf->getFirstElementByTagNameNs(NS_DC, 'title');
-$this->title = $title->nodeValue = $info['title'];
+$this->title = trim($info['title']);
 }
 if (isset($info['authors'])) {
-$authors = preg_split("/\r\n|\n|\r/", $info['authors']);
-//todo
+$this->authors = preg_split("/\r\n|\n|\r|\s*[,;]\s*/", $info['authors'], -1, PREG_SPLIT_NO_EMPTY);
 }
+$this->metadataModified = true;
+$this->saveOpf();
+}
+
+function saveOpf () {
+$opfFile = $this->getOpfFileName();
+$opf = DOM::loadXMLString($this->getFileSystem()->getFromName($opfFile));
+if (@$this->metadataModified) {
+$this->metadataModified = false;
+$metadata = $opf->getFirstElementByTagName('metadata');
+$metadata->getFirstElementByTagNameNs(NS_DC, 'title') ->nodeValue = $this->title;
+$metadata->removeAllChilds('dc:creator');
+foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->addText(trim($a));
+}
+if (@$this->spineModified) {
+$this->spineModified=false;
+$spine = $opf->getFirstElementByTagName('spine');
+$spine->removeAllChilds();
+foreach($this->spine as $id) $spine->appendElement('itemref', array('idref'=>$id));
+}
+if (@$this->manifestModified) {
+$this->manifestModified=false;
+$manifest = $opf->getFirstElementByTagName('manifest');
+$dir = dirname($this->getOpfFileName());
+$dirlen = 1+strlen($dir);
+$manifest->removeAllChilds();
+foreach($this->itemIdMap as $p){
+$href = substr($p->fileName, $dirlen);
+$attrs = array('id'=>$p->id, 'media-type'=>$p->mediaType, 'href'=>$href);
+if (@$p->props) $attrs['properties'] = implode(' ', $p->props);
+$manifest->appendElement('item', $attrs);
+}}
 $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() );
+}
+
+function addNewPage (&$info, $pageFrom = null, $contents = null) {
+$fn = $info['fileName'];
+if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
+if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
+if (empty($info['title'])) $info['title'] = 'untitled'.time();
+if (empty($info['fileName'])) {
+$path = ($pageFrom? dirname($pageFrom->fileName) : dirname($this->getOpfFileName())) .'/';
+$fn = Misc::toValidName($info['title']).'.xhtml' ;
+$fn = $info['fileName'] = "$path$fn";
+}
+if (empty($info['id'])) $info['id'] = Misc::toValidName($info['title']);
+if (!$contents) $contents = <<<END
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML><html>
+<head>
+<title>{$info['title']}</title>
+</head><body>
+</body></html>
+END;
+$this->getSpine();
+$this->getItemById(null);
+$this->getItemByFileName(null);
+$this->spineModified = true;
+$this->manifestModified = true;
+$p = new BookPage(array('fileName'=>$info['fileName'], 'id'=>$info['id'], 'mediaType'=>'application/xhtml+xml'));
+$p->book = $this;
+$this->itemIdMap[$info['id']] = $p;
+$this->itemFileNameMap[$info['fileName']] = $p;
+if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
+else $this->spine[] = $info['id'];
+$this->getFileSystem()->addFromString($fn, $contents);
+$this->saveOpf();
+return $p;
+}
+
+function addNewResource (&$info, $srcFile, $pageFrom = null) {
+$fn = $info['fileName'];
+$srcBaseName = basename($srcFile);
+if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
+if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
+if (empty($info['fileName'])) {
+$path = ($pageFrom? dirname($pageFrom->fileName) : dirname($this->getOpfFileName())) .'/';
+$fn = $info['fileName'] = "$path$srcBaseName";
+}
+if (empty($info['id'])) {
+$noext = substr($srcBaseName, 0, strrpos($srcBaseName,'.'));
+$info['id'] = Misc::toValidName($noext);
+}
+//suite!
+die(nl2br(print_r($info,true)));
 }
 
 function getNavFileName () {

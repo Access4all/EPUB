@@ -23,6 +23,8 @@ echo "<li><a href=\"$url\">$fn</a></li>";
 echo '</ul>';
 }
 
+echo '<h2>', getTranslation('FileView'), '</h2>';
+
 global $booksdir;
 $base = "$booksdir/{$b->name}";
 listFiles($base, '', $b, $leftView, $rightView);

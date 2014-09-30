@@ -1,28 +1,31 @@
 <?php
+define('DOM_LIBXML_OPTIONS', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NSCLEAN);
+
 class DOM {
 
 static function newDocument () {
 $doc = new DOMDocument2();
-$doc->registerNodeClass('DOMNode', 'DOMNode2');
 $doc->registerNodeClass('DOMElement', 'DOMElement2');
+$doc->formatOutput = true;
+$doc->preserveWhiteSpace = false;
 return $doc;
 }
 
 static function loadXMLFile ($file) {
 $doc = DOM::newDocument();
-$doc->load($file);
+$doc->load($file, DOM_LIBXML_OPTIONS);
 return $doc;
 }
 
 static function loadXMLString ($data) {
 $doc = DOM::newDocument();
-$doc->loadXML($data);
+$doc->loadXML($data, DOM_LIBXML_OPTIONS);
 return $doc;
 }
 
 static function loadHTMLString ($data) {
 $doc = DOM::newDocument();
-@$doc->loadHTML($data);
+@$doc->loadHTML($data, DOM_LIBXML_OPTIONS);
 return $doc;
 }
 }
@@ -67,10 +70,6 @@ return call_user_func_array(array($this->getRootElement(), $name), $args);
 }
 }
 
-class DOMNode2 extends DOMNode {
-public function __toString () { return $this->nodeValue; }
-}
-
 class DOMElement2 extends DOMElement {
 
 function __toString () { return $this->nodeValue; }
@@ -95,6 +94,43 @@ return null;
 function getElements ($func) {
 return new DOMElementIterator( $this->getElementsByTagName('*'), $func);
 }
+
+function setAttributes ($attrs) {
+foreach($attrs as $name=>$value) $this->setAttribute($name, $value);
+}
+
+function appendElement ($tagName, $attrs = null) {
+$el = $this->ownerDocument->createElement($tagName);
+if ($attrs) $el->setAttributes($attrs);
+$this->appendChild($el);
+return $el;
+}
+
+function appendElementNs ($ns, $tagName, $attrs = null) {
+$el = $this->ownerDocument->createElementNs($ns, $tagName);
+if ($attrs) $el->setAttributes($attrs);
+$this->appendChild($el);
+return $el;
+}
+
+function insertElementBefore ($tagName, $ref, $attrs=null) {
+$el = $this->ownerDocument->createElement($tagName);
+if ($attrs) $el->setAttributes($attrs);
+$this->insertBefore($el, $ref);
+return $el;
+}
+
+function addText ($text) {
+$tn = $this->ownerDocument->createTextNode($text);
+$this->appendChild($tn);
+return $this;
+}
+
+function removeAllChilds ($tagName = null) {
+for ($i=$this->childNodes->length -1; $i>=0; $i--) {
+$child = $this->childNodes->item($i);
+if (!$tagName || $tagName==$child->nodeName) $this->removeChild($child);
+}}
 
 function saveHTML () { return $this->ownerDocument->saveHTML($this); }
 function saveXML () { return $this->ownerDocument->saveXML($this); }

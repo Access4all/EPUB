@@ -30,5 +30,22 @@ if (!$title) return 'Untitled document';
 else return strval($title);	
 }
 
+function saveDoc () {
+$doc = $this->getDoc();
+$this->book->getFileSystem()->addFromString(
+$this->fileName,
+$doc->saveXML()
+);//
+}
+
+function updatePageSettings ($info) {
+$doc = $this->getDoc();
+if (isset($info['title'])) {
+$title = $doc->getFirstElementByTagName('title');
+$title->nodeValue = trim($info['title']);
+}
+$this->saveDoc();
+}
+
 }
 ?>

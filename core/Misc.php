@@ -1,7 +1,6 @@
 <?php
 class Misc {
 
-
 static function rmdirRecursive ($dir) {
 if (substr($dir,-1)!='/') $dir.='/';
 $dd = opendir($dir);
@@ -14,6 +13,20 @@ else if (is_file($entry)) @unlink($entry);
 closedir($dd);
 return @rmdir($dir);
 }
+
+static function toValidName ($s) {
+$s = utf8_decode($s);
+$s = strtr($s, 
+'áéíóúâêîôûàèìòùäëïöüÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÄËÏÖÜãÃñÑõÕçÇÿýÝ©øØ',
+'aeiouaeiouaeiouaeiouAEIOUAEIOUAEIOUAEIOUaAnNoOcCyyYcoO');
+$s = strtolower($s);
+$s = preg_replace('/[^-a-zA-Z_0-9]/', '-', $s);
+$s = preg_replace('/-{2,}/', '-', $s);
+$s = preg_replace('/^-+/', '', $s);
+$s = preg_replace('/-+$/', '', $s);
+return $s;
+}
+
 
 }
 ?>
