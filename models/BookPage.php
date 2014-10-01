@@ -18,7 +18,7 @@ return array_keys(get_object_vars($this));
 
 function getDoc () {
 if (!@$this->doc) {
-$this->doc = DOM::loadHTMLString( $this->book->getContentsByFileName($this->fileName) );
+$this->doc = DOM::loadXMLString( $this->book->getContentsByFileName($this->fileName) );
 }
 return $this->doc;
 }
@@ -36,6 +36,17 @@ $this->book->getFileSystem()->addFromString(
 $this->fileName,
 $doc->saveXML()
 );//
+}
+
+function updateContents ($contents) {
+if ($this->mediaType!='application/xhtml+xml') { $this->book->getFileSystem()->addFromString( $this->fileName, $contents); return; }
+$doc = $this->getDoc();
+$frag = $doc->createDocumentFragment();
+$frag->appendXML($contents);
+$body = $doc->getFirstElementByTagName('body');
+$body->removeAllChilds();
+$body->appendChild($frag);
+$this->saveDoc();
 }
 
 function updatePageSettings ($info) {

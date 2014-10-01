@@ -1,6 +1,6 @@
 <?php
 
-function listFiles ($base, $dir, $b, $leftView, $rightView) {
+function listFiles ($base, $dir, $b, $leftView, $rightView, $first=false) {
 global $root;
 $a=array();
 $dd = opendir("$base/$dir");
@@ -10,7 +10,8 @@ $a[]=$fn;
 }
 closedir($dd);
 sort($a);
-echo '<ul>';
+if ($first) echo '<ul class="fileTree" data-ctxtype="file">';
+else echo '<ul>';
 foreach ($a as $fn) {
 if (is_dir("$base/$dir$fn")) {
 echo "<li>$fn";
@@ -27,5 +28,5 @@ echo '<h2>', getTranslation('FileView'), '</h2>';
 
 global $booksdir;
 $base = "$booksdir/{$b->name}";
-listFiles($base, '', $b, $leftView, $rightView);
+listFiles($base, '', $b, $leftView, $rightView, true);
 ?>

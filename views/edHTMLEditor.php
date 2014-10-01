@@ -10,5 +10,6 @@ echo <<<END
 <div id="editor" contenteditable="true">
 $contents
 </div><!--editor-->
+<p><button type="button" onclick="Editor_save();">{$t('Save')}</button></p>
 END;
 ?>

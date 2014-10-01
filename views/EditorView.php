@@ -27,7 +27,7 @@ case 'sv':  require('edSpineView.php'); break;
 function editorMain ($leftView, $rightView, $b, $p) {
 global $root, $lang, $pageTitle;
 if ($rightView=='newpage') $pageTitle = $b->getTitle() .' &mdash; '. getTranslation('CreateNewPage');
-else if ($rightView=='addfiles') $pageTitle = $b->getTitle() .' &mdash; '. getTranslation('CreateAddFiles');
+else if ($rightView=='addfiles') $pageTitle = $b->getTitle() .' &mdash; '. getTranslation('AddFiles');
 else if (!$p) $pageTitle = $b->getTitle() .' &mdash; '. $b->getAuthors();
 else $pageTitle = $b->getTitle() .' &mdash; '. basename($p->fileName);
 $t = 'getTranslation';

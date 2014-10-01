@@ -1,6 +1,6 @@
 <?php
 echo '<h2>', getTranslation('SpineView'), '</h2>';
-echo '<ol>';
+echo '<ol class="fileTree" data-ctxtype="spine">';
 foreach($b->getSpine() as $id) {
 $item = $b->getItemById($id);
 $url = "$root/editor/{$b->name}/{$leftView}_{$rightView}/{$item->fileName}";

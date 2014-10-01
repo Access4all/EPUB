@@ -68,12 +68,18 @@ function domGenerateId () {
 return 'rndid'+(new Date() .getTime()) +Math.floor(Math.random()*1000000);
 }
 
+/*function $$ (p1, p2, p3, p4) {
+if (!p2) return document.querySelectorAll(p1);
+else if (!p3) return p1.querySelectorAll(p2);
+else return $(p1,p2,p3,p4);
+}
+
 function $ (p1, p2, p3, p4) {
 if (!p2) return document.querySelector(p1);
 else if (!p3) return p1.querySelector(p2);
 else if (!p4) {
 if (typeof(p1)=='string') p1 = document.querySelectorAll(p1);
-else if (p1.length()) for (var i=0; i<p1.length; i++) { p1[i][p2]=p3; }
+if (p1.length()) for (var i=0; i<p1.length; i++) { p1[i][p2]=p3; }
 else p1[p2]=p3;
 }
 else {
@@ -96,7 +102,7 @@ delete attrs.text;
 }
 if (attrs) for (var i in attrs) el.setAttribute(i, attrs[i]);
 return el;
-}
+}*/
 
 if (!Array.prototype.indexOf) Array.prototype.indexOf = function (o, start) {
 if (typeof(start)!='number') start=0;
@@ -104,8 +110,9 @@ for (var i=start; i<this.length; i++) if (this[i]==o) return i;
 return -1;
 }
 
-Object.prototype.isArray = function () { return false; }
-Array.prototype.isArray = function () { return true; }
+Array.prototype.merge = function (ar) {
+for (var i=0; i<ar.length; i++) this.push(ar[i]);
+}
 
 String.prototype.indexOfIgnoreCase = function (s) {
 return this.toLowerCase().indexOf(s.toLowerCase());
@@ -144,12 +151,40 @@ String.prototype.stripHTML = function () {
 return this.replace(/<.*?>/g, '');
 }
 
+NodeList.prototype.each = function () {
+var f = arguments[0], args = [];
+for (var i=1; i<arguments.length; i++) args.push(arguments[i]);
+for (var i=0; i<this.length; i++) f.call(this[i], args);
+}
+
+HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
+window.$ = function (selector) { return document.querySelectorAll(selector); }
+
+Element.prototype.appendElement = function (tagName, attrs) {
+var o = this.ownerDocument.createElement(tagName);
+if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
+this.appendChild(o);
+return o;
+}
+
+Element.prototype.appendText = function (str) {
+this.appendChild(this.ownerDocument.createTextNode(str));
+return this;
+}
+
+Element.prototype.findAncestor = function (tagNames) {
+if (typeof(tagNames)=='string') tagNames=[tagNames];
+if (tagNames.indexOf( this.nodeName.toLowerCase() )>=0) return this;
+else if (this.parentNode) return this.parentNode.findAncestor(tagNames);
+else return null;
+}
+
 window.onload = function () {
 if (window.onloads) {
 for (var i=0; i<window.onloads.length; i++) 
-try { 
+//try { 
 window.onloads[i](); 
-} catch (e) { log(e.message); }
+//} catch (e) { log(e.message); }
 }}
 
 window.vk = {

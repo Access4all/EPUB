@@ -247,8 +247,9 @@ return $p;
 }
 
 function addNewResource (&$info, $srcFile, $pageFrom = null) {
+if (!$srcFile) return 'No file provided';
 $fn = $info['fileName'];
-$srcBaseName = basename($srcFile);
+$srcBaseName = basename($srcFile->getFileName());
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
 if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
 if (empty($info['fileName'])) {
@@ -259,8 +260,28 @@ if (empty($info['id'])) {
 $noext = substr($srcBaseName, 0, strrpos($srcBaseName,'.'));
 $info['id'] = Misc::toValidName($noext);
 }
-//suite!
-die(nl2br(print_r($info,true)));
+$mediaType = $srcFile->getMediaType();
+list($type, $subtype) = explode('/', $mediaType, 2);
+if ($type=='image' || $type=='audio' || $type=='video' || $mediaType=='application/x-javascript') {
+$this->getFileSystem() ->addFromFile( $info['fileName'], $srcFile->getRealFileName() );
+$srcFile->release();
+$p = new BookPage(array('id'=>$info['id'], 'mediaType'=>$mediaType, 'fileName'=>$info['fileName']));
+$p->book = $this;
+$this->getItemById(null);
+$this->getItemByFileName(null);
+$this->manifestModified = true;
+$this->itemIdMap[$info['id']] = $p;
+$this->itemFileNameMap[$info['fileName']] = $p;
+return $p;
+}
+$info['fileName'] = preg_replace('/\..+$/', '.xhtml', $info['fileName']);
+if ($mediaType == 'application/xhtml+xml') return $this->addNewPage($info, $pageFrom, $srcFile->getContents() );
+else if ($mediaType=='text/html') {
+$html = DOM::loadHTMLString( $srcFile->getContents() );
+return $this->addNewPage($info, $pageFrom, $html->saveXML() );
+}
+// other types of imports
+return 'This type of document is not supported yet';
 }
 
 function getNavFileName () {
@@ -309,6 +330,28 @@ return $this->itemFileNameMap[$fileName];
 function getSpine () {
 if (!@$this->spine) $this->readOpf();
 return $this->spine;
+}
+
+function moveSpineBefore ($it, $ref) {
+$this->getSpine();
+$insertPos = array_search($ref->id, $this->spine);
+$removePos = array_search($it->id, $this->spine);
+if ($removePos>$insertPos) $removePos++;
+array_splice($this->spine, $insertPos, 0, $it->id);
+array_splice($this->spine, $removePos, 1);
+$this->spineModified=true;
+$this->saveOpf();
+}
+
+function moveSpineAFter  ($it, $ref) {
+$this->getSpine();
+$insertPos = 1+array_search($ref->id, $this->spine);
+$removePos = array_search($it->id, $this->spine);
+if ($removePos>$insertPos) $removePos++;
+array_splice($this->spine, $insertPos, 0, $it->id);
+array_splice($this->spine, $removePos, 1);
+$this->spineModified=true;
+$this->saveOpf();
 }
 
 }
