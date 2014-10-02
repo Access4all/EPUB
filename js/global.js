@@ -160,6 +160,14 @@ for (var i=0; i<this.length; i++) f.call(this[i], args);
 HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
 
+{
+var oldCreateElement = Document.prototype.createElement;
+Document.prototype.createElement = function (tagName, attrs) {
+var e = oldCreateElement.call(this, tagName);
+if (attrs) for (var i in attrs) e.setAttribute(i, attrs[i]);
+return e;
+}}
+
 Element.prototype.appendElement = function (tagName, attrs) {
 var o = this.ownerDocument.createElement(tagName);
 if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
@@ -172,7 +180,7 @@ this.appendChild(this.ownerDocument.createTextNode(str));
 return this;
 }
 
-Element.prototype.findAncestor = function (tagNames) {
+Node.prototype.findAncestor = function (tagNames) {
 if (typeof(tagNames)=='string') tagNames=[tagNames];
 if (tagNames.indexOf( this.nodeName.toLowerCase() )>=0) return this;
 else if (this.parentNode) return this.parentNode.findAncestor(tagNames);

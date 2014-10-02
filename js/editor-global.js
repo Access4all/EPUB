@@ -26,6 +26,22 @@ if (originator) originator.focus();
 return false;
 }
 
+function InputBox (title, prompt, text, okFunc, cancelFunc) {
+var form = document.createElement('form', {'role':'alertdialog'});
+form.appendElement('h1').appendText(title);
+var p = form.appendElement('p');
+p.appendElement('label', {'for':'InputBoxInput', 'id':'InputBoxLabel'}).appendText(prompt);
+var input = p.appendElement('input', {'type':'text', 'value':text, 'id':'InputBoxInput', 'aria-labelledby':'InputBoxLabel'});
+p = form.appendElement('p');
+var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
+var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
+form.onsubmit = function(){ if (okFunc) okFunc(input.value); form.parentNode.removeChild(form); return false; };
+form.onreset = function(){ if (cancelFunc) cancelFunc(); form.parentNode.removeChild(form); return false; };
+document.querySelector('body').appendChild(form);
+input.select();
+input.focus();
+}
+
 function FileTree_init () {
 var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+this.getAttribute('data-ctxtype')] ,this);
 this.$('a').each(function(){
@@ -64,7 +80,17 @@ ul.style.display = (ul.style.display=='block'? 'none' : 'block');
 this.firstChild.nodeValue = (ul.style.display=='block'? '-' : '+');
 }
 
-function FileTree_CtxMenuItemList_file (items) {
+function FileTree_CtxMenuItemList_file (items, link) {
+items.merge([
+msgs.Rename, null,
+msgs.Delete, null,
+]);//
+if (window.tmpMoveName) items.merge([
+msgs.MoveHere.replace('%1', window.tmpMoveName), FileTree_SpineMove.bind(null, link, 'moveFile'),
+]);//
+else items.merge([
+msgs.Move, FileTree_MoveInitiate.bind(null,link),
+]);//
 }
 
 function FileTree_CtxMenuItemList_toc (items, link) {
@@ -120,4 +146,4 @@ if (!document.querySelector || !document.querySelectorAll || !document.getElemen
 $('.fileTree').each(FileTree_init);
 });
 
-alert('editor loaded');
+//alert('editor loaded');

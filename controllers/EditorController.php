@@ -38,6 +38,10 @@ public function moveTocUnder ($bookName) {
 $this->moveOperation($bookName, __FUNCTION__);
 }
 
+public function moveFile ($bookName) {
+$this->moveOperation($bookName, __FUNCTION__);
+}
+
 private function moveOperation ($bookName, $actionName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();

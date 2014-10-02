@@ -18,6 +18,10 @@ function addFromString ($name, $data) {
 return @file_put_contents($this->dir .$name, $data);
 }
 
+function moveFile ($oldName, $newName) {
+return @rename($this->dir .$oldName, $this->dir .$newName);
+}
+
 function isExtracted () { return true; }
 function close () {}
 

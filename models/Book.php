@@ -214,7 +214,7 @@ $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() )
 function addNewPage (&$info, $pageFrom = null, $contents = null) {
 $fn = $info['fileName'];
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
-if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
+if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)*\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
 if (empty($info['title'])) $info['title'] = 'untitled'.time();
 if (empty($info['fileName'])) {
 $path = ($pageFrom? dirname($pageFrom->fileName) : dirname($this->getOpfFileName())) .'/';
@@ -353,6 +353,27 @@ array_splice($this->spine, $removePos, 1);
 $this->spineModified=true;
 $this->saveOpf();
 }
+
+function moveFile ($it, $ref) {
+$newFileName = dirname($ref->fileName) .'/' .basename($it->fileName);
+$this->implMoveFile($it, $newFileName);
+}
+
+function renameFile ($it, $newName) {
+$newFileName = dirname($it->fileName) .'/' .$newName;
+$this->implMoveFile($it, $newFileName);
+}
+
+private function implMoveFile ($it, $newFileName) {
+$this->getItemByFileName(null);
+$this->getFileSystem() ->moveFile( $it->fileName, $newFileName);
+$this->itemFileNameMap[$it->fileName] = null;
+$this->itemFileNameMap[$newFileName] = $it;
+$it->fileName = $newFileName;
+$this->saveOpf();
+//todo: update all files where the file is referenced
+}
+
 
 }
 ?>
