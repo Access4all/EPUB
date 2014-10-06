@@ -22,6 +22,13 @@ this.inlineFormat = RTZ_inlineFormat;
 this.superBlockFormat = RTZ_superBlockFormat;
 this.formatAsList = RTZ_formatAsList;
 this.formatAsLink = RTZ_formatAsLink;
+this.insertIcon = RTZ_insertIcon;
+this.insertIllustration = RTZ_insertIllustration;
+this.insertIconDialog = RTZ_insertIconDialog;
+this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
+this.enterKey = RTZ_enterKey;
+this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
+this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
 this.init = RTZ_init;
 this.implKeyDown = RTZ_implKeyDown;
 keys = {
@@ -48,12 +55,15 @@ orderedList: vk.ctrl+vk.l,
 unorderedList: vk.ctrl+vk.u,
 definitionList: vk.ctrl+vk.shift+vk.d,
 blockquote: vk.ctrl+vk.q,
+insertIcon: vk.ctrl+vk.shift+vk.i,
+insertIllustration: vk.ctrl+vk.shift+vk.g,
 };
 }
 
 function RTZ_init () {
 var _this = this;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
+this.zone.onpaste = RTZ_paste.bind(this);
 this.toolbar.$('button').each(function(){ this.onclick = RTZ_toolbarButtonClick.bind(_this, this.getAttribute('data-action')); });
 this.toolbar.$('select').each(function(){ this.onchange = RTZ_toolbarStyleSelect.bind(_this, this); });
 if (this.debug){
@@ -94,6 +104,9 @@ return re;
 
 function RTZ_implKeyDown (k, simulated) {
 switch(k){
+case vk.enter:
+this.enterKey();
+break;
 case keys.regular:
 this.simpleBlockFormat('p');
 break;
@@ -130,6 +143,12 @@ break;
 case keys.blockquote:
 this.superBlockFormat('blockquote');
 break;
+case keys.insertIcon:
+this.insertIconDialog();
+break;
+case keys.insertIllustration :
+this.insertIllustrationDialog();
+break;
 case keys.copy:
 if (!simulated) return true;
 document.execCommand('copy', false, null);
@@ -138,9 +157,12 @@ case keys.cut:
 if (!simulated) return true;
 document.execCommand('cut', false, null);
 break;
-case keys.paste:
+case keys.paste: 
 if (!simulated) return true;
 document.execCommand('paste', false, null);
+break;
+case keys.save :
+Editor_save();
 break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
@@ -169,6 +191,112 @@ this.select(sel);
 default: return true;
 }
 return false;
+}
+
+function RTZ_enterKey () {
+var sel = this.getSelection();
+var textNode = null;
+var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td', 'figcaption']);
+if (!sel.collapsed) {
+sel.deleteContents();
+sel.collapse(false);
+}
+if (sel.commonAncestorContainer.nodeType==3 && sel.endOffset<sel.endContainer.length) {
+var node = sel.endContainer;
+textNode = node.splitText(sel.endOffset);
+node.parentNode.removeChild(textNode);
+if (node.length<=0) node.parentNode.removeChild(node);
+}
+if (!el.hasChildNodes()) this.enterKeyOnEmptyParagraph(sel, el, textNode);
+else this.enterKeyOnNonEmptyParagraph(sel, el, textNode);
+}
+
+function RTZ_listDetectType (s) {
+if (/^\d+$/.test(s)) return '1';
+else if (s=='i' || s=='I' || s.length>1) return s.charAt(0)>'Z'?'i':'I';
+else return s.charAt(0)>'Z'?'a':'A';
+}
+
+function RTZ_listDetectStart (s, type) {
+if (type=='1') return s;
+else if (type=='A' || type=='a') return 1 + s.charCodeAt(0) - type.charCodeAt(0);
+var romanNumbers = [null, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx'];
+return romanNumbers.indexOf(s.toLowerCase());
+}
+
+function RTZ_enterKeyOnNonEmptyParagraph (sel, el, textNode) {
+var match, ok, tgn=el.tagName.toLowerCase();
+ok = tgn!='figcaption' && tgn!='caption' && tgn!='td' && tgn!='th';
+if (ok && (match = el.textContent.match(/^(\d+|[a-zA-Z]{1,4})[.)]\s/))) {
+sel.selectNodeContents(el);
+var text = sel.extractContents();
+text.firstChild.nodeValue = text.firstChild.nodeValue.toString().substring(match[0].length);
+var ol = document.createElement('ol');
+var li = ol.appendElement('li');
+li.appendChild(text);
+var type = RTZ_listDetectType(match[1]);
+var start = RTZ_listDetectStart(match[1], type);
+ol.setAttribute('start', start);
+ol.setAttribute('type', type);
+li = ol.appendElement('li');
+if (textNode) li.appendChild(textNode);
+if (el.nodeName.toLowerCase()=='li') el.appendChild(ol);
+else {
+el.parentNode.insertBefore(ol, el);
+el.parentNode.removeChild(el);
+}
+sel.selectNodeContents(li);
+sel.collapse(false);
+this.select(sel);
+return;
+}
+else if (ok && (match = /^[-*+]\s/ .test(el.textContent))) {
+sel.selectNodeContents(el);
+var text = sel.extractContents();
+text.firstChild.nodeValue = text.firstChild.nodeValue.toString().substring(2);
+var ul = document.createElement('ul');
+var li = ul.appendElement('li');
+li.appendChild(text);
+li = ul.appendElement('li');
+if (textNode) li.appendChild(textNode);
+if (el.nodeName.toLowerCase()=='li') el.appendChild(ul);
+else {
+el.parentNode.insertBefore(ul, el);
+el.parentNode.removeChild(el);
+}
+sel.selectNodeContents(li);
+sel.collapse(false);
+this.select(sel);
+return;
+}
+if (tgn=='figcaption') tgn='p';
+else if (tgn=='dd') tgn='dt';
+else if (tgn=='dt') tgn='dd';
+var newEl = document.createElement(tgn);
+el.parentNode.insertBefore(newEl, el.nextSibling);
+if (textNode) newEl.appendChild(textNode);
+sel.selectNodeContents(newEl);
+sel.collapse(true);
+this.select(sel);
+}
+
+function RTZ_enterKeyOnEmptyParagraph (sel, el, textNode) {
+var parent = el.parentNode;
+var tgn = 'p';
+if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='li') tgn='li';
+else if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='dd') tgn='dt';
+var newEl = document.createElement(tgn);
+if (textNode) newEl.appendChild(textNode);
+if (parent==this.zone) parent.replaceChild(newEl, el);
+else {
+parent.removeChild(el);
+var parentTgn = (parent.parentNode? parent.parentNode.tagName.toLowerCase() : '#none');
+if (parentTgn=='li' || parentTgn=='dd') parent = parent.parentNode;
+parent.parentNode.insertBefore(newEl, parent.nextSibling);
+}
+sel.selectNodeContents(newEl);
+sel.collapse(true);
+this.select(sel);
 }
 
 function RTZ_inlineFormat (tagName, allowNest, attrs, justCheck) {
@@ -214,12 +342,13 @@ return;
 }
 var sel = this.getSelection();
 var _this = this;
-InputBox(msgs.MakeALink, msgs.LinkURL+':', '', function(text){
+DialogBox(msgs.MakeALink, [{label:msgs.LinkURL, name:'url'}], function(){
+var text = this.elements.url.value;
 _this.select(sel);
 _this.inlineFormat('a', false, {'href':text});
 _this.zone.focus();
 return false;
-}, null); //InputBox
+}, null); //DialogBox
 }
 
 function RTZ_simpleBlockFormat (tagName, attrs) {
@@ -308,6 +437,67 @@ sel.setEnd(realEndNode, realEndOffset);
 sel.collapse(false);
 }
 this.select(sel);
+}
+
+function RTZ_insertIcon (url, alt) {
+var img = document.createElement2('img', {'alt':alt, 'src':url});
+var sel = this.getSelection();
+sel.insertNode(img);
+sel.setStartAfter(img);
+sel.setEndAfter(img);
+sel.collapse(false);
+this.select(sel);
+}
+
+function RTZ_insertIllustration (url, alt) {
+var figure = document.createElement('figure');
+var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'96%'});
+var capt = figure.appendElement('figcaption').appendText(alt);
+var sel = this.getSelection();
+var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
+ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
+sel.setStartAfter(capt);
+sel.setEndAfter(capt);
+sel.collapse(false);
+this.select(sel);
+}
+
+function RTZ_insertIconDialog () {
+var sel = this.getSelection();
+var _this = this;
+DialogBox(msgs.InsertIcon, [
+{label:msgs.IconURL, name:'url'},
+{label:msgs.IconAlt, name:'alt'},
+], function(){ 
+_this.select(sel);
+_this.insertIcon(this.elements.url.value, this.elements.alt.value);
+_this.zone.focus();
+}); //DialogBox
+}
+
+function RTZ_insertIllustrationDialog () {
+var sel = this.getSelection();
+var _this = this;
+DialogBox(msgs.InsertIllu, [
+{label:msgs.IlluURL, name:'url'},
+{label:msgs.IlluAlt, name:'alt'},
+], function(){ 
+_this.select(sel);
+_this.insertIllustration(this.elements.url.value, this.elements.alt.value);
+_this.zone.focus();
+}); //DialogBox
+}
+
+
+function RTZ_paste (e) {
+var sel = this.getSelection();
+var div = document.createElement('div');
+this.zone.appendChild(div);
+sel.selectNodeContents(div);
+this.select(sel);
+alert(1);
+return true;
+
 }
 
 function RTZ_debug_updateHTMLPreview () {

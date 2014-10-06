@@ -160,13 +160,11 @@ for (var i=0; i<this.length; i++) f.call(this[i], args);
 HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
 
-{
-var oldCreateElement = Document.prototype.createElement;
-Document.prototype.createElement = function (tagName, attrs) {
-var e = oldCreateElement.call(this, tagName);
+Document.prototype.createElement2 = function (tagName, attrs) {
+var e = this.createElement(tagName);
 if (attrs) for (var i in attrs) e.setAttribute(i, attrs[i]);
 return e;
-}}
+}
 
 Element.prototype.appendElement = function (tagName, attrs) {
 var o = this.ownerDocument.createElement(tagName);

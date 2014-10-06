@@ -23,10 +23,12 @@ echo <<<END
 <button type="button" data-action="link">{$t('Link')}</button>
 <button type="button" data-action="bold">{$t('Bold')}</button>
 <button type="button" data-action="italic">{$t('Italic')}</button>
+<button type="button" data-action="insertIcon">{$t('Icon')}</button>
 </p><p>
 <button type="button" data-action="orderedList">{$t('OrderedList')}</button>
 <button type="button" data-action="unorderedList">{$t('UnorderedList')}</button>
 <button type="button" data-action="blockquote">{$t('Blockquote')}</button>
+<button type="button" data-action="insertIllustration">{$t('Illustration')}</button>
 <select>
 <option value="nothing">{$t('OtherStyles')}</option>
 <option value="h5">{$t('Heading5')}</option>

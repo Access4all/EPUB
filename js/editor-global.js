@@ -26,20 +26,27 @@ if (originator) originator.focus();
 return false;
 }
 
-function InputBox (title, prompt, text, okFunc, cancelFunc) {
-var form = document.createElement('form', {'role':'alertdialog'});
+function DialogBox (title, desc, okFunc, cancelFunc, readyFunc) {
+var first=null, form = document.createElement2('form', {'role':'dialog'});
 form.appendElement('h1').appendText(title);
+for (var i=0; i<desc.length; i++) {
+var item = desc[i];
 var p = form.appendElement('p');
-p.appendElement('label', {'for':'InputBoxInput', 'id':'InputBoxLabel'}).appendText(prompt);
-var input = p.appendElement('input', {'type':'text', 'value':text, 'id':'InputBoxInput', 'aria-labelledby':'InputBoxLabel'});
-p = form.appendElement('p');
+p.appendElement('label', {'for':item.name, 'id':item.name+'Label'}).appendText(item.label+':');
+var type = item.type || 'text';
+var value = item.value || '';
+var input = p.appendElement('input', {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'});
+if (!first) first=input;
+}
+var p = form.appendElement('p');
 var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
 var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
-form.onsubmit = function(){ if (okFunc) okFunc(input.value); form.parentNode.removeChild(form); return false; };
-form.onreset = function(){ if (cancelFunc) cancelFunc(); form.parentNode.removeChild(form); return false; };
+form.onsubmit = function(){ if (okFunc) okFunc.call(this); this.parentNode.removeChild(this); return false; };
+form.onreset = function(){ if (cancelFunc) cancelFunc.call(this); this.parentNode.removeChild(this); return false; };
 document.querySelector('body').appendChild(form);
-input.select();
-input.focus();
+first.select();
+first.focus();
+if (readyFunc) readyFunc.call(form);
 }
 
 function FileTree_init () {
