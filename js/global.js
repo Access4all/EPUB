@@ -154,8 +154,11 @@ return this.replace(/<.*?>/g, '');
 NodeList.prototype.each = function () {
 var f = arguments[0], args = [];
 for (var i=1; i<arguments.length; i++) args.push(arguments[i]);
-for (var i=0; i<this.length; i++) f.call(this[i], args);
-}
+for (var i=0; i<this.length; i++) {
+args.unshift(this[i]);
+f.apply(null, args);
+args.shift();
+}}
 
 HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
@@ -194,7 +197,7 @@ window.onloads[i]();
 }}
 
 window.vk = {
-'shift': 256, 'ctrl': 512, 'alt': 1024,
+'shift': 256, 'ctrl': 512, 'alt': 1024, 'impossible':2048,
 'a': 65, 'b': 66, 'c': 67, 'd': 68, 'e': 69, 'f': 70, 'g': 71,
 'h': 72, 'i': 73, 'j': 74, 'k': 75, 'l': 76, 
 'm': 77, 'n': 78, 'o': 79, 'p': 80, 'q': 81,

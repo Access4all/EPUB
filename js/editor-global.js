@@ -35,7 +35,18 @@ var p = form.appendElement('p');
 p.appendElement('label', {'for':item.name, 'id':item.name+'Label'}).appendText(item.label+':');
 var type = item.type || 'text';
 var value = item.value || '';
-var input = p.appendElement('input', {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'});
+var input = null;
+if (type=='select') {
+input = p.appendElement('select', {'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'});
+for (val in item.values) input.appendElement('option', {'value':val}).appendText(item.values[val]);
+if (item.value) input.value = item.value;
+}
+else {
+var exargs = ['min', 'max', 'step', 'pattern', 'maxlength'];
+var args = {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'};
+for (var j=0; j<exargs.length; j++) if (item[exargs[j]]) args[exargs[j]]=item[exargs[j]];
+input = p.appendElement('input', args);
+}
 if (!first) first=input;
 }
 var p = form.appendElement('p');
@@ -49,18 +60,18 @@ first.focus();
 if (readyFunc) readyFunc.call(form);
 }
 
-function FileTree_init () {
-var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+this.getAttribute('data-ctxtype')] ,this);
-this.$('a').each(function(){
-this.oncontextmenu = ctxItemFunc;
+function FileTree_init (e) {
+var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+e.getAttribute('data-ctxtype')] ,this);
+e.$('a').each(function(o){
+o.oncontextmenu = ctxItemFunc;
 });
-this.$('ul,ol').each(function(){
-var li = this.parentNode;
+e.$('ul,ol').each(function(o){
+var li = o.parentNode;
 var a = li.appendElement('a', {'href':'#'});
 a.appendText('+');
 a.onclick = FileTree_expandLinkClick;
 li.insertBefore(a, li.firstChild);
-this.style.display='none';
+o.style.display='none';
 });
 //suite
 }
@@ -143,7 +154,11 @@ function Editor_save () {
 var editor = document.querySelector('#editor');
 if (!editor) return;
 var url = window.actionUrl.replace('@@', 'save');
-ajax('POST', url, 'content='+encodeURIComponent(editor.innerHTML), function(e){alert('success: '+e);}, function(){alert('failed');});
+ajax('POST', url, 'content='+encodeURIComponent(editor.innerHTML), function(e){
+var div = document.getElementById('debug3');
+if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
+div.innerHTML = e;
+}, function(){alert('failed');});
 };
 
 if (!window.onloads) window.onloads = [];

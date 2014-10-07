@@ -29,6 +29,7 @@ echo <<<END
 <button type="button" data-action="unorderedList">{$t('UnorderedList')}</button>
 <button type="button" data-action="blockquote">{$t('Blockquote')}</button>
 <button type="button" data-action="insertIllustration">{$t('Illustration')}</button>
+<button type="button" data-action="insertTable">{$t('Table')}</button>
 <select>
 <option value="nothing">{$t('OtherStyles')}</option>
 <option value="h5">{$t('Heading5')}</option>

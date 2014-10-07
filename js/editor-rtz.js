@@ -24,11 +24,16 @@ this.formatAsList = RTZ_formatAsList;
 this.formatAsLink = RTZ_formatAsLink;
 this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
+this.insertTable = RTZ_insertTable;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
+this.insertTableDialog = RTZ_insertTableDialog;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
+this.tabKey = RTZ_tabKey;
+this.shiftTabKey = RTZ_shiftTabKey;
+this.cleanHTML = RTZ_cleanHTML;
 this.init = RTZ_init;
 this.implKeyDown = RTZ_implKeyDown;
 keys = {
@@ -51,12 +56,19 @@ h3: vk.ctrl+vk.n3,
 h4: vk.ctrl+vk.n4,
 h5: vk.ctrl+vk.n5,
 h6: vk.ctrl+vk.n6,
+h1alt: vk.alt+vk.n1,
+h2alt: vk.alt+vk.n2,
+h3alt: vk.alt+vk.n3,
+h4alt: vk.alt+vk.n4,
+h5alt: vk.alt+vk.n5,
+h6alt: vk.alt+vk.n6,
 orderedList: vk.ctrl+vk.l,
 unorderedList: vk.ctrl+vk.u,
 definitionList: vk.ctrl+vk.shift+vk.d,
 blockquote: vk.ctrl+vk.q,
 insertIcon: vk.ctrl+vk.shift+vk.i,
 insertIllustration: vk.ctrl+vk.shift+vk.g,
+insertTable: vk.ctrl+vk.shift+vk.t,
 };
 }
 
@@ -64,8 +76,8 @@ function RTZ_init () {
 var _this = this;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
-this.toolbar.$('button').each(function(){ this.onclick = RTZ_toolbarButtonClick.bind(_this, this.getAttribute('data-action')); });
-this.toolbar.$('select').each(function(){ this.onchange = RTZ_toolbarStyleSelect.bind(_this, this); });
+this.toolbar.$('button').each(function(o){ o.onclick = RTZ_toolbarButtonClick.bind(_this, o.getAttribute('data-action')); });
+this.toolbar.$('select').each(function(o){ o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); });
 if (this.debug){
 var div = document.createElement('div');
 div.appendElement('h1').appendText('Debug HTML code');
@@ -89,7 +101,7 @@ this.implKeyDown(keys[action], true);
 function RTZ_keyDown (e) {
 e = e || window.event;
 var k = e.keyCode || e.which;
-if (k>=20) {
+if (k>=20 || k==vk.tab) {
 if (e.ctrlKey) k |= vk.ctrl;
 if (e.shiftKey) k|=vk.shift;
 if (e.altKey) k|=vk.alt;
@@ -107,18 +119,31 @@ switch(k){
 case vk.enter:
 this.enterKey();
 break;
+case vk.tab :
+if (this.tabKey()) return true;
+else break;
+case vk.shift+vk.tab:
+if (this.shiftTabKey()) return true;
+else break;
 case keys.regular:
 this.simpleBlockFormat('p');
 break;
+case keys.h1alt:
+case keys.h2alt:
+case keys.h3alt:
+case keys.h4alt:
+case keys.h5alt:
+case keys.h6alt:
+k = k + keys.h1 - keys.h1alt;
 case keys.h1:
 case keys.h2:
 case keys.h3:
 case keys.h4:
 case keys.h5:
-case keys.h6: {
-var n = (k - vk.ctrl -vk.n0);
-this.simpleBlockFormat('h'+n, {'role':'heading', 'aria-level':n});
-}break;
+case keys.h6: 
+k += 1 - keys.h1;
+this.simpleBlockFormat('h'+k, {'role':'heading', 'aria-level':k});
+break;
 case keys.link:
 this.formatAsLink();
 break;
@@ -148,6 +173,9 @@ this.insertIconDialog();
 break;
 case keys.insertIllustration :
 this.insertIllustrationDialog();
+break;
+case keys.insertTable :
+this.insertTableDialog();
 break;
 case keys.copy:
 if (!simulated) return true;
@@ -299,6 +327,45 @@ sel.collapse(true);
 this.select(sel);
 }
 
+function RTZ_tabKey () {
+var sel = this.getSelection();
+var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
+if (!cell) return true;
+var nextCell = cell.nextElementSibling;
+if (!nextCell) {
+var tr = cell.parentNode;
+var nextTr = tr.nextElementSibling;
+if (!nextTr || !nextTr.tagName || nextTr.tagName.toLowerCase()!='tr') nextTr=null;
+if (nextTr) nextCell = nextTr.firstElementChild;
+else {
+nextTr = tr.cloneNode(true);
+nextTr.$('td,th').each(function(o){ o.innerHTML=''; });
+tr.parentNode.insertBefore(nextTr, tr.nextSibling);
+nextCell = nextTr.firstElementChild;
+}}
+sel.selectNodeContents(nextCell);
+sel.collapse(false);
+this.select(sel);
+return false;
+}
+
+function RTZ_shiftTabKey () {
+var sel = this.getSelection();
+var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
+if (!cell) return true;
+var prevCell = cell.previousElementSibling;
+if (!prevCell) {
+var tr = cell.parentNode;
+var prevTr = tr.previousElementSibling;
+if (prevTr) prevCell = prevTr.lastElementChild;
+}
+if (!prevCell) return true;
+sel.selectNodeContents(prevCell);
+sel.collapse(false);
+this.select(sel);
+return false;
+}
+
 function RTZ_inlineFormat (tagName, allowNest, attrs, justCheck) {
 var sel = this.getSelection();
 var node = sel.commonAncestorContainer;
@@ -330,7 +397,7 @@ if (attrs) for (var i in attrs) node.setAttribute(i, attrs[i]);
 try {
 sel.surroundContents(node);
 } catch(e) { alert('failed'); return; }
-if (!allowNest) node.$(tagName).each(function(){ sel.selectNodeContents(this);  var ex = sel.extractContents();  this.parentNode.replaceChild(ex, this);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection
+if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  var ex = sel.extractContents();  o.parentNode.replaceChild(ex, o);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection
 sel.selectNodeContents(node);
 this.select(sel);
 }
@@ -449,15 +516,36 @@ sel.collapse(false);
 this.select(sel);
 }
 
-function RTZ_insertIllustration (url, alt) {
-var figure = document.createElement('figure');
-var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'96%'});
+function RTZ_insertIllustration (url, alt, style) {
+var figure = document.createElement2('figure', {'class':style});
+var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'99%'});
 var capt = figure.appendElement('figcaption').appendText(alt);
 var sel = this.getSelection();
 var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
 ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
 sel.setStartAfter(capt);
 sel.setEndAfter(capt);
+sel.collapse(false);
+this.select(sel);
+}
+
+function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
+var table = document.createElement2('table', {'class':style, 'data-th':thScheme});
+var firstCell = null;
+for (var i=0; i<nRows; i++) {
+var tr = table.appendElement('tr');
+for (var j=0; j<nCols; j++) {
+var type = 'td';
+if (i==0 && (thScheme=='top' || thScheme=='both')) type='th';
+if (j==0 && (thScheme=='left' || thScheme=='both')) type = 'th';
+var cell = tr.appendElement(type);
+if (!firstCell) firstCell=cell;
+}}
+table.appendElement('caption').appendText(captionText);
+var sel = this.getSelection();
+var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
+ancestor.parentNode.insertBefore(table, ancestor.nextSibling);
+sel.selectNodeContents(firstCell);
 sel.collapse(false);
 this.select(sel);
 }
@@ -472,7 +560,7 @@ DialogBox(msgs.InsertIcon, [
 _this.select(sel);
 _this.insertIcon(this.elements.url.value, this.elements.alt.value);
 _this.zone.focus();
-}); //DialogBox
+});//DialogBox
 }
 
 function RTZ_insertIllustrationDialog () {
@@ -481,23 +569,75 @@ var _this = this;
 DialogBox(msgs.InsertIllu, [
 {label:msgs.IlluURL, name:'url'},
 {label:msgs.IlluAlt, name:'alt'},
+{label:msgs.IlluStyle, name:'istyle', type:'select', value:'width99', values:{left50:'Float left', right50:'Float right', width99:'Full width'} },
 ], function(){ 
 _this.select(sel);
-_this.insertIllustration(this.elements.url.value, this.elements.alt.value);
+_this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.istyle.value);
 _this.zone.focus();
-}); //DialogBox
+});//DialogBox
 }
 
-
-function RTZ_paste (e) {
+function RTZ_insertTableDialog () {
 var sel = this.getSelection();
-var div = document.createElement('div');
-this.zone.appendChild(div);
-sel.selectNodeContents(div);
-this.select(sel);
-alert(1);
-return true;
+var _this = this;
+DialogBox(msgs.InsertTable, [
+{type:'number', name:'nRows', label:msgs.TableNbRows, min:2, max:100, step:1, value:4},
+{type:'number', name:'nCols', label:msgs.TableNbCols, min:2, max:100, step:1, value:3},
+{name:'captionText', label:msgs.TableCaption},
+{type:'select', name:'thScheme', label:msgs.TableTHScheme, value:'top', values:{top:msgs.OnTop, left:msgs.OnLeft, both:msgs.BothTopLeft} },
+{type:'select', name:'tstyle', label:msgs.TableStyle, value:'width99', values:{left50:'Float left', right50:'Float right', width99:'Full width'} },
+], function(){
+var nRows = parseInt(this.elements.nRows.value), nCols = parseInt(this.elements.nCols.value);
+if (nRows<2 || nCols<2) return false;
+_this.select(sel);
+_this.insertTable(nRows, nCols, this.elements.captionText.value, this.elements.thScheme.value, this.elements.tstyle.value);
+_this.zone.focus();
+});//DialogBox
+}
 
+function RTZ_cleanHTML (sel, o) {
+if (!sel||!o){
+var sel = document.createRange();
+sel.selectNodeContents(this.zone);
+var frag = sel.extractContents();
+this.cleanHTML(sel, frag);
+this.zone.appendChild(frag);
+return;
+}
+if (o.nodeType==3) {
+if (o.nodeValue.trim().length==0) o.parentNode.removeChild(o);
+return;
+}
+else if (o.nodeType!=1 && o.nodeType!=9 && o.nodeType!=11) {
+o.parentNode.removeChild(o);
+return;
+}
+for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td a b i s strong em abbr sup sub span ins del var samp kbd code tt'.split(' ');
+var toRemove = false, tagName = (o.tagName? o.tagName.toLowerCase() : 'h1');
+toRemove = (allowedElements.indexOf(tagName)<0)
+|| (tagName=='p' && !o.hasChildNodes())
+|| (tagName=='p' && o.childNodes.length==1 && o.firstChild.nodeType==3 && o.firstChild.nodeValue.trim().length==0);
+if (toRemove) {
+sel.selectNodeContents(o);
+var extracted = sel.extractContents();
+o.parentNode.insertBefore(extracted, o);
+o.parentNode.removeChild(o);
+}
+if (o.removeAttribute) o.removeAttribute('style');
+}
+
+function RTZ_paste () {
+var count=0, lengthBefore = this.zone.innerHTML.length;
+var f = (function(){
+if (this.zone.innerHTML.length==lengthBefore) {
+if (++count<2000) setTimeout(f,1);
+else alert('Paste failed');
+}
+this.cleanHTML();
+}) .bind(this);
+setTimeout(f,1);
+return true;
 }
 
 function RTZ_debug_updateHTMLPreview () {

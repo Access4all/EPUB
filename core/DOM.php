@@ -1,5 +1,5 @@
 <?php
-define('DOM_LIBXML_OPTIONS', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NSCLEAN);
+define('DOM_LIBXML_OPTIONS', LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN );//| LIBXML_NOERROR | LIBXML_NOWARNING);
 
 class DOM {
 
@@ -54,19 +54,10 @@ if ($func($item)) return;
 }
 
 class DOMDocument2 extends DOMDocument {
-function getRootElement () { 
-if (!@$this->root) {
-foreach($this->childNodes as $node) {
-if ($node->nodeType==1) {
-$this->root = $node;
-break;
-}}
-}
-return $this->root;
-}
+function getRootElement () { return $this->documentElement; }
 
 function __call ($name, $args) {
-return call_user_func_array(array($this->getRootElement(), $name), $args);
+return call_user_func_array(array($this->documentElement, $name), $args);
 }
 }
 

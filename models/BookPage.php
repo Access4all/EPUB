@@ -40,6 +40,10 @@ $doc->saveXML()
 
 function updateContents ($contents) {
 if ($this->mediaType!='application/xhtml+xml') { $this->book->getFileSystem()->addFromString( $this->fileName, $contents); return; }
+$contents = preg_replace_callback( '#<((?:img|br)\b.*?)>#ms', function($m){ 
+if (substr($m[1], -1)!='/') $m[1].=' /';
+return "<$m[1]>";
+}, $contents);
 $doc = $this->getDoc();
 $frag = $doc->createDocumentFragment();
 $frag->appendXML($contents);

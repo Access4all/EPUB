@@ -2,13 +2,13 @@
 display: none;
 }
 
-.leftPanel {
-float: left;
-width: 22%;
+#leftPanel {
+display: inline-block;
+width: 24%;
 }
 
-.rightPanel {
-float: left;
+#rightPanel {
+display: inline-block;
 width: 75%;
 margin-left: 5px;
 }
@@ -26,3 +26,9 @@ a.button, .menul a {
 display: inline-block;
 margin-left: 7px;
 }
+
+
+.left50 {  float: left; width: 50%; }
+.right50 {  float: right; width: 50%; }
+.width99 { width: 99%; }
+
