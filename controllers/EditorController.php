@@ -18,6 +18,19 @@ $p->updateContents($_POST['content']);
 die('saved');
 }
 
+function preview ($bookName, $pageName) {
+global $root;
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+$p = $b->getItemByFileName($pageName);
+if (!$p) exit404();
+//Todo: prepare preview: update TOC, CSS template, etc.
+$b->updateTOC();
+//sleep(2); // Wait a bit so that AJAX save works
+header("Location: $root/book/{$b->name}/view/{$p->fileName}");
+exit();
+}
+
 public function moveSpineAfter ($bookName) {
 $this->moveOperation($bookName, __FUNCTION__);
 }
@@ -91,6 +104,10 @@ exit();
 else if (isset($_POST['id'], $_POST['fileName'])) {
 $p->updatePageSettings($_POST);
 header("Location:{$_SERVER['REQUEST_URI']}");
+}
+if ($p && !preg_match('/\.(?:xhtml|htm|html|xml|opf|txt|css|js)$/i', $pageName)) {
+$b->directEchoFile($p->fileName);
+exit();
 }
 $view = new EditorView();
 if (!$p && $rightViewMethod!='newpage' && $rightViewMethod!='addfiles') $view->bookOptions($leftViewMethod, $rightViewMethod, $b);

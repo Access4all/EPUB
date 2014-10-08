@@ -22,12 +22,14 @@ this.inlineFormat = RTZ_inlineFormat;
 this.superBlockFormat = RTZ_superBlockFormat;
 this.formatAsList = RTZ_formatAsList;
 this.formatAsLink = RTZ_formatAsLink;
+this.formatAsCodeListing = RTZ_formatAsCodeListing;
 this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
 this.insertTable = RTZ_insertTable;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
+this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
@@ -45,10 +47,12 @@ copy: vk.ctrl+vk.c,
 paste: vk.ctrl+vk.v,
 cut: vk.ctrl+vk.x,
 save: vk.ctrl+vk.s,
+preview: vk.f9,
 link: vk.ctrl+vk.k,
 bold: vk.ctrl+vk.b,
 italic: vk.ctrl+vk.i,
 strikeout: vk.ctrl+vk.shift+vk.k,
+abbreviation: vk.ctrl+vk.shift+vk.b,
 regular: vk.ctrl+vk.n0,
 h1: vk.ctrl+vk.n1,
 h2: vk.ctrl+vk.n2,
@@ -65,7 +69,9 @@ h6alt: vk.alt+vk.n6,
 orderedList: vk.ctrl+vk.l,
 unorderedList: vk.ctrl+vk.u,
 definitionList: vk.ctrl+vk.shift+vk.d,
+codeListing: vk.ctrl+vk.shift+vk.p,
 blockquote: vk.ctrl+vk.q,
+asideBox: vk.ctrl+vk.shift+vk.a,
 insertIcon: vk.ctrl+vk.shift+vk.i,
 insertIllustration: vk.ctrl+vk.shift+vk.g,
 insertTable: vk.ctrl+vk.shift+vk.t,
@@ -154,7 +160,10 @@ case keys.italic:
 this.inlineFormat('em', false);
 break;
 case keys.strikeout:
-this.inlineFormat('del', false);
+this.inlineFormat('s', false);
+break;
+case keys.abbreviation:
+this.insertAbbrDialog();
 break;
 case keys.unorderedList:
 this.formatAsList('ul', 'li', 'li');
@@ -163,10 +172,16 @@ case keys.orderedList:
 this.formatAsList('ol', 'li', 'li');
 break;
 case keys.definitionList:
-this.formatAsList('dl', 'dt', 'dd');
+this.formatAsList('dl', 'dd', 'dt');
+break;
+case keys.codeListing:
+this.formatAsCodeListing();
 break;
 case keys.blockquote:
 this.superBlockFormat('blockquote');
+break;
+case keys.asideBox:
+this.superBlockFormat('aside');
 break;
 case keys.insertIcon:
 this.insertIconDialog();
@@ -191,6 +206,9 @@ document.execCommand('paste', false, null);
 break;
 case keys.save :
 Editor_save();
+break;
+case keys.preview:
+$('#previewLink')[0].click();
 break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
@@ -418,6 +436,28 @@ return false;
 }, null); //DialogBox
 }
 
+function RTZ_formatAsCodeListing () {
+var sel = this.getSelection();
+var wasCollapsed = sel.collapsed;
+var startNode = sel.startContainer.findAncestor(['p']);
+var endNode = sel.endContainer.findAncestor(['p']);
+sel.setStartBefore(startNode);
+sel.setEndAfter(endNode);
+if (startNode.tagName!=endNode.tagName) return;
+var extracted = sel.extractContents();
+var pre = document.createElement2('pre');
+var code = pre.appendElement('code');
+var sel2 = document.createRange();
+for (var i=0; i<extracted.childNodes.length; i++) {
+if (i>0) code.appendElement('br');
+var p = extracted.childNodes[i];
+sel2.selectNodeContents(p);
+p = sel2.extractContents();
+code.appendChild(p);
+}
+sel.insertNode(pre);
+}
+
 function RTZ_simpleBlockFormat (tagName, attrs) {
 var sel = this.getSelection();
 var collapsed = sel.collapsed;
@@ -550,6 +590,18 @@ sel.collapse(false);
 this.select(sel);
 }
 
+function RTZ_insertAbbrDialog () {
+var sel = this.getSelection();
+var _this = this;
+DialogBox(msgs.InsertAbbr, [
+{label:msgs.AbbrTitle, name:'abbrtitle'},
+], function(){ 
+_this.select(sel);
+_this.inlineFormat('abbr', false, {title:this.elements.abbrtitle.value});
+_this.zone.focus();
+});//DialogBox
+}
+
 function RTZ_insertIconDialog () {
 var sel = this.getSelection();
 var _this = this;
@@ -613,7 +665,7 @@ o.parentNode.removeChild(o);
 return;
 }
 for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td a b i s strong em abbr sup sub span ins del var samp kbd code tt'.split(' ');
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub span ins del code pre hr img audio video source track object param section aside figure var samp kbd'.split(' ');
 var toRemove = false, tagName = (o.tagName? o.tagName.toLowerCase() : 'h1');
 toRemove = (allowedElements.indexOf(tagName)<0)
 || (tagName=='p' && !o.hasChildNodes())
@@ -665,8 +717,14 @@ w.removeAllRanges();
 w.addRange(sel);
 }
 
+function RTZ_previewLinkClick () {
+Editor_save();
+return !window.open(this.href);
+}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
+$('#previewLink')[0].onclick = RTZ_previewLinkClick;
 var rtz = new RTZ( $('#editor')[0], $('#toolbar')[0]);
 rtz.debug = true;
 rtz.init();

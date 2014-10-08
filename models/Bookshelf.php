@@ -32,7 +32,7 @@ $db->exec('replace into Books (name, title, authors, lastUpdate) values (%s, %s,
 return true;
 }
 
-function importBookFromFile ($file) {
+function importBookFromFile ($file, $newTitle=null) {
 global $booksdir;
 $regs = array(
 utf8_encode('/[àáâäãÀÁÂÄÃ]/u') => 'a',
@@ -47,11 +47,18 @@ utf8_encode('/[çÇ]/u') => 'c',
 );//
 $fs = new ZipFileSystem($file);
 $b = new Book(array('fs'=>$fs));
-$name = $b->getTitle();
+$name = ($newTitle? $newTitle : $b->getTitle());
 $name = preg_replace(array_keys($regs), array_values($regs), $name);
 $name = mb_strtolower($name);
-copy($file, "$booksdir/$name.epub");
+$epubFile = "$booksdir/$name.epub";
+@copy($file, $epubFile);
 $b = new Book(array('name'=>$name));
+if (!$b->exists()) return false;
+if ($newTitle) {
+$b->extract();
+@unlink($epubFile);
+$b->updateBookSettings(array('title'=>$newTitle));
+}
 return $this->addBook($b);
 }
 

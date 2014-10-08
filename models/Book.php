@@ -125,6 +125,7 @@ foreach($metas->getElementsByTagNameNs(NS_DC, 'creator') as $x) $a[]=$x->nodeVal
 $this->authors = $a;
 $this->title = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'title') );
 $this->identifier = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'identifier') );
+$this->language = strval( $metas->getFirstElementByTagNameNs(NS_DC, 'language') );
 
 // read manifest
 $manifest = $opf->getFirstElementByTagName('manifest');
@@ -188,7 +189,7 @@ $this->metadataModified = false;
 $metadata = $opf->getFirstElementByTagName('metadata');
 $metadata->getFirstElementByTagNameNs(NS_DC, 'title') ->nodeValue = $this->title;
 $metadata->removeAllChilds('dc:creator');
-foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->addText(trim($a));
+foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->appendText(trim($a));
 }
 if (@$this->spineModified) {
 $this->spineModified=false;
@@ -208,6 +209,12 @@ $attrs = array('id'=>$p->id, 'media-type'=>$p->mediaType, 'href'=>$href);
 if (@$p->props) $attrs['properties'] = implode(' ', $p->props);
 $manifest->appendElement('item', $attrs);
 }}
+foreach($opf->getElementsByTagName('meta') as $m) {
+$prop = $m->getAttribute('property');
+if ($prop && $prop=='dcterms:modified') {
+$m->nodeValue = date('c');
+break;
+}}
 $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() );
 }
 
@@ -222,14 +229,16 @@ $fn = Misc::toValidName($info['title']).'.xhtml' ;
 $fn = $info['fileName'] = "$path$fn";
 }
 if (empty($info['id'])) $info['id'] = Misc::toValidName($info['title']);
-if (!$contents) $contents = <<<END
+if (!$contents) $contents = str_replace("\r\n", "\n", <<<END
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE HTML><html>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{$this->language}" lang="{$this->language}">
 <head>
 <title>{$info['title']}</title>
 </head><body>
 </body></html>
-END;
+END
+);//
 $this->getSpine();
 $this->getItemById(null);
 $this->getItemByFileName(null);
@@ -305,6 +314,42 @@ $spine = $this->getSpine();
 if (count($spine)<=0) return null;
 $spine0 = $this->getItemById($spine[0]);
 return $spine0->fileName;
+}
+
+function updateTOC () {
+$navItem = $this->getNavItem();
+$navdoc = $navItem->getDoc();
+$body = $navdoc->getFirstElementByTagName('body');
+$body->removeAllChilds();
+$nav = $body->appendElement('nav', array('role'=>'navigation', 'epub:type'=>'toc'));
+$nav->appendElement('h2')->appendText('Table of contents');
+$ol = $nav->appendElement('ol');
+$curLevel = -1;
+foreach($this->getSpine() as $spineId) {
+$item = $this->getItemById($spineId);
+$modified = false;
+$doc = $item->getDoc();
+foreach($doc->getElements(function($e){ return !!preg_match('/^h\d$/i', $e->nodeName); }) as $heading) {
+$level = 0+substr($heading->nodeName,1);
+$text = $level.$heading->nodeValue;
+if ($curLevel<0) $curLevel = $level;
+while($level<$curLevel) {
+$curLevel--;
+$ol = $ol->parentNode->parentNode;
+}
+while ($level>$curLevel) {
+$curLevel++;
+if ($ol->lastChild) $ol = $ol->lastChild->appendElement('ol');
+else $ol = $ol->appendElement('li')->appendElement('ol');
+}
+$ol->appendElement('li')->appendText($text);
+}
+if ($item==$navItem) continue;
+if ($modified) $item->saveCloseDoc();
+else $item->closeDoc();
+}
+$navItem->saveCloseDoc();
+die(date('H:i:s'));
 }
 
 function directEchoFile ($fileName) {

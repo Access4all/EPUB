@@ -111,7 +111,7 @@ $this->insertBefore($el, $ref);
 return $el;
 }
 
-function addText ($text) {
+function appendText ($text) {
 $tn = $this->ownerDocument->createTextNode($text);
 $this->appendChild($tn);
 return $this;

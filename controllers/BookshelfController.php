@@ -39,5 +39,19 @@ exit();
 }
 
 
+function newBook () {
+global $root;
+if (empty($_POST['title'])) exit404();
+$title = trim($_POST['title']);
+$failed = true;
+$bs = new Bookshelf();
+$tplFile = './data/template.epub';
+if ($bs->importBookFromFile($tplFile, $title)) $failed=false;
+$_SESSION['failed'] = $failed;
+$_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
+header("Location:$root/bookshelf/index#alert");
+exit();
+}
+
 }
 ?>

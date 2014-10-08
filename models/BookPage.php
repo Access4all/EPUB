@@ -16,11 +16,22 @@ if (@$this->doc) $this->doc = null;
 return array_keys(get_object_vars($this));
 }
 
+function decodeEntities ($str) {
+$a = array(
+'&nbsp;' => utf8_encode(chr(160))
+);
+return str_replace(array_keys($a), array_values($a), $str);
+}
+
 function getDoc () {
 if (!@$this->doc) {
-$this->doc = DOM::loadXMLString( $this->book->getContentsByFileName($this->fileName) );
+$this->doc = DOM::loadXMLString( $this->decodeEntities($this->book->getContentsByFileName($this->fileName)));
 }
 return $this->doc;
+}
+
+function closeDoc () {
+$this->doc=null;
 }
 
 function getTitle () {
@@ -38,8 +49,14 @@ $doc->saveXML()
 );//
 }
 
+function saveCloseDoc () {
+$this->saveDoc();
+$this->closeDoc();
+}
+
 function updateContents ($contents) {
 if ($this->mediaType!='application/xhtml+xml') { $this->book->getFileSystem()->addFromString( $this->fileName, $contents); return; }
+$contents = trim($this->decodeEntities($contents));
 $contents = preg_replace_callback( '#<((?:img|br)\b.*?)>#ms', function($m){ 
 if (substr($m[1], -1)!='/') $m[1].=' /';
 return "<$m[1]>";

@@ -54,6 +54,12 @@ echo <<<END
 <input type="file" id="upload" name="upload" />
 <button type="submit">{$t('Send')}</button>
 </form>
+<h2>{$t('CreateNewBook')}</h2>
+<form action="$root/bookshelf/newBook" method="post">
+<p><label for="title">{$t('BookTitle')}: </label>
+<input type="text" name="title" id="title" /></p>
+<p><button type="submit">{$t('Send')}</button></p>
+</form>
 END;
 require('bsFooter.php');
 }
