@@ -14,6 +14,12 @@ closedir($dd);
 return @rmdir($dir);
 }
 
+static function generateId ($prefix = 'autoid') {
+static $count = 0;
+list($t1, $t2) = explode('.', microtime(true));
+return $prefix .date('_Y_m_d_H_i_s_', $t1) .$t2 .'_' .(++$count);
+}
+
 static function toValidName ($s) {
 $s = utf8_decode($s);
 $s = strtr($s, 

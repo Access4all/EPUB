@@ -71,7 +71,7 @@ ob_start();
 
 function parse_ini_file_2 ($filename) {
 $t = array();
-foreach (@file($filename, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES) as $row) {
+foreach (file($filename, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES) as $row) {
 if (preg_match('%^\s*(.*?)\s*=\s*"?(.*)"?\s*$%', $row, $match)) {
 $t[$match[1]] = trim($match[2]);
 }}
@@ -93,4 +93,24 @@ function getTranslation ($a) {
 global $transl;
 return isset($transl[$a])? $transl[$a] : "~$a~";
 }
+
+function pathResolve ($ref, $file) {
+$parts = explode('/', dirname($ref).'/'.$file);
+while(($i=array_search('..', $parts))>0) {
+array_splice($parts, $i -1, 2);
+}
+return implode('/', $parts);
+}
+
+function pathRelativize ($ref, $file) {
+$parts1 = explode('/', dirname($ref));
+$parts2 = explode('/', $file);
+$common=0;
+while($common<count($parts1) && $common<count($parts2) && $parts1[$common]==$parts2[$common]) $common++;
+array_splice($parts2, 0, $common);
+array_splice($parts1, 0, $common);
+for ($i=0; $i<count($parts1); $i++) array_unshift($parts2, '..');
+return implode('/', $parts2);
+}
+
 ?>

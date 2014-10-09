@@ -11,7 +11,7 @@ window.lang = "$lang";
 window.actionUrl = "$root/editor/{$b->name}/@@/$pn";
 </script>
 <script type="text/javascript" src="$root/js/global.js?rnd=$rnd"></script>
-<script type="text/javascript" src="$root/js/stringTable.php?modules=editor&amp;lang=$lang&amp;rnd=$rnd"></script>
+<script type="text/javascript" src="$root/js/stringTable.php?modules=editor,editor-rtz&amp;lang=$lang&amp;rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/editor-global.js?rnd=$rnd"></script>
 </body></html>
 END;

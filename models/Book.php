@@ -24,6 +24,7 @@ return $b;
 
 function __construct ($a=null) {
 if ($a) autofill($this,$a);
+$this->options=null;
 }
 
 function __wakeup () {
@@ -108,13 +109,6 @@ $this->opfFileName = ''.$container->rootfiles->rootfile->attributes()['full-path
 return $this->opfFileName;
 }
 
-function getOpfRelativeFileName ($fn) {
-$dir = dirname($this->getOpfFileName());
-$re = "$dir/$fn";
-if (substr($re,0,2)=='./') $re = substr($re,2);
-return $re;
-}
-
 private function readOpf () {
 $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($this->getOpfFileName()));
 
@@ -139,7 +133,7 @@ $o->id = $item->getAttribute('id');
 $o->href = $item->getAttribute('href');
 $o->mediaType = $item->getAttribute('media-type');
 $o->props = $item->getAttribute('properties');
-$o->fileName = $this->getOpfRelativeFileName($o->href);
+$o->fileName = pathResolve($this->getOpfFileName(), $o->href);
 $o->props = ($o->props? explode(' ', $o->props)  :array() );
 $idmap[$o->id] = $o;
 $fnmap[$o->fileName] = $o;
@@ -160,6 +154,32 @@ $a[] = $id;
 $this->spine = $a;
 }
 
+function getBOFileName () {
+return 'META-INF/editor-options.ini';
+}
+
+function getOption ($name, $def = null) {
+if (!@$this->options) $this->readBO();
+return isset($this->options[$name])? $this->options[$name] : $def;
+}
+
+function setOption ($name, $value) {
+if (!@$this->options) $this->readBO();
+$this->options[$name]=$value;
+}
+
+private function readBO () {
+
+$this->options = array();
+foreach(@preg_split('/\r\n|\n|\r/', $this->getFileSystem()->getFromName($this->getBOFileName())) as $line) {
+if (preg_match('/^\s*([-a-zA-Z_0-9]+)\s*=\s*(.*?)\s*$/', $line, $m)) $this->options[$m[1]]=$m[2];
+}
+foreach($this->options as $key=>$value) {
+if ($value==='true') $this->options[$key] = true;
+else if ($value==='false') $this->options[$key] = false;
+}
+}
+
 function getTitle () {
 if (!@$this->title) $this->readOpf();
 return $this->title;
@@ -171,14 +191,17 @@ return implode(', ', $this->authors);
 }
 
 function updateBookSettings ($info) {
-if (isset($info['title'])) {
-$this->title = trim($info['title']);
-}
+if (isset($info['title'])) $this->title = trim($info['title']);
+if (isset($info['identifier'])) $this->identifier = trim($info['identifier']);
+if (isset($info['language'])) $this->language = trim($info['language']);
 if (isset($info['authors'])) {
 $this->authors = preg_split("/\r\n|\n|\r|\s*[,;]\s*/", $info['authors'], -1, PREG_SPLIT_NO_EMPTY);
 }
+foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
+foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
 $this->metadataModified = true;
 $this->saveOpf();
+$this->saveBO();
 }
 
 function saveOpf () {
@@ -216,6 +239,18 @@ $m->nodeValue = date('c');
 break;
 }}
 $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() );
+}
+
+function saveBO () {
+if (!@$this->options) return;
+$optar = array();
+ksort($this->options);
+foreach($this->options as $key=>$value) {
+if ($value===true) $value='true';
+else if ($value===false) $value='false';
+$optar[] = "$key=$value";
+}
+$this->getFileSystem()->addFromString($this->getBOFileName(), implode("\r\n", $optar) );
 }
 
 function addNewPage (&$info, $pageFrom = null, $contents = null) {
@@ -317,21 +352,30 @@ return $spine0->fileName;
 }
 
 function updateTOC () {
+if ($this->getOption('tocNoGen', false)) return;
+$maxDepth = $this->getOption('tocMaxDepth', 4);
 $navItem = $this->getNavItem();
 $navdoc = $navItem->getDoc();
 $body = $navdoc->getFirstElementByTagName('body');
 $body->removeAllChilds();
 $nav = $body->appendElement('nav', array('role'=>'navigation', 'epub:type'=>'toc'));
-$nav->appendElement('h2')->appendText('Table of contents');
+$nav->appendElement('h2', array('role'=>'heading', 'aria-level'=>2))
+->appendText($this->getOption('tocHeadingText', getTranslation('TableOfContents')));
 $ol = $nav->appendElement('ol');
 $curLevel = -1;
 foreach($this->getSpine() as $spineId) {
 $item = $this->getItemById($spineId);
+if ($item==$navItem) continue;
 $modified = false;
 $doc = $item->getDoc();
 foreach($doc->getElements(function($e){ return !!preg_match('/^h\d$/i', $e->nodeName); }) as $heading) {
 $level = 0+substr($heading->nodeName,1);
-$text = $level.$heading->nodeValue;
+if ($level>$maxDepth) continue;
+if (!$heading->hasAttribute('id')) { $heading->setAttribute('id', Misc::generateId($heading->nodeName) ); $modified=true; }
+if (!$heading->hasAttribute('aria-level')) { $heading->setAttribute('role', 'heading'); $heading->setAttribute('aria-level', $level); $modified=true; }
+$text = ($heading->hasAttribute('data-toclabel')? $heading->getAttribute('data-toclabel') : $heading->nodeValue);
+$url = pathRelativize($navItem->fileName, $item->fileName);
+$anchor = $heading->getAttribute('id');
 if ($curLevel<0) $curLevel = $level;
 while($level<$curLevel) {
 $curLevel--;
@@ -342,14 +386,12 @@ $curLevel++;
 if ($ol->lastChild) $ol = $ol->lastChild->appendElement('ol');
 else $ol = $ol->appendElement('li')->appendElement('ol');
 }
-$ol->appendElement('li')->appendText($text);
+$ol->appendElement('li')->appendElement('a', array('href'=>"$url#$anchor"))->appendText($text);
 }
-if ($item==$navItem) continue;
 if ($modified) $item->saveCloseDoc();
 else $item->closeDoc();
 }
 $navItem->saveCloseDoc();
-die(date('H:i:s'));
 }
 
 function directEchoFile ($fileName) {

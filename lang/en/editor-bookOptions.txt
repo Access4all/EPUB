@@ -1,0 +1,9 @@
+BookTitle=Book title
+Authors=Author(s)
+BookIdentifier=Book identifier
+BookLanguage=Language
+TOCOptions=Table of contents
+TOCNoGen=Disable automatic table of contents generation
+TOCHeadingText=TOC introductory heading
+TOCMaxDepth=Maximum heading depth
+levels=levels

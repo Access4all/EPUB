@@ -24,9 +24,8 @@ $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 $p = $b->getItemByFileName($pageName);
 if (!$p) exit404();
-//Todo: prepare preview: update TOC, CSS template, etc.
+sleep(2); // Wait a bit so that AJAX save has time to finish
 $b->updateTOC();
-//sleep(2); // Wait a bit so that AJAX save works
 header("Location: $root/book/{$b->name}/view/{$p->fileName}");
 exit();
 }

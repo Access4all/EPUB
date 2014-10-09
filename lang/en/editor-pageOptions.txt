@@ -1,0 +1,7 @@
+DirectUpload=Direct upload
+FileName=File path
+PageIdentifier=Identifier
+PageTitle=Page title
+PageType=Page type
+PageType_document=Regular document
+AddFiles=Import files

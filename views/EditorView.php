@@ -36,18 +36,22 @@ $this->leftView($leftView, $rightView, $b, $p);
 require('edLeftFooter.php');
 switch($rightView){
 case 'editor': 
+loadTranslation('editor-rtz');
 require('edRightHeader.php');
 if ($p->mediaType=='application/xhtml+xml') require('edHTMLEditor.php'); 
 else require('edTextEditor.php');
 break;
 case 'options': 
+loadTranslation('editor-pageOptions');
 require('edRightHeader.php');
 require('edPageOptions.php'); 
 break;
 case 'newpage' :
+loadTranslation('editor-pageOptions');
 require('edNewPage.php');
 break;
 case 'addfiles' :
+loadTranslation('editor-pageOptions');
 require('edAddFiles.php');
 break;
 }

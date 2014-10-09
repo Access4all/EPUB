@@ -1,0 +1,8 @@
+previeww, accessibility status, save, copy, cut, paste
+label "structure", Drop down list: regular, heading 1-6, blockquote; label "llists", drop down list: numbered list, bullet list, definition list
+superblocks: illustration, table, aside boxes
+INline: link, bold, italic, icon, abbreviation, strikethrough
+
+
+=TEmplating
+
