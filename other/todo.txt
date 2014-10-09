@@ -4,5 +4,5 @@ superblocks: illustration, table, aside boxes
 INline: link, bold, italic, icon, abbreviation, strikethrough
 
 
-=TEmplating
+E-inclusion.
 

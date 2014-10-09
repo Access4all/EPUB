@@ -1,10 +1,10 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'epuba4all');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
 define('DEBUG', true);
 define('LOCAL', $_SERVER['REMOTE_ADDR']=='127.0.0.1' || 0===strpos($_SERVER['SERVER_ADDR'], '192.168.') || 0===strpos($_SERVER['SERVER_ADDR'], '10.0.'));
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'epuba4all');
+define('DB_USER', LOCAL? 'root' : 'A4aEpubQcU0');
+define('DB_PASSWORD', LOCAL? '' : '@4all/E-inclusion');
 
 error_reporting(E_ALL&~E_STRICT);
 function exceptionHandler ($e) {
@@ -51,7 +51,7 @@ foreach($a as $k=>$v) $obj->$k=$v;
 $db = null; 
 try {
 if (!defined('NODB')) require_once('gdba.php');
-if (LOCAL) $db = GDBA::MySQL(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD);
+$db = GDBA::MySQL(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD);
 $db->exec('set names utf8');
 } catch (Exception $e) { exit503(); }
 
