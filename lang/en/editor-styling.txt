@@ -1,0 +1,6 @@
+Paragraph=Paragraph
+SelectStyleToEdit=Select a style to modify
+BasicFormatting=Basic formatting
+Font=Font
+FontSize=Size
+FontColor=Color

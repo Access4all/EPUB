@@ -22,6 +22,7 @@ switch($leftView) {
 case 'tv':  require('edTocView.php'); break;
 case 'fv':  require('edFileView.php'); break;
 case 'sv':  require('edSpineView.php'); break;
+case 'zv':  require('edTemplateEditor.php'); break;
 }}
 
 function editorMain ($leftView, $rightView, $b, $p) {

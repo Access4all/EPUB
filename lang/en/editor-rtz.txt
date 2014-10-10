@@ -1,3 +1,5 @@
+StructureDropDown=Structure
+ListsDropDown=Lists
 MakeALink=Make a link
 LinkURL=Link URL
 InsertIcon=Insert an icon
@@ -33,7 +35,7 @@ Heading3=Heading 3
 Heading4=Heading 4
 Heading5=Heading 5
 Heading6=Heading 6
-RegularParagraph=Regular
+Regular=Regular
 Blockquote=Quotation
 AsideBox=Aside box
 Icon=Icon

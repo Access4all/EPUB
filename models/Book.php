@@ -104,7 +104,8 @@ function getOpfFileName () {
 if (!isset($this->opfFileName)) {
 $fs = $this->getFileSystem();
 $container = new SimpleXMLElement($fs->getFromName('META-INF/container.xml'));
-$this->opfFileName = ''.$container->rootfiles->rootfile->attributes()['full-path'];
+$tmp = $container->rootfiles->rootfile->attributes();
+$this->opfFileName = ''.$tmp['full-path'];
 }
 return $this->opfFileName;
 }

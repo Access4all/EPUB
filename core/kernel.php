@@ -68,6 +68,7 @@ $_SESSION['language'] = $lang;
 $root = dirname($_SERVER['PHP_SELF']);
 $booksdir = './data';
 ob_start();
+if ($root=='/') $root='';
 
 function parse_ini_file_2 ($filename) {
 $t = array();

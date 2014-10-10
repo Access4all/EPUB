@@ -6,6 +6,7 @@ FileView=Files
 TocView=Table of contents
 TableOfContents=Table of contents
 SpineView=Spine
+TemplateEditorView=Styling
 CreateNewPage=New page
 AddFiles=Import files
 Move=Move...

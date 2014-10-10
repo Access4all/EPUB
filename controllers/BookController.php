@@ -40,7 +40,8 @@ if (!$item) exit404();
 $ct = $item->mediaType;
 if ($ct == 'application/xhtml+xml') {
 $html = $b->getContentsByFileName($fileName);
-(new BookView()) -> processPage($b, $item, $html);
+$bv = new BookView();
+$bv-> processPage($b, $item, $html);
 header("Content-Type: text/html; charset=utf-8");
 echo $html;
 }

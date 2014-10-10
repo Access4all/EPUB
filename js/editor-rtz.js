@@ -730,4 +730,4 @@ rtz.debug = true;
 rtz.init();
 });
 
-alert('RTZ loaded');
+//alert('RTZ loaded');

@@ -1,0 +1,43 @@
+open access4all.ch
+user ###username###
+###password###
+cd httpdocs
+binary
+mput index.php bddmgr.php server.htaccess
+del .htaccess
+ren server.htaccess .htaccess
+mkdir controllers
+cd controllers
+mput controllers\*
+cd ..
+mkdir core
+cd core
+mput core\*
+cd ..
+mkdir js
+cd js
+mput js\*
+cd ..
+mkdir css
+cd css
+mput css\*
+cd ..
+mkdir models
+cd models
+mput models\*
+cd ..
+mkdir views
+cd views
+mput views\*
+cd ..
+mkdir lang
+cd lang
+mkdir en
+cd en
+mput lang\en\*
+cd ..
+cd ..
+mkdir data
+cd data
+mput data\template.epub
+quit

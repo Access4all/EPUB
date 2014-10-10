@@ -18,7 +18,16 @@ $p->updateContents($_POST['content']);
 die('saved');
 }
 
-function preview ($bookName, $pageName) {
+public function contentCss ($bookName) {
+global $root;
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+header('Content-type: text/css');
+$b->directEchoFile('META-INF/template.css');
+exit();
+}
+
+public function preview ($bookName, $pageName) {
 global $root;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
