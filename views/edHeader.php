@@ -23,6 +23,7 @@ echo <<<END
 <li><a href="$root/editor/{$b->name}/{$leftView}_addfiles/$pn" role="button" class="button">{$t('AddFiles')}</a></li>
 </ul>
 </div>
+<div id="leftRightWrapper">
 <div id="leftPanel">
 <ul class="menul">
 <li><a href="$root/editor/{$b->name}/tv_{$rightView}/$pn">{$t('TocView')}</a></li>

@@ -53,7 +53,7 @@ echo <<<END
 <button type="button" data-action="strikeout">{$t('Strikeout')}</button>
 </span></p>
 </div><!--toolbar-->
-<div id="editorWrapper">
+<div id="edWrapper">
 <div id="editor" contenteditable="true" role="textbox" tabindex="0">
 $contents
 </div></div><!--editor-->

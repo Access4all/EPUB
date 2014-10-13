@@ -15,8 +15,11 @@ return @copy($orig, $this->dir .$name);
 }
 
 function addFromString ($name, $data) {
-return @file_put_contents($this->dir .$name, $data);
-}
+$fn = $this->dir .$name;
+if (false===@file_put_contents($fn, $data)) {
+if (@mkdir(dirname($fn), 0777, true))
+@file_put_contents($fn, $data);
+}}
 
 function moveFile ($oldName, $newName) {
 return @rename($this->dir .$oldName, $this->dir .$newName);

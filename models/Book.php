@@ -128,11 +128,14 @@ if (!$manifest) return null;
 $idmap = array();
 $fnmap = array();
 foreach($manifest->getElementsByTagName('item') as $item) {
-$o = new BookPage();
+$mediaType = $item->getAttribute('media-type');
+$o = null;
+if ($mediaType=='application/xhtml+xml') $o = new BookPage();
+else $o = new BookResource();
 $o->book = $this;
 $o->id = $item->getAttribute('id');
 $o->href = $item->getAttribute('href');
-$o->mediaType = $item->getAttribute('media-type');
+$o->mediaType = $mediaType;
 $o->props = $item->getAttribute('properties');
 $o->fileName = pathResolve($this->getOpfFileName(), $o->href);
 $o->props = ($o->props? explode(' ', $o->props)  :array() );
@@ -150,7 +153,10 @@ if (!$spine) return null;
 foreach($spine->getElementsByTagName('itemref') as $itemref) {
 $id = $itemref->getAttribute('idref');
 if (!$id) continue;
+$item = $this->itemIdMap[$id];
+if (!$item) continue;
 $a[] = $id;
+$item->linear = $itemref->getAttribute('linear')!='no';
 }
 $this->spine = $a;
 }
@@ -219,7 +225,12 @@ if (@$this->spineModified) {
 $this->spineModified=false;
 $spine = $opf->getFirstElementByTagName('spine');
 $spine->removeAllChilds();
-foreach($this->spine as $id) $spine->appendElement('itemref', array('idref'=>$id));
+foreach($this->spine as $id) {
+$item = $this->itemIdMap[$id];
+$attrs = array('idref'=>$id);
+//if ($item&& !@$item->linear) $attrs['linear']='no';
+$spine->appendElement('itemref', $attrs);
+}
 }
 if (@$this->manifestModified) {
 $this->manifestModified=false;
@@ -310,7 +321,7 @@ list($type, $subtype) = explode('/', $mediaType, 2);
 if ($type=='image' || $type=='audio' || $type=='video' || $mediaType=='application/x-javascript') {
 $this->getFileSystem() ->addFromFile( $info['fileName'], $srcFile->getRealFileName() );
 $srcFile->release();
-$p = new BookPage(array('id'=>$info['id'], 'mediaType'=>$mediaType, 'fileName'=>$info['fileName']));
+$p = new BookResource(array('id'=>$info['id'], 'mediaType'=>$mediaType, 'fileName'=>$info['fileName']));
 $p->book = $this;
 $this->getItemById(null);
 $this->getItemByFileName(null);
@@ -394,6 +405,30 @@ else $item->closeDoc();
 }
 $navItem->saveCloseDoc();
 }
+
+function updateCssTemplate ($newContents) {
+$newContents = trim(str_replace(
+array( "\r", "\n", '{', '}', ';' ),
+array( ' ', ' ', "{\r\n", "}\r\n\r\n", ";\r\n" ),
+trim($newContents)));
+$contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
+$contents = preg_replace('/^\s*#editor.*?\{.*?\}/ms', '', $contents);
+$contents = trim($contents ."\r\n\r\n" .$newContents);
+$this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
+$contents = str_replace('#editor {', 'body {', $contents);
+$contents = str_replace('#editor ', '', $contents);
+$this->getFileSystem() ->addFromString('EPUB/css/epub3.css', $contents);
+$item = $this->getItemByFileName('EPUB/css/epub3.css');
+if (!$item) {
+$p = new BookResource(array('id'=>'cssEpub3', 'mediaType'=>'text/css', 'fileName'=>'EPUB/css/epub3.css'));
+$p->book = $this;
+$this->getItemById(null);
+$this->getItemByFileName(null);
+$this->manifestModified = true;
+$this->itemIdMap[$info['id']] = $p;
+$this->itemFileNameMap[$info['fileName']] = $p;
+$this->saveOpf();
+}}
 
 function directEchoFile ($fileName) {
 return $this->getFileSystem() ->directEcho($fileName);

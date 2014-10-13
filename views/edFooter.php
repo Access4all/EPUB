@@ -2,6 +2,7 @@
 $rnd = md5(time());
 echo <<<END
 </div><!-- right panel -->
+</div><!--leftRightWrapper-->
 </div><!-- full wrapper -->
 <script type="text/javascript">
 window.root = "$root";

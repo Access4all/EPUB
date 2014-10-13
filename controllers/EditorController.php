@@ -18,6 +18,14 @@ $p->updateContents($_POST['content']);
 die('saved');
 }
 
+public function saveTemplate ($bookName, $pageName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+if (empty($_POST['content'])) exit500();
+$b->updateCssTemplate($_POST['content']);
+die('saved');
+}
+
 public function contentCss ($bookName) {
 global $root;
 $b = Book::getWorkingBook($bookName);

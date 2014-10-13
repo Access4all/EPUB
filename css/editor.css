@@ -1,17 +1,24 @@
+#leftRightWrapper {
+display: table;
+}
+
 #leftPanel {
-display: inline-block;
-width: 24%;
+display: table-cell;
+width: 24.5%;
 }
 
 #rightPanel {
-display: inline-block;
+display: table-cell;
 width: 75%;
 margin-left: 5px;
 }
 
-#editor {
-display: inline-block;
+#edWrapper {
+position: relative;
+left: 0px;
+top: 0px;
 width: 100%;
+height: auto;
 }
 
 .menul {
@@ -31,8 +38,4 @@ margin-left: 7px;
 .buttonGroup {
 margin-right: 20px;
 }
-
-.left50 {  float: left; width: 50%; }
-.right50 {  float: right; width: 50%; }
-.width99 { width: 99%; }
 

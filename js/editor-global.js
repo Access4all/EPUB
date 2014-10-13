@@ -55,7 +55,7 @@ var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Canc
 form.onsubmit = function(){ if (okFunc) okFunc.call(this); this.parentNode.removeChild(this); return false; };
 form.onreset = function(){ if (cancelFunc) cancelFunc.call(this); this.parentNode.removeChild(this); return false; };
 document.querySelector('body').appendChild(form);
-first.select();
+if (first.select) first.select();
 first.focus();
 if (readyFunc) readyFunc.call(form);
 }
