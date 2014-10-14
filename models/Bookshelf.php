@@ -29,10 +29,10 @@ else return false;
 function addBook ($b) {
 global $db;
 $db->exec('replace into Books (name, title, authors, lastUpdate) values (%s, %s, %s, UNIX_TIMESTAMP())', $b->name, $b->getTitle(), $b->getAuthors() );
-return true;
+return $b;
 }
 
-function importBookFromFile ($file, $newTitle=null) {
+function importBookFromFile ($file, $name=null) {
 global $booksdir;
 $regs = array(
 utf8_encode('/[àáâäãÀÁÂÄÃ]/u') => 'a',
@@ -47,18 +47,13 @@ utf8_encode('/[çÇ]/u') => 'c',
 );//
 $fs = new ZipFileSystem($file);
 $b = new Book(array('fs'=>$fs));
-$name = ($newTitle? $newTitle : $b->getTitle());
+if (!$name) $name = $b->getTitle());
 $name = preg_replace(array_keys($regs), array_values($regs), $name);
 $name = mb_strtolower($name);
 $epubFile = "$booksdir/$name.epub";
 @copy($file, $epubFile);
 $b = new Book(array('name'=>$name));
 if (!$b->exists()) return false;
-if ($newTitle) {
-$b->extract();
-@unlink($epubFile);
-$b->updateBookSettings(array('title'=>$newTitle));
-}
 return $this->addBook($b);
 }
 

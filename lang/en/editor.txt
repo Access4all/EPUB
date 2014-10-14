@@ -5,6 +5,7 @@ PageEditor=Edition
 FileView=Files
 TocView=Table of contents
 TableOfContents=Table of contents
+ListOfFigures=List of figures
 SpineView=Spine
 TemplateEditorView=Styling
 CreateNewPage=New page

@@ -41,6 +41,7 @@ echo <<<END
 <input type="checkbox" id="fontweight" /><label for="fontweight">{$t('Bold')}</label>
 <input type="checkbox" id="fontstyle" /><label for="fontstyle">{$t('Italic')}</label>
 </p>
+<h3>{$t('TextAlignmentH')}</h3>
 <p><label for="textalign">{$t('TextAlign')}:</label>
 <select id="textalign">
 <option value="initial">{$t('Default')}</option>
@@ -49,6 +50,13 @@ echo <<<END
 <option value="right">{$t('Right')}</option>
 <option value="justify">{$t('Justified')}</option>
 </select></p>
+<h3>{$t('Background')}</h3>
+<p><label for="bgcolor">{$t('BgColor')}:</label>
+<input type="color" id="bgcolor" /></p>
+<h3>{$t('Borders')}</h3>
+<p>To be done</p>
+<h3>{$t('MarginAndPadding')}</h3>
+<p>To be done</p>
 <h3>{$t('PositionningAndSize')}</h3>
 <p><label for="cssFloat">{$t('Floating')}:</label>
 <select id="cssFloat">

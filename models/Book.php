@@ -228,7 +228,7 @@ $spine->removeAllChilds();
 foreach($this->spine as $id) {
 $item = $this->itemIdMap[$id];
 $attrs = array('idref'=>$id);
-//if ($item&& !@$item->linear) $attrs['linear']='no';
+if ($item&& @$item->linear===false) $attrs['linear']='no';
 $spine->appendElement('itemref', $attrs);
 }
 }
@@ -374,19 +374,23 @@ $nav = $body->appendElement('nav', array('role'=>'navigation', 'epub:type'=>'toc
 $nav->appendElement('h2', array('role'=>'heading', 'aria-level'=>2))
 ->appendText($this->getOption('tocHeadingText', getTranslation('TableOfContents')));
 $ol = $nav->appendElement('ol');
+//$nav->appendElement('h2', array('role'=>'heading', 'aria-level'=>2))
+//->appendText($this->getOption('tocLofText', getTranslation('ListOfFigures')));
+//$lof = $nav->appendElement('ol');
 $curLevel = -1;
 foreach($this->getSpine() as $spineId) {
 $item = $this->getItemById($spineId);
 if ($item==$navItem) continue;
+if ($item->linear===false) continue;
 $modified = false;
 $doc = $item->getDoc();
+$url = pathRelativize($navItem->fileName, $item->fileName);
 foreach($doc->getElements(function($e){ return !!preg_match('/^h\d$/i', $e->nodeName); }) as $heading) {
 $level = 0+substr($heading->nodeName,1);
 if ($level>$maxDepth) continue;
 if (!$heading->hasAttribute('id')) { $heading->setAttribute('id', Misc::generateId($heading->nodeName) ); $modified=true; }
 if (!$heading->hasAttribute('aria-level')) { $heading->setAttribute('role', 'heading'); $heading->setAttribute('aria-level', $level); $modified=true; }
 $text = ($heading->hasAttribute('data-toclabel')? $heading->getAttribute('data-toclabel') : $heading->nodeValue);
-$url = pathRelativize($navItem->fileName, $item->fileName);
 $anchor = $heading->getAttribute('id');
 if ($curLevel<0) $curLevel = $level;
 while($level<$curLevel) {
@@ -399,6 +403,15 @@ if ($ol->lastChild) $ol = $ol->lastChild->appendElement('ol');
 else $ol = $ol->appendElement('li')->appendElement('ol');
 }
 $ol->appendElement('li')->appendElement('a', array('href'=>"$url#$anchor"))->appendText($text);
+}
+if (@$lof) foreach($doc->getElementsByTagName('figure') as $figure) {
+$caption = $figure->getFirstElementByTagName('figcaption');
+if (!$caption) continue;
+$text = $caption->textContent;
+if (!$figure->hasAttribute('id')) { $figure->setAttribute('id', Misc::generateId('fig') ); $modified=true; }
+$anchor = $figure->getAttribute('id');
+$lof->appendElement('li')
+->appendElement('a', array('href'=>"$url#$anchor")) ->appendText($text);
 }
 if ($modified) $item->saveCloseDoc();
 else $item->closeDoc();

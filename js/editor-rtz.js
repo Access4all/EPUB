@@ -26,10 +26,12 @@ this.formatAsCodeListing = RTZ_formatAsCodeListing;
 this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
 this.insertTable = RTZ_insertTable;
+this.insertBox = RTZ_insertBox;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
+this.insertBoxDialog = RTZ_insertBoxDialog;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
@@ -37,6 +39,7 @@ this.tabKey = RTZ_tabKey;
 this.shiftTabKey = RTZ_shiftTabKey;
 this.cleanHTML = RTZ_cleanHTML;
 this.init = RTZ_init;
+this.loadStyles = RTZ_loadStyles;
 this.implKeyDown = RTZ_implKeyDown;
 keys = {
 goToHome: vk.ctrl+vk.home,
@@ -71,7 +74,7 @@ unorderedList: vk.ctrl+vk.u,
 definitionList: vk.ctrl+vk.shift+vk.d,
 codeListing: vk.ctrl+vk.shift+vk.p,
 blockquote: vk.ctrl+vk.q,
-asideBox: vk.ctrl+vk.shift+vk.a,
+insertBox: vk.ctrl+vk.shift+vk.a,
 insertIcon: vk.ctrl+vk.shift+vk.i,
 insertIllustration: vk.ctrl+vk.shift+vk.g,
 insertTable: vk.ctrl+vk.shift+vk.t,
@@ -84,6 +87,7 @@ this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 this.toolbar.$('button').each(function(o){ o.onclick = RTZ_toolbarButtonClick.bind(_this, o.getAttribute('data-action')); });
 this.toolbar.$('select').each(function(o){ o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); });
+this.loadStyles();
 if (this.debug){
 var div = document.createElement('div');
 div.appendElement('h1').appendText('Debug HTML code');
@@ -92,6 +96,37 @@ this.zone.onkeyup = RTZ_debug_updateHTMLPreview.bind(this);
 this.zone.parentNode.insertBefore(div, this.zone.nextSibling);
 this.zone.onkeyup(null);
 }
+}
+
+function RTZ_loadStyles () {
+this.styles = {};
+this.positionalStyles = {};
+this.boxTypes = {};
+if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
+var stylesheet = document.styleSheets[j];
+var rules = null;
+try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against firefox security error
+if (!rules) continue;
+for (var i=0; i<rules.length; i++) {
+var rule = rules[i];
+if (!/^#editor /.test(rule.selectorText)) continue;
+var m, selector = rule.selectorText.substring(8).trim();
+if (/^\.\w+$/.test(selector)) {
+var x = selector.substring(1).trim();
+this.positionalStyles[x]=x;
+}
+else if (m=selector.match(/^(\w+)\.(\w+)$/)) {
+var ar = this.styles[m[1]];
+if (!ar) { ar = []; this.styles[m[1]]=ar; }
+ar.push(m[2]);
+}}}
+var tags = ['aside', 'section'];
+for (var j=0; j<tags.length; j++) {
+if (this.styles[tags[j]]) for (var i=0; i<this.styles[tags[j]].length; i++) {
+var name = tags[j]+'.'+this.styles[tags[j]][i];
+var label = this.styles[tags[j]][i];
+this.boxTypes[name]=label;
+}}
 }
 
 function RTZ_toolbarStyleSelect (select) {
@@ -180,8 +215,8 @@ break;
 case keys.blockquote:
 this.superBlockFormat('blockquote');
 break;
-case keys.asideBox:
-this.superBlockFormat('aside');
+case keys.insertBox:
+this.insertBoxDialog();
 break;
 case keys.insertIcon:
 this.insertIconDialog();
@@ -205,6 +240,7 @@ if (!simulated) return true;
 document.execCommand('paste', false, null);
 break;
 case keys.save :
+this.cleanHTML();
 Editor_save();
 break;
 case keys.preview:
@@ -242,7 +278,7 @@ return false;
 function RTZ_enterKey () {
 var sel = this.getSelection();
 var textNode = null;
-var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td', 'figcaption']);
+var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td']);
 if (!sel.collapsed) {
 sel.deleteContents();
 sel.collapse(false);
@@ -272,7 +308,7 @@ return romanNumbers.indexOf(s.toLowerCase());
 
 function RTZ_enterKeyOnNonEmptyParagraph (sel, el, textNode) {
 var match, ok, tgn=el.tagName.toLowerCase();
-ok = tgn!='figcaption' && tgn!='caption' && tgn!='td' && tgn!='th';
+ok = tgn!='caption' && tgn!='td' && tgn!='th';
 if (ok && (match = el.textContent.match(/^(\d+|[a-zA-Z]{1,4})[.)]\s/))) {
 sel.selectNodeContents(el);
 var text = sel.extractContents();
@@ -315,8 +351,7 @@ sel.collapse(false);
 this.select(sel);
 return;
 }
-if (tgn=='figcaption') tgn='p';
-else if (tgn=='dd') tgn='dt';
+if (tgn=='dd') tgn='dt';
 else if (tgn=='dt') tgn='dd';
 var newEl = document.createElement(tgn);
 el.parentNode.insertBefore(newEl, el.nextSibling);
@@ -559,14 +594,21 @@ this.select(sel);
 function RTZ_insertIllustration (url, alt, style) {
 var figure = document.createElement2('figure', {'class':style});
 var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'99%'});
-var capt = figure.appendElement('figcaption').appendText(alt);
+var capt = figure.appendElement('figcaption');
+var captP = capt.appendElement('p').appendText(alt);
 var sel = this.getSelection();
 var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
 ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
-sel.setStartAfter(capt);
-sel.setEndAfter(capt);
+sel.selectNodeContents(captP);
 sel.collapse(false);
 this.select(sel);
+}
+
+function RTZ_insertBox (type, position) {
+var t = type.split('.');
+var tagName = t[0];
+var classNames = t[1] + ' ' + position;
+this.superBlockFormat(tagName, {'class':classNames});
 }
 
 function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
@@ -621,7 +663,7 @@ var _this = this;
 DialogBox(msgs.InsertIllu, [
 {label:msgs.IlluURL, name:'url'},
 {label:msgs.IlluAlt, name:'alt'},
-{label:msgs.IlluStyle, name:'istyle', type:'select', value:'width99', values:{left50:'Float left', right50:'Float right', width99:'Full width'} },
+{label:msgs.IlluStyle, name:'istyle', type:'select', values:this.positionalStyles},
 ], function(){ 
 _this.select(sel);
 _this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.istyle.value);
@@ -637,7 +679,7 @@ DialogBox(msgs.InsertTable, [
 {type:'number', name:'nCols', label:msgs.TableNbCols, min:2, max:100, step:1, value:3},
 {name:'captionText', label:msgs.TableCaption},
 {type:'select', name:'thScheme', label:msgs.TableTHScheme, value:'top', values:{top:msgs.OnTop, left:msgs.OnLeft, both:msgs.BothTopLeft} },
-{type:'select', name:'tstyle', label:msgs.TableStyle, value:'width99', values:{left50:'Float left', right50:'Float right', width99:'Full width'} },
+{type:'select', name:'tstyle', label:msgs.TableStyle, values:this.positionalStyles},
 ], function(){
 var nRows = parseInt(this.elements.nRows.value), nCols = parseInt(this.elements.nCols.value);
 if (nRows<2 || nCols<2) return false;
@@ -647,13 +689,33 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_insertBoxDialog () {
+var _this = this;
+var sel = this.getSelection();
+DialogBox(msgs.InsertBox, [
+{label:msgs.IBoxType, name:'type', type:'select', values:this.boxTypes},
+{label:msgs.IBoxPosition, name:'position', type:'select', values:this.positionalStyles},
+], function(){
+_this.select(sel);
+_this.insertBox(this.elements.type.value, this.elements.position.value);
+_this.zone.focus();
+});//Dialog box
+}
+
 function RTZ_cleanHTML (sel, o) {
 if (!sel||!o){
+var cursel = this.getSelection();
+var startNode = cursel.startContainer, endNode = cursel.endContainer, startOf = cursel.startOffset, endOf = cursel.endOffset;
 var sel = document.createRange();
 sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
 this.cleanHTML(sel, frag);
 this.zone.appendChild(frag);
+try {
+cursel.setStart(startNode, startOf);
+cursel.setEnd(endNode, endOf);
+this.select(cursel);
+} catch(e) {} // Just in case the previous selection is no longer in the document
 return;
 }
 if (o.nodeType==3) {
@@ -665,7 +727,7 @@ o.parentNode.removeChild(o);
 return;
 }
 for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub span ins del code pre hr img audio video source track object param section aside figure var samp kbd'.split(' ');
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside figure figcaption var samp kbd'.split(' ');
 var toRemove = false, tagName = (o.tagName? o.tagName.toLowerCase() : 'h1');
 toRemove = (allowedElements.indexOf(tagName)<0)
 || (tagName=='p' && !o.hasChildNodes())
@@ -676,7 +738,10 @@ var extracted = sel.extractContents();
 o.parentNode.insertBefore(extracted, o);
 o.parentNode.removeChild(o);
 }
-if (o.removeAttribute) o.removeAttribute('style');
+if (o.removeAttribute) {
+o.removeAttribute('style');
+if (o.className && o.className.startsWith('Mso')) o.removeAttribute('class');
+}
 }
 
 function RTZ_paste () {

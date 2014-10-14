@@ -61,6 +61,7 @@ this.form.elements.fontcolor.onchange = function(){ _this.updateValue('color', t
 this.form.elements.fontstyle.onclick = function() { _this.updateValue('fontStyle', this.checked?'italic':'normal', 'normal'); };
 this.form.elements.fontweight.onclick = function(){ _this.updateValue('fontWeight', this.checked?'bold':'normal', 'normal'); };
 this.form.elements.textalign.onchange = function(){ _this.updateValue('textAlign', this.value, 'initial'); };
+this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundColor', this.value, 'transparent'); };
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
 this.populateStyleSelect();
@@ -77,7 +78,7 @@ for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
 if (!/^#editor / .test(rule.selectorText)) continue;
 var selector = rule.selectorText.substring(8).trim();
-if(!/^\w+\.\w+$/ .test(selector)) continue; // Simple tags, i.e. p, h1, etc. are already on the list
+if(!/^\w*\.\w+$/ .test(selector)) continue; // Simple tags, i.e. p, h1, etc. are already on the list
 ss.appendElement('option', {value:selector}).appendText(selector);
 }}
 }
@@ -111,6 +112,7 @@ this.form.elements.fontcolor.value = style.color || cs.color || 'default';
 this.form.elements.fontweight.checked = style.fontWeight=='bold' || cs.fontWeight=='bold';
 this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cs.fontStyle=='italic';
 this.form.elements.textalign.value = style.textAlign || cs.textAlign || 'initial';
+this.form.elements.bgcolor.value = style.backgroundColor || cs.backgroundColor || 'transparent';
 this.form.elements.cssFloat.value = style.cssFloat || cs.cssFloat || 'none';
 this.form.elements.width.value = parseInt(style.width || cs.width) || 'auto';
 }
