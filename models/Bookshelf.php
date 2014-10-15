@@ -32,29 +32,13 @@ $db->exec('replace into Books (name, title, authors, lastUpdate) values (%s, %s,
 return $b;
 }
 
-function importBookFromFile ($file, $name=null) {
+function createBookFromFile ($file, $info=null) {
 global $booksdir;
-$regs = array(
-utf8_encode('/[àáâäãÀÁÂÄÃ]/u') => 'a',
-utf8_encode('/[éèëêÉÈËÊ]/u') => 'e',
-utf8_encode('/[ïîíìÏÎÍÌ]/u') => 'i',
-utf8_encode('/[òóöôõÖÔÕÓÒøØ]/u') => 'o',
-utf8_encode('/[ùúüûÜÛÚÙ]/u') => 'u',
-utf8_encode('/[ÿıİ]/u') => 'y',
-utf8_encode('/[ñÑ]/u') => 'n',
-utf8_encode('/[çÇ]/u') => 'c',
-'/[][{}()<> +*%\/\\$#@&|=~,;.:]/u' => '-',
-);//
-$fs = new ZipFileSystem($file);
-$b = new Book(array('fs'=>$fs));
-if (!$name) $name = $b->getTitle());
-$name = preg_replace(array_keys($regs), array_values($regs), $name);
-$name = mb_strtolower($name);
-$epubFile = "$booksdir/$name.epub";
-@copy($file, $epubFile);
-$b = new Book(array('name'=>$name));
-if (!$b->exists()) return false;
-return $this->addBook($b);
+if ($info==null) $info = array();
+$bf = new BookFactory();
+$b = $bf->createBookFromFile($this, $info, $file);
+if (!$b || !$b->exists()) return false;
+return $b;
 }
 
 

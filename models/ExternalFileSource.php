@@ -2,6 +2,7 @@
 abstract class ExternalFileSource {
 abstract function getFileName () ;
 abstract function getContents () ;
+abstract function copyTo ($filesystem, $filename);
 abstract function release () ;
 
 function getRealFileName () { return $this->getFileName(); }
@@ -14,15 +15,34 @@ return $ext;
 }
 
 function getMediaType () {
-$MIMETYPES = array(
-'xhtml' => 'application/xhtml+xml',
-'html' => 'text/html',
-'htm' => 'text/html', 
-);
 $ext = $this->getFileNameExtension();
-if (isset($MIMETYPES[$ext])) return $MIMETYPES[$ext];
+if (isset(ExternalFileSource::$MIMETYPES[$ext])) return ExternalFileSource::$MIMETYPES[$ext];
 else return 'application/octetstream';
 }
+
+static $MIMETYPES = array(
+'epub' => 'application/epub+zip',
+'xhtml' => 'application/xhtml+xml',
+'html' => 'text/html',
+'htm' => 'text/html',
+'md' => 'text/markdown',
+'tex' => 'text/tex',
+'pdf' => 'application/pdf',
+'doc' => 'application/msword',
+'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+'xls' => 'application/vnd.ms-excel',
+'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+'ppt' => 'application/vnd.ms-powerpoint',
+'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+'png' => 'image/png',
+'gif' => 'image/gif',
+'jpg' => 'image/jpeg',
+'jpeg' => 'image/jpeg',
+'mp3' => 'audio/mpeg',
+'ogg' => 'audio/ogg',
+'mp4' => 'video/mpeg',
+'ogv' => 'video/ogg',
+);
 
 }
 ?>

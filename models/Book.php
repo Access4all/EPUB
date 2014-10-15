@@ -1,4 +1,5 @@
 <?php
+require_once('BookFactory.php');
 require_once('core/kernel.php');
 define('NS_EPUB', 'http://www.idpf.org/2007/ops');
 define('NS_DC', 'http://purl.org/dc/elements/1.1/');
@@ -265,79 +266,63 @@ $optar[] = "$key=$value";
 $this->getFileSystem()->addFromString($this->getBOFileName(), implode("\r\n", $optar) );
 }
 
-function addNewPage (&$info, $pageFrom = null, $contents = null) {
-$fn = $info['fileName'];
-if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
-if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)*\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
+function addNewEmptyPage (&$info, $pageFrom = null) {
 if (empty($info['title'])) $info['title'] = 'untitled'.time();
 if (empty($info['fileName'])) {
-$path = ($pageFrom? dirname($pageFrom->fileName) : dirname($this->getOpfFileName())) .'/';
+$path = ($pageFrom? $pageFrom->fileName : $this->getOpfFileName());
 $fn = Misc::toValidName($info['title']).'.xhtml' ;
-$fn = $info['fileName'] = "$path$fn";
+$info['fileName'] = pathResolve($path, $fn);
 }
 if (empty($info['id'])) $info['id'] = Misc::toValidName($info['title']);
-if (!$contents) $contents = str_replace("\r\n", "\n", <<<END
+$info['mediaType'] = 'application/xhtml+xml';
+$info['contents'] = str_replace("\r\n", "\n", <<<END
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{$this->language}" lang="{$this->language}">
 <head>
 <title>{$info['title']}</title>
 </head><body>
+<p></p>
 </body></html>
 END
 );//
-$this->getSpine();
-$this->getItemById(null);
-$this->getItemByFileName(null);
-$this->spineModified = true;
-$this->manifestModified = true;
-$p = new BookPage(array('fileName'=>$info['fileName'], 'id'=>$info['id'], 'mediaType'=>'application/xhtml+xml'));
-$p->book = $this;
-$this->itemIdMap[$info['id']] = $p;
-$this->itemFileNameMap[$info['fileName']] = $p;
-if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
-else $this->spine[] = $info['id'];
-$this->getFileSystem()->addFromString($fn, $contents);
-$this->saveOpf();
-return $p;
+return $this->addNewResource($info, new MemoryFile($info), $pageFrom);
 }
 
 function addNewResource (&$info, $srcFile, $pageFrom = null) {
 if (!$srcFile) return 'No file provided';
-$fn = $info['fileName'];
 $srcBaseName = basename($srcFile->getFileName());
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
 if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
 if (empty($info['fileName'])) {
-$path = ($pageFrom? dirname($pageFrom->fileName) : dirname($this->getOpfFileName())) .'/';
-$fn = $info['fileName'] = "$path$srcBaseName";
+$info['fileName'] =  pathResolve( ($pageFrom? $pageFrom->fileName : $this->getOpfFileName()), $srcBaseName);
 }
 if (empty($info['id'])) {
 $noext = substr($srcBaseName, 0, strrpos($srcBaseName,'.'));
 $info['id'] = Misc::toValidName($noext);
 }
+$bf = new BookFactory();
+$resources = $bf->createResourcesFromFile($this, $info, $srcFile);
+foreach($resources as $lst) {
+list($res, $srcFile) = $lst;
+$res->book = $this;
 $mediaType = $srcFile->getMediaType();
-list($type, $subtype) = explode('/', $mediaType, 2);
-if ($type=='image' || $type=='audio' || $type=='video' || $mediaType=='application/x-javascript') {
-$this->getFileSystem() ->addFromFile( $info['fileName'], $srcFile->getRealFileName() );
+$srcFile->copyTo($this->getFileSystem(), $info['fileName']);
 $srcFile->release();
-$p = new BookResource(array('id'=>$info['id'], 'mediaType'=>$mediaType, 'fileName'=>$info['fileName']));
-$p->book = $this;
 $this->getItemById(null);
 $this->getItemByFileName(null);
 $this->manifestModified = true;
-$this->itemIdMap[$info['id']] = $p;
-$this->itemFileNameMap[$info['fileName']] = $p;
-return $p;
-}
-$info['fileName'] = preg_replace('/\..+$/', '.xhtml', $info['fileName']);
-if ($mediaType == 'application/xhtml+xml') return $this->addNewPage($info, $pageFrom, $srcFile->getContents() );
-else if ($mediaType=='text/html') {
-$html = DOM::loadHTMLString( $srcFile->getContents() );
-return $this->addNewPage($info, $pageFrom, $html->saveXML() );
-}
-// other types of imports
-return 'This type of document is not supported yet';
+$this->itemIdMap[$info['id']] = $res;
+$this->itemFileNameMap[$info['fileName']] = $res;
+if ($res instanceof BookPage) {
+$this->getSpine();
+$this->spineModified = true;
+if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
+else $this->spine[] = $info['id'];
+}}
+$this->saveBO();
+$this->saveOpf();
+return true;
 }
 
 function getNavFileName () {

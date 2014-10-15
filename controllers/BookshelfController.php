@@ -28,9 +28,13 @@ global $root;
 $failed = true;
 $bs = new Bookshelf();
 if (isset($_FILES['upload'])) {
-$tmp = './data/upload'.time().'.tmp';
+$tmp = './data/upload'.time().'_'.basename($_FILES['upload']['name']);
 if (move_uploaded_file($_FILES['upload']['tmp_name'], $tmp)) {
-if ($bs->importBookFromFile($tmp)) $failed=false;
+$book = $bs->createBookFromFile(new UploadedFile($tmp));
+if ($book) {
+$failed=false;
+$bs->addBook($book);
+}
 @unlink($tmp);
 }}
 $_SESSION['failed'] = $failed;
@@ -47,7 +51,13 @@ $title = trim($_POST['title']);
 $failed = true;
 $bs = new Bookshelf();
 $tplFile = './data/template.epub';
-if ($bs->importBookFromFile($tplFile, $title)) $failed=false;
+$book = $bs->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
+if ($book) {
+$book->extract();
+$book->updateBookSettings(array('title'=>$title));
+$bs->addBook($book);
+$failed=false;
+}
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
 header("Location:$root/bookshelf/index#alert");

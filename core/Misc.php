@@ -7,7 +7,7 @@ $dd = opendir($dir);
 while($entry = readdir($dd)) {
 if ($entry=='.' || $entry=='..') continue;
 $entry = "$dir$entry";
-if (is_dir($entry)) rmdirRecursive($entry);
+if (is_dir($entry)) Misc::rmdirRecursive($entry);
 else if (is_file($entry)) @unlink($entry);
 }
 closedir($dd);

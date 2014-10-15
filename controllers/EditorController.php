@@ -104,7 +104,9 @@ else if (isset($_POST['addfiles'], $_POST['fileName'], $_POST['id'])) {
 $file = null;
 if (isset($_FILES['upload'])) {
 $f = &$_FILES['upload'];
-$name = 'data/uploads/'.basename($f['name']);
+$ext = strrchr($f['name'], '.');
+$name = Misc::toValidName(basename($f['name'], $ext));
+$name = 'data/uploads/'.$name .$ext;
 @move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
