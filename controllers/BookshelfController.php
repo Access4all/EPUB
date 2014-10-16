@@ -28,7 +28,7 @@ global $root;
 $failed = true;
 $bs = new Bookshelf();
 if (isset($_FILES['upload'])) {
-$tmp = './data/upload'.time().'_'.basename($_FILES['upload']['name']);
+$tmp = './data/uploads/'.basename($_FILES['upload']['name']);
 if (move_uploaded_file($_FILES['upload']['tmp_name'], $tmp)) {
 $book = $bs->createBookFromFile(new UploadedFile($tmp));
 if ($book) {

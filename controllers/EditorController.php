@@ -26,11 +26,16 @@ $b->updateCssTemplate($_POST['content']);
 die('saved');
 }
 
-public function contentCss ($bookName) {
+public function exportTemplate ($bookName) {
+$this->getTemplate($bookName, null, true);
+}
+
+public function getTemplate ($bookName, $pageName=null, $forceDownload=false) {
 global $root;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 header('Content-type: text/css');
+if ($forceDownload) header('Content-Disposition: attachment; filename="template.css"');
 $b->directEchoFile('META-INF/template.css');
 exit();
 }

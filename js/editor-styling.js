@@ -53,6 +53,8 @@ this.populateStyleSelect = STE_populateStyleSelect;
 function STE_init () {
 var _this = this;
 this.form.elements.saveTplBtn.onclick = STE_saveTemplate.bind(this);
+this.form.elements.exportStyleBtn.onclick = STE_exportTemplate.bind(this);
+this.form.elements.importStyleBtn.onclick = STE_importTemplate.bind(this);
 this.form.elements.newStyleBtn.onclick = STE_newStyleDialog.bind(this);
 this.form.styleSelect.onchange = function(){ _this.updateUI(this.value); };
 this.form.elements.font.onchange = function(){ _this.updateValue('fontFamily', this.value, 'default'); };
@@ -154,8 +156,26 @@ ajax('POST', url, 'content='+encodeURIComponent(collected), function(e){
 var div = document.getElementById('debug3');
 if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
 div.innerHTML = e;
-}, function(){alert('failed');});
+}, 
+function(){alert('failed');});
+}
 
+function STE_exportTemplate () {
+var url = window.actionUrl.replace('@@', 'exportTemplate');
+window.location.href = url;
+}
+
+function STE_importTemplate () {
+var curUrl = window.location.href;
+var newUrl = window.actionUrl.replace('@@', 'importTemplate');
+DialogBox(msgs.ImportTemplate, [
+{type:'file', label:msgs.ImportTemplateFile, name:'upload'}
+], function(){
+var up = this.elements.upload;
+alert(up);
+alert(up.files);
+for (var i in up) alert(i);
+});//DialogBox
 }
 
 if (!window.onloads) window.onloads=[];

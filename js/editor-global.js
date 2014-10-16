@@ -27,6 +27,7 @@ return false;
 }
 
 function DialogBox (title, desc, okFunc, cancelFunc, readyFunc) {
+var lastFocus = document.activeElement;
 var first=null, form = document.createElement2('form', {'role':'dialog'});
 form.appendElement('h1').appendText(title);
 for (var i=0; i<desc.length; i++) {
@@ -52,13 +53,32 @@ if (!first) first=input;
 var p = form.appendElement('p');
 var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
 var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
-form.onsubmit = function(){ if (okFunc) okFunc.call(this); this.parentNode.removeChild(this); return false; };
-form.onreset = function(){ if (cancelFunc) cancelFunc.call(this); this.parentNode.removeChild(this); return false; };
+form.onsubmit = function(){ 
+//try {
+var re;
+if (okFunc) re = okFunc.call(this);
+if (re!==false) {
+this.parentNode.removeChild(this); 
+if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+//} catch(e) { for (var i in e) alert(i+'='+e[i]); }
+return false;
+};
+form.onreset = function(){ 
+var re;
+if (cancelFunc) re = cancelFunc.call(this);
+if (re!==false) {
+this.parentNode.removeChild(this); 
+if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+return false; 
+};
 document.querySelector('body').appendChild(form);
 if (first.select) first.select();
-first.focus();
+if (first.focus) first.focus();
 if (readyFunc) readyFunc.call(form);
 }
+DialogBox.SUBMIT = 391;
 
 function FileTree_init (e) {
 var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+e.getAttribute('data-ctxtype')] ,this);

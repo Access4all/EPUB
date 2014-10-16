@@ -123,6 +123,27 @@ $child = $this->childNodes->item($i);
 if (!$tagName || $tagName==$child->nodeName) $this->removeChild($child);
 }}
 
+function extractNodeContents ($tagName = null) {
+$frag = $this->ownerDocument->createDocumentFragment();
+for ($i=$this->childNodes->length -1; $i>=0; $i--) {
+$child = $this->childNodes->item($i);
+if (!$tagName || $tagName==$child->nodeName) {
+$this->removeChild($child);
+$frag->insertBefore($child, $frag->firstChild);
+}}
+return $frag;
+}
+
+function removePreservingChildren () {
+$parent = $this->parentNode;
+for ($i=$this->childNodes->length -1; $i>=0; $i--) {
+$child = $this->childNodes->item($i);
+$parent->insertBefore($child, $this->nextSibling);
+}
+$parent->removeChild($this);
+return $parent;
+}
+
 function saveHTML () { return $this->ownerDocument->saveHTML($this); }
 function saveXML () { return $this->ownerDocument->saveXML($this); }
 }

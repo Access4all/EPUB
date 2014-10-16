@@ -9,6 +9,8 @@ echo <<<END
 <p>
 <button id="saveTplBtn" type="button">{$t('Save')}</button>
 <button id="newStyleBtn" type="button">{$t('NewStyle')}</button>
+<button id="importStyleBtn" type="button">{$t('ImportStyle')}</button>
+<button id="exportStyleBtn" type="button">{$t('ExportStyle')}</button>
 </p>
 <p><label for="styleSelect">{$t('SelectStyleToEdit')}:</label>
 <select id="styleSelect">

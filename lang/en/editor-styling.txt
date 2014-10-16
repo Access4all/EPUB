@@ -1,10 +1,14 @@
 Global=Global
 Paragraph=Paragraph
 SelectStyleToEdit=Select a style to modify
+ExportStyle=Download template
+ImportStyle=Import template
 NewStyle=New style...
 NewStyleDT=Create new style
 NewStyleTag=Element type
 NewStyleName=Style name
+ImportTemplate=Import template
+ImportTemplateFile=CSS template file to use
 BasicFormatting=Text formatting
 Font=Font
 FontSize=Size

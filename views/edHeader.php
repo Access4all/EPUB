@@ -11,7 +11,7 @@ echo <<<END
 <title>$pageTitle</title>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="$root/editor/{$b->name}/contentCss/css.css?rnd=$rnd" />
+<link rel="stylesheet" href="$root/editor/{$b->name}/getTemplate/css.css?rnd=$rnd" />
 <link rel="stylesheet" href="$root/css/editor.css" />
 </head><body>
 <div id="fullWrapper">

@@ -36,7 +36,13 @@ $factory = new $factoryClass();
 return $factory->createBookFromFile($bookshelf, $info, $file);
 }
 else if (method_exists($factoryClass, 'createResourcesFromFile')) {
-//todo
+$tplFile = './data/template.epub';
+$title = 'UntitledBook'.time();
+$book = $bookshelf->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
+$book->extract();
+$book->updateBookSettings(array('title'=>$title));
+$book->addNewResource($info, $file);
+return $book;
 }}
 return null; // Not supported
 }
@@ -50,9 +56,12 @@ return array(array(new BookPage($info), $file));
 
 class HTMLBookFactory {
 function createResourcesFromFile ($book, &$info, $file) {
-$doc = DOM::loadHTMLString( $file->getContents() );
+$contents = $file->getContents();
+$doc = DOM::loadHTMLString($contents  );
 changeFileExtension($info);
 $file->release();
+$cleaner = new HTMLCleaner();
+$cleaner->cleanDocument($doc);
 $info['contents'] = $doc->saveXML();
 $info['mediaType'] = 'application/xhtml+xml';
 return array(array(new BookPage($info), new MemoryFile($info)));

@@ -82,6 +82,7 @@ $dn = "$booksdir/{$this->name}/";
 $fs->extractTo($dn);
 $this->close();
 $this->getFileSystem();
+@unlink("$booksdir/{$this->name}.epub");
 }
 
 function export ($format) {
@@ -220,7 +221,7 @@ $this->metadataModified = false;
 $metadata = $opf->getFirstElementByTagName('metadata');
 $metadata->getFirstElementByTagNameNs(NS_DC, 'title') ->nodeValue = $this->title;
 $metadata->removeAllChilds('dc:creator');
-foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->appendText(trim($a));
+if (@$this->authors) foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->appendText(trim($a));
 }
 if (@$this->spineModified) {
 $this->spineModified=false;
@@ -291,13 +292,16 @@ return $this->addNewResource($info, new MemoryFile($info), $pageFrom);
 
 function addNewResource (&$info, $srcFile, $pageFrom = null) {
 if (!$srcFile) return 'No file provided';
-$srcBaseName = basename($srcFile->getFileName());
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
 if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
 if (empty($info['fileName'])) {
-$info['fileName'] =  pathResolve( ($pageFrom? $pageFrom->fileName : $this->getOpfFileName()), $srcBaseName);
+$srcBaseName = $srcFile->getFileName();
+$ext = strrchr($srcBaseName, '.');
+$srcBaseName = Misc::toValidName(basename($srcBaseName, $ext));
+$info['fileName'] =  pathResolve( ($pageFrom? $pageFrom->fileName : $this->getOpfFileName()), ($srcBaseName.$ext));
 }
 if (empty($info['id'])) {
+$srcBaseName = basename($srcFile->getFileName());
 $noext = substr($srcBaseName, 0, strrpos($srcBaseName,'.'));
 $info['id'] = Misc::toValidName($noext);
 }
@@ -404,7 +408,10 @@ else $item->closeDoc();
 $navItem->saveCloseDoc();
 }
 
-function updateCssTemplate ($newContents) {
+function updateCssTemplate ($newContents, $dontFilter=false) {
+$contents = null;
+if ($dontFilter) $contents = $newContents;
+else {
 $newContents = trim(str_replace(
 array( "\r", "\n", '{', '}', ';' ),
 array( ' ', ' ', "{\r\n", "}\r\n\r\n", ";\r\n" ),
@@ -412,6 +419,7 @@ trim($newContents)));
 $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
 $contents = preg_replace('/^\s*#editor.*?\{.*?\}/ms', '', $contents);
 $contents = trim($contents ."\r\n\r\n" .$newContents);
+}
 $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
 $contents = str_replace('#editor {', 'body {', $contents);
 $contents = str_replace('#editor ', '', $contents);
