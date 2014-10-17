@@ -127,7 +127,7 @@ return this.indexOfIgnoreCase(str)==0;
 }
 
 String.prototype.trim = function () {
-return this.replace(/^\s*/,'').replace(/\s*$/,'');
+return this.replace(/^(?:\s|[<r\n\u00A0])*/,'').replace(/(?:\s|[\r\n\u00A0])*$/,'');
 }
 
 String.prototype.splitn = function (sep, lim) {

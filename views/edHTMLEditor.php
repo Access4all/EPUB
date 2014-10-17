@@ -1,11 +1,11 @@
 <?php
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
-$contents = $b->getContentsByFileName($p->fileName);
-$start = strpos($contents, '<body');
-$end = strpos($contents, '</body>');
-$start = 1 + strpos($contents, '>', $start+1);
-$contents = substr($contents, $start, $end);
+$doc = DOM::loadXMLString( $b->getContentsByFileName($p->fileName) );
+$body = $doc->getFirstElementByTagName('body');
+$contents = $body->saveHTML();
+$contents = substr($contents, 1+strpos($contents, '>')); // remove <body>
+$contents = substr($contents, 0, strrpos($contents, '<')); // remove </body>
 echo <<<END
 <h1>$simpleFileName</h1>
 <div id="toolbar" role="toolbar">

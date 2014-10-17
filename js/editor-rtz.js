@@ -12,6 +12,11 @@ for (var i=this.childNodes.length -1; re==null && i>=0; i--) re = this.childNode
 return re;
 }
 
+Node.prototype.eachTextNode = function(f){
+if (this.nodeType==3) f(this);
+if (this.childNodes) for (var i=this.childNodes.length -1; i>=0; i--) this.childNodes[i].eachTextNode(f);
+}
+
 function RTZ (zone, toolbar) {
 this.zone = zone;
 this.toolbar = toolbar;
@@ -96,6 +101,7 @@ this.zone.onkeyup = RTZ_debug_updateHTMLPreview.bind(this);
 this.zone.parentNode.insertBefore(div, this.zone.nextSibling);
 this.zone.onkeyup(null);
 }
+this.cleanHTML();
 }
 
 function RTZ_loadStyles () {
@@ -710,6 +716,7 @@ var sel = document.createRange();
 sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
 this.cleanHTML(sel, frag);
+cleanHTML2(sel, frag);
 this.zone.appendChild(frag);
 try {
 cursel.setStart(startNode, startOf);
@@ -718,30 +725,104 @@ this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
 return;
 }
-if (o.nodeType==3) {
-if (o.nodeValue.trim().length==0) o.parentNode.removeChild(o);
-return;
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption var samp kbd span div'.split(' ');
+var allowedEmptyElements = ['br', 'img', 'hr'];
+var allowedAttrs = {
+'#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby'  ],
+a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
+abbr:['title'],
+img:['src', 'width', 'height', 'alt'],
+ol:['type', 'start'],
+};
+var remove = false, rename=null, surround=null;
+if (o.nodeType==11) {
+var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, figure');
+for (var i=0; i<blocks.length; i++) {
+var block = blocks[i];
+var p = block.findAncestor(['p']);
+if (!p || p==block) continue;
+var sel3 = document.createRange();
+sel3.selectNodeContents(p);
+var extracted = sel3.extractContents();
+p.parentNode.insertBefore(extracted, p);
+p.parentNode.removeChild(p);
+}}
+if (o.normalize) o.normalize();
+if (o.childNodes) for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
+if (o.attributes) for (var i=o.attributes.length -1; i>=0; i--) {
+var removeA=true, attr = o.attributes[i], nodeName = o.nodeName.toLowerCase();
+if (attr.name.startsWith('data-')) continue;
+if (allowedAttrs['#'].indexOf(attr.name)>=0) removeA=false;
+if (allowedAttrs[nodeName] && allowedAttrs[nodeName].indexOf(attr.name)>=0) removeA=false;
+if (attr.name=='class') {
+var classNames = attr.value.split(' ');
+var newClassNames = [];
+for (var j=0; j<classNames.length; j++) {
+var add=false, cn = classNames[j];
+if (this.styles[nodeName] && this.styles[nodeName].indexOf(cn)>=0) add=true;
+else if (this.positionalStyles[cn]) add=true;
+if (add) newClassNames.push(cn);
 }
-else if (o.nodeType!=1 && o.nodeType!=9 && o.nodeType!=11) {
-o.parentNode.removeChild(o);
-return;
+attr.value = newClassNames.join(' ');
+if (!attr.value || attr.value.length<=0) removeA=true;
 }
-for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside figure figcaption var samp kbd'.split(' ');
-var toRemove = false, tagName = (o.tagName? o.tagName.toLowerCase() : 'h1');
-toRemove = (allowedElements.indexOf(tagName)<0)
-|| (tagName=='p' && !o.hasChildNodes())
-|| (tagName=='p' && o.childNodes.length==1 && o.firstChild.nodeType==3 && o.firstChild.nodeValue.trim().length==0);
-if (toRemove) {
+if (removeA) o.removeAttributeNode(attr);
+}
+switch(o.nodeType) {
+case 3:
+if (o.nodeValue.trim().length==0) remove=6;
+if (o.parentNode.nodeType==11) surround='p';
+if (o.parentNode.nodeType==1 && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p';
+//if (o.nodeValue.trim().length>0) alert(o.parentNode+'{'+o.textContent+'}');
+break;
+case 1: {
+var nodeName = o.nodeName.toLowerCase();
+if (allowedElements.indexOf(nodeName)<0) remove=5;
+if (!o.hasChildNodes() && allowedEmptyElements.indexOf(nodeName)<0) remove=4;
+if ((!o.attributes || o.attributes.length<=0) && (nodeName=='div' || nodeName=='span')) remove=3;
+if (nodeName=='p' && ['p', 'td', 'th', 'li', 'dt', 'dd', 'caption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) remove=2;
+if (nodeName=='i') rename='em';
+else if (nodeName=='b') rename='strong';
+}break;
+case 11: break;
+default: remove=1; break;
+}
+if (remove && o.hasChildNodes()) {
 sel.selectNodeContents(o);
 var extracted = sel.extractContents();
 o.parentNode.insertBefore(extracted, o);
 o.parentNode.removeChild(o);
 }
-if (o.removeAttribute) {
-o.removeAttribute('style');
-if (o.className && o.className.startsWith('Mso')) o.removeAttribute('class');
+else if (rename) {
+sel.selectNodeContents(o);
+var extracted = sel.extractContents();
+var newEl = o.ownerDocument.createElement(rename);
+newEl.appendChild(extracted);
+o.parentNode.insertBefore(newEl, o);
+o.parentNode.removeChild(o);
 }
+else if (remove && !o.hasChildNodes()) o.parentNode.removeChild(o);
+else if (surround) {
+sel.selectNode(o);
+var newEl = o.ownerDocument.createElement(surround);
+sel.surroundContents(newEl);
+}
+}
+
+function cleanHTML2 (sel, frag) {
+var firstNode = null, lastNode=null;
+for (var i=0; i<frag.childNodes.length; i++) {
+var o = frag.childNodes[i];
+if (o.nodeType==3 || ['a', 'strong', 'em', 'abbr', 's', 'span', 'kbd', 'var', 'samp'].indexOf(o.nodeName.toLowerCase())>=0) { if (firstNode==null) firstNode=o; lastNode=o; }
+else if (firstNode!=null) { cleanHTML2Surround(sel, firstNode, lastNode); firstNode=null; i=0; }
+}
+if (firstNode!=null) cleanHTML2Surround(sel, firstNode, lastNode);
+}
+
+function cleanHTML2Surround (sel, startNode, endNode) {
+sel.setStartBefore(startNode);
+sel.setEndAfter(endNode);
+sel.surroundContents(document.createElement('p'));
 }
 
 function RTZ_paste () {
