@@ -1,10 +1,5 @@
 <?php
-define('DEBUG', true);
-define('LOCAL', $_SERVER['REMOTE_ADDR']=='127.0.0.1' || 0===strpos($_SERVER['SERVER_ADDR'], '192.168.') || 0===strpos($_SERVER['SERVER_ADDR'], '10.0.'));
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'epuba4all');
-define('DB_USER', LOCAL? 'root' : 'A4aEpubQcU0');
-define('DB_PASSWORD', LOCAL? '' : '@4all/E-inclusion');
+require_once('config.php');
 
 error_reporting(E_ALL&~E_STRICT);
 function exceptionHandler ($e) {
@@ -56,7 +51,6 @@ $db->exec('set names utf8');
 } catch (Exception $e) { exit503(); }
 
 session_start();
-$langs = array('en'=>'English');
 $lang = 'en';
 if (isset($_GET['language'])) $lang = $_GET['language'];
 else if (isset($_SESSION['language'])) $lang = $_SESSION['language'];
@@ -65,8 +59,6 @@ $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 }
 if (!array_key_exists($lang, $langs)) $lang='en';
 $_SESSION['language'] = $lang;
-$root = dirname($_SERVER['PHP_SELF']);
-$booksdir = './data';
 ob_start();
 if ($root=='/') $root='';
 
