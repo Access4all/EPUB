@@ -285,6 +285,14 @@ function RTZ_enterKey () {
 var sel = this.getSelection();
 var textNode = null;
 var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td']);
+if (!el) {
+el = document.createElement('p');
+var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
+sel.selectNOdeContents(sel.commonAncestorContainer);
+sel.surroundContents(el);
+sel.setStart(sc,so);
+sel.setEnd(ec,eo);
+}
 if (!sel.collapsed) {
 sel.deleteContents();
 sel.collapse(false);
@@ -717,6 +725,7 @@ sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
 this.cleanHTML(sel, frag);
 cleanHTML2(sel, frag);
+frag.querySelectorAll('div, aside, section, figure').each(cleanHTML2.bind(this, sel));
 this.zone.appendChild(frag);
 try {
 cursel.setStart(startNode, startOf);

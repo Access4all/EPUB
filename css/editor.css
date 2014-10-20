@@ -1,16 +1,33 @@
+main, nav, header, footer, article, aside, section { display: block; }
+time, mark { display: inline; }
+
+body {
+font-family: Arial;
+font-size: 100%;
+color: black;
+background-color: #def;
+}
+
+#topPanel {
+border-bottom: solid 1px #8af;
+}
+
 #leftRightWrapper {
 display: table;
+border-top: solid 1px #fff;
 }
 
 #leftPanel {
 display: table-cell;
 width: 24.5%;
+border-right: solid 1px #fff;
 }
 
 #rightPanel {
 display: table-cell;
 width: 75%;
-margin-left: 5px;
+padding-left: 5px;
+border-left: 1px solid #8af;
 }
 
 #edWrapper {
@@ -19,6 +36,10 @@ left: 0px;
 top: 0px;
 width: 100%;
 height: auto;
+border-top: 3px solid #8af;
+border-left: 3px solid #8af;
+border-right: 3px solid #fff;
+border-bottom: 3px solid #fff;
 }
 
 .menul {
@@ -29,13 +50,83 @@ list-style-type: none;
 list-style-type: none;
 display: inline;
 }
+a, a:link {
+color: blue;
+text-decoration: underline;
+}
+
+a:visited {
+color: purple;
+}
 
 a.button, .menul a {
 display: inline-block;
-margin-left: 7px;
+text-decoration: none;
+padding: 0.1em 1em 0.1em 1em;
+border-left: 2px solid #fff;
+border-top: 2px solid #fff;
+border-top: 2px solid #8af;
+border-right: 2px solid #8af;
+}
+
+a:focus, a:hover {
+text-decoration: underline;
+background-color: #006;
+color: #def;
+border-left: 2px solid #24a;
+border-top: 2px solid #24a;
+border-top: 2px solid #002;
+border-right: 2px solid #002;
+}
+
+a:active {
+background-color: #002;
+color: #fed;
+border-left: 2px solid #24a;
+border-top: 2px solid #24a;
+border-bottom: 2px solid #000;
+border-right: 2px solid #000;
 }
 
 .buttonGroup {
-margin-right: 20px;
+margin-left: 2em;
+margin-right: 2em;
+background-color: #cdf;
+border: 1px solid #cdf;
+border-radius: 0.4em;
 }
+
+
+input, select, textarea, button {
+background-color: #eef;
+color: black;
+border: 3px solid #35f;
+vertical-align: top;
+}
+
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number] {
+min-width: 12em;
+}
+
+input:hover, input:focus, input:active, select:hover, select:focus, select:active, textarea:hover, textarea:focus, textarea:active, button:hover, button:focus, button:active, div:focus, span:focus {
+background-color: #eef;
+color: black;
+border: 3px solid navy;
+}
+
+input[aria-invalid=true], select[aria-invalid=true], textarea[aria-invalid=true] {
+border: 3px solid orange;
+}
+
+label, button, input[type=submit], input[type=reset], input[type=button], *[tabindex] { cursor: pointer }
+p>label, p>input[type=hidden]+label { 
+display: inline-block;
+min-width: 23em;
+text-align: right;
+vertical-align: top;
+margin-right:  1em;
+}
+
+p>button, p>input[type=checkbox], p>input[type=radio], p>input[type=submit], p>input[type=reset], p>input[type=button]  { margin-left: 23em; }
+p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; margin-left: initial; }
 

@@ -120,7 +120,7 @@ this.firstChild.nodeValue = (ul.style.display=='block'? '-' : '+');
 
 function FileTree_CtxMenuItemList_file (items, link) {
 items.merge([
-msgs.Rename, null,
+msgs.Rename, FileTree_RenameDialog.bind(null, link),
 msgs.Delete, null,
 ]);//
 if (window.tmpMoveName) items.merge([
@@ -169,6 +169,17 @@ msgs.Cancel, null
 Menu_show(this, items);
 return false;
 }}
+
+function FileTree_RenameDialog (link) {
+var simpleName = link.href.substring(link.href.lastIndexOf('/')+1);
+DialogBox(msgs.RenameFile, [
+{label:msgs.RenameTo, name:'newName', value:simpleName}
+], function(){var src  = link.href.substring(window.rootUrl.length);
+var ref = this.elements.newName.value;
+var url = window.rootUrl2 + 'renameFile' + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
+ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!');});
+});//DialogBox
+}
 
 function Editor_save () {
 var editor = document.querySelector('#editor');

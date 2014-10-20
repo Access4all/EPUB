@@ -76,6 +76,18 @@ public function moveFile ($bookName) {
 $this->moveOperation($bookName, __FUNCTION__);
 }
 
+public function renameFile ($bookName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+if (empty($_GET['src']) || empty($_GET['ref'])) exit404();
+$moveItem = $b->getItemByFileName( $_GET['src'] );
+$newName = $_GET['ref'];
+if (!preg_match('/^[-a-zA-Z_0-9]+\.[-a-zA-Z_0-9]+$/', $newName)) exit500();
+if (!$moveItem || !$newName) exit404();
+$b->renameFile($moveItem, $newName);
+die('OK');
+}
+
 private function moveOperation ($bookName, $actionName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();

@@ -17,10 +17,9 @@ return array_keys(get_object_vars($this));
 }
 
 function decodeEntities ($str) {
-$a = array(
-'&nbsp;' => utf8_encode(chr(160))
-);
-return str_replace(array_keys($a), array_values($a), $str);
+global $entities;
+if (!@$entities) $entities = unserialize(file_get_contents('./models/entities.dat'));
+return str_replace(array_keys($entities), array_values($entities), $str);
 }
 
 function getDoc () {

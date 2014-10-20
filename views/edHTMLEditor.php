@@ -1,7 +1,7 @@
 <?php
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
-$doc = DOM::loadXMLString( $b->getContentsByFileName($p->fileName) );
+$doc = $p->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $contents = $body->saveHTML();
 $contents = substr($contents, 1+strpos($contents, '>')); // remove <body>

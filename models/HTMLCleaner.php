@@ -1,7 +1,7 @@
 <?php
 require_once('core/kernel.php');
 
-global $allowedTags, $allowedEmptyTags, $allowedAttrs, $allowedClasses;
+global $allowedTags, $allowedEmptyTags, $allowedAttrs, $allowedClasses, $disallowedFreeTextIn;
 $allowedTags = preg_split("/[ \r\n,;]+/", <<<END
 html head body title meta
 p h1 h2 h3 h4 h5 h6 pre blockquote div
@@ -21,6 +21,8 @@ $allowedAttrs = array(
 'meta' => array('name', 'value', 'http-equiv', 'content', 'charset'),
 'ol' => array('start', 'type'),
 );//
+
+$disallowedFreeTextIn = array('body', 'div', 'aside', 'section');
 
 $allowedClasses = array();
 

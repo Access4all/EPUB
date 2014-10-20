@@ -127,7 +127,7 @@ return this.indexOfIgnoreCase(str)==0;
 }
 
 String.prototype.trim = function () {
-return this.replace(/^(?:\s|[<r\n\u00A0])*/,'').replace(/(?:\s|[\r\n\u00A0])*$/,'');
+return this.replace(/^(?:\s|[\r\n\u00A0])*/,'').replace(/(?:\s|[\r\n\u00A0])*$/,'');
 }
 
 String.prototype.splitn = function (sep, lim) {
@@ -162,6 +162,14 @@ args.shift();
 
 HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
+
+HTMLElement.prototype.getAbsoluteScreenPosition = function (cx, cy) {
+cx = cx || 0; cy = cy || 0;
+cx += this.offsetLeft;
+cy += this.offsetTop;
+if (this.offsetParent) return this.offsetParent.getAbsoluteScreenPosition(cx,cy);
+else return {x:cx, y:cy};
+}
 
 Document.prototype.createElement2 = function (tagName, attrs) {
 var e = this.createElement(tagName);
