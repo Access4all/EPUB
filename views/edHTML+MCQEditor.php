@@ -1,11 +1,14 @@
 <?php
+loadTranslation('editor-mcq');
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
-$doc = $p->getDoc();
-$body = $doc->getFirstElementByTagName('body');
-$contents = $body->saveInnerHTML();
+$doc = $p->getDataDoc();
+$quiz = $doc->documentElement;
+$contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
+$simple = $quiz->getAttribute('type')=='simple';
 echo <<<END
 <h1>$simpleFileName</h1>
+<!--
 <div class="toolbar" role="toolbar">
 <p>
 <span class="buttonGroup">
@@ -50,35 +53,39 @@ echo <<<END
 <button type="button" data-action="abbreviation">{$t('Abbreviation')}</button>
 <button type="button" data-action="strikeout">{$t('Strikeout')}</button>
 </span></p>
-</div><!--toolbar-->
+</div><!--toolbar- ->
 <div class="edWrapper">
-<div class="editor" contenteditable="true" role="textbox" tabindex="0">
+<div class="editor" contenteditable="true" data-toolbar="toolbar">
 $contents
 </div></div><!--editor-->
-<h2>Keyboard shortcuts</h2>
-<ul>
-<li>Ctrl+0: regular paragraph</li>
-<li>Ctrl+1-6 or Alt+1-6: heading 1-6</li>
-<li>Ctrl+A: select all</li>
-<li>Ctrl+B: bold</li>
-<li>Ctrl+C: copy</li>
-<li>Ctrl+I: italic</li>
-<li>Ctrl+K: link</li>
-<li>Ctrl+L: numbered/ordered list</li>
-<li>Ctrl+Q: quotation</li>
-<li>Ctrl+S: save</li>
-<li>Ctrl+U: bulleted/unordered list</li>
-<li>Ctrl+V: paste</li>
-<li>Ctrl+X: cut</li>
-<li>Ctrl+Shift+A: aside box</li>
-<li>Ctrl+Shift+B: abbreviation</li>
-<li>Ctrl+Shift+D: definition list</li>
-<li>Ctrl+Shift+G: insert illustration</li>
-<li>Ctrl+Shift+I: insert icon</li>
-<li>Ctrl+Shift+K: strikethrough</li>
-<li>Ctrl+Shift+P: code block</li>
-<li>Ctrl+Shift+T: insert table</li>
-</ul>
+<form id="quiz">
+END;
+{ $i= -1; 
+foreach($quiz->getElementsByTagName('question') as $q) {
+$count = ++$i+1;
+$text = ''.$q->getFirstElementByTagName('q');
+echo <<<END
+<fieldset>
+<legend>{$t('Question')} <span>$count</span>:
+<span contenteditable="true">$text</span></legend>
+END;
+$j= -1;
+foreach($q->getElementsByTagName('c') as $a) {
+++$j;
+$name = $simple? "q[{$i}]" : "q[{$i}][]";
+$id = "q{$i}_{$j}";
+$itype = $simple? 'radio' : 'checkbox';
+$checked = $a->hasAttribute('checked')? ' checked="checked"' : '';
+echo <<<END
+<p><input tabindex="0" type="$itype" name="$name" id="$id" value="$j"$checked />
+<label for="$id" contenteditable="true">$a</label></p>
+END;
+}
+echo '</fieldset>';
+}}
+echo <<<END
+</form>
+<script type="text/javascript" src="$root/js/editor-mcq.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/editor-rtz.js?rnd=$rnd"></script>
 END;
 ?>

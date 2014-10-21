@@ -60,6 +60,8 @@ $this->saveDoc();
 $this->closeDoc();
 }
 
+function getEditorType () { return 'HTML'; }
+
 function updateContents ($contents) {
 if ($this->mediaType!='application/xhtml+xml') return parent::updateContents($contents);
 $contents = trim($this->decodeEntities($contents));

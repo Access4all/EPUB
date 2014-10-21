@@ -51,7 +51,9 @@ return null; // Not supported
 
 class XHTMLBookFactory {
 function createResourcesFromFile ($book, &$info, $file) {
-return array(array(new BookPage($info), $file));
+$className = 'BookPage';
+if (isset($info['className'])) $className = $info['className'];
+return array(array(new $className($info), $file));
 }}
 
 class HTMLBookFactory {

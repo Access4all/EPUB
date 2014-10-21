@@ -112,7 +112,7 @@ $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 $p = $b->getItemByFileName($pageName);
 if (isset($_POST['newpage'], $_POST['fileName'], $_POST['id'], $_POST['title'], $_POST['type'])) {
-$p = $b->addNewPage($_POST, $p);
+$p = $b->addNewEmptyPage($_POST, $p);
 if (is_object($p)) {
 header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$p->fileName}");
 exit();

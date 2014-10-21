@@ -39,8 +39,7 @@ switch($rightView){
 case 'editor': 
 loadTranslation('editor-rtz');
 require('edRightHeader.php');
-if ($p->mediaType=='application/xhtml+xml') require('edHTMLEditor.php'); 
-else require('edTextEditor.php');
+require("ed{$p->getEditorType()}Editor.php"); 
 break;
 case 'options': 
 loadTranslation('editor-pageOptions');

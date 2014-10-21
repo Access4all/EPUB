@@ -7,6 +7,8 @@ function __construct ($a=null) {
 if ($a) autofill($this,$a);
 }
 
+function getEditorType () { return 'Text'; }
+
 function updateContents ($contents) {
 return $this->book->getFileSystem()->addFromString( $this->fileName, $contents); 
 }

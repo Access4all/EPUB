@@ -78,7 +78,7 @@ try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against f
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
-if (!/^#editor / .test(rule.selectorText)) continue;
+if (!/^\.editor / .test(rule.selectorText)) continue;
 var selector = rule.selectorText.substring(8).trim();
 if(!/^\w*\.\w+$/ .test(selector)) continue; // Simple tags, i.e. p, h1, etc. are already on the list
 ss.appendElement('option', {value:selector}).appendText(selector);
@@ -102,7 +102,7 @@ else this.curStyle.style[property] = value;
 }
 
 function STE_updateUI (selection) {
-var selector = ('#editor '+selection).trim();
+var selector = ('.editor '+selection).trim();
 if (selection=='#') this.curStyle=null;
 else this.curStyle = $css(selector, $css.CREATE);
 if (!this.curStyle) return;
@@ -149,7 +149,7 @@ try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against f
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
-if (/^#editor/ .test(rule.selectorText)) collected += rule.cssText + ' ';
+if (/^\.editor/ .test(rule.selectorText)) collected += rule.cssText + ' ';
 }}
 var url = window.actionUrl.replace('@@', 'saveTemplate');
 ajax('POST', url, 'content='+encodeURIComponent(collected), function(e){

@@ -19,7 +19,7 @@ return $doc;
 
 static function loadXMLString ($data) {
 $doc = DOM::newDocument();
-$doc->loadXML($data, DOM_LIBXML_OPTIONS);
+if ($data) $doc->loadXML($data, DOM_LIBXML_OPTIONS);
 return $doc;
 }
 
@@ -56,6 +56,13 @@ if ($func($item)) return;
 class DOMDocument2 extends DOMDocument {
 function getRootElement () { return $this->documentElement; }
 
+function appendElement ($tagName, $attrs = null) {
+$el = $this->createElement($tagName);
+if ($attrs) $el->setAttributes($attrs);
+$this->appendChild($el);
+return $el;
+}
+
 function __call ($name, $args) {
 return call_user_func_array(array($this->documentElement, $name), $args);
 }
@@ -64,6 +71,7 @@ return call_user_func_array(array($this->documentElement, $name), $args);
 class DOMElement2 extends DOMElement {
 
 function __toString () { return $this->nodeValue; }
+function isEmpty () { return !$this->hasChildNodes(); }
 
 function getFirstElementByTagName ($tag) {
 $nl = $this->getElementsByTagName($tag);
@@ -146,6 +154,20 @@ return $parent;
 
 function saveHTML () { return $this->ownerDocument->saveHTML($this); }
 function saveXML () { return $this->ownerDocument->saveXML($this); }
+
+function saveInnerHTML () {
+$contents = $this->saveHTML();
+$contents = substr($contents, 1+strpos($contents, '>')); // remove <body>
+$contents = substr($contents, 0, strrpos($contents, '<')); // remove </body>
+return $contents;
+}
+function saveInnerXML () {
+$contents = $this->saveXML();
+$contents = substr($contents, 1+strpos($contents, '>')); // remove <body>
+$contents = substr($contents, 0, strrpos($contents, '<')); // remove </body>
+return $contents;
+}
+
 }
 
 ?>

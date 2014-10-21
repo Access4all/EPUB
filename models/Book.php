@@ -131,11 +131,13 @@ $idmap = array();
 $fnmap = array();
 foreach($manifest->getElementsByTagName('item') as $item) {
 $mediaType = $item->getAttribute('media-type');
+$itemid = $item->getAttribute('id');
+$className = $this->getOption("PageClass:$itemid", 'BookPage');
 $o = null;
-if ($mediaType=='application/xhtml+xml') $o = new BookPage();
-else $o = new BookResource();
+if ($mediaType!='application/xhtml+xml') $className = 'BookResource';
+$o = new $className();
 $o->book = $this;
-$o->id = $item->getAttribute('id');
+$o->id = $itemid;
 $o->href = $item->getAttribute('href');
 $o->mediaType = $mediaType;
 $o->props = $item->getAttribute('properties');
@@ -178,10 +180,9 @@ $this->options[$name]=$value;
 }
 
 private function readBO () {
-
 $this->options = array();
 foreach(@preg_split('/\r\n|\n|\r/', $this->getFileSystem()->getFromName($this->getBOFileName())) as $line) {
-if (preg_match('/^\s*([-a-zA-Z_0-9]+)\s*=\s*(.*?)\s*$/', $line, $m)) $this->options[$m[1]]=$m[2];
+if (preg_match('/^\s*([-a-zA-Z_0-9:]+)\s*=\s*(.*?)\s*$/', $line, $m)) $this->options[$m[1]]=$m[2];
 }
 foreach($this->options as $key=>$value) {
 if ($value==='true') $this->options[$key] = true;
@@ -275,25 +276,17 @@ $fn = Misc::toValidName($info['title']).'.xhtml' ;
 $info['fileName'] = pathResolve($path, $fn);
 }
 if (empty($info['id'])) $info['id'] = Misc::toValidName($info['title']);
+if (empty($info['type'])) $info['type'] = 'document';
 $info['mediaType'] = 'application/xhtml+xml';
-$info['contents'] = str_replace("\r\n", "\n", <<<END
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{$this->language}" lang="{$this->language}">
-<head>
-<title>{$info['title']}</title>
-</head><body>
-<p></p>
-</body></html>
-END
-);//
+$bpf = new BookPageFactory();
+$info['contents'] = str_replace("\r\n", "\n", $bpf->createEmptyPage($this, $info) );
 return $this->addNewResource($info, new MemoryFile($info), $pageFrom);
 }
 
 function addNewResource (&$info, $srcFile, $pageFrom = null) {
 if (!$srcFile) return 'No file provided';
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
-if (!empty($info['fileName']) && !preg_match('#^[-a-zA-Z_0-9]+(?:/[-a-zA-Z_0-9]+)\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
+if (!empty($info['fileName']) && !preg_match('#^(?:[-a-zA-Z_0-9]+/)*[-a-zA-Z_0-9]+\.[a-zA-Z]{1,5}$#', $info['fileName'])) return 'Invalid file name';
 if (empty($info['fileName'])) {
 $srcBaseName = $srcFile->getFileName();
 $ext = strrchr($srcBaseName, '.');
@@ -319,6 +312,8 @@ $this->manifestModified = true;
 $this->itemIdMap[$info['id']] = $res;
 $this->itemFileNameMap[$info['fileName']] = $res;
 if ($res instanceof BookPage) {
+$className = get_class($res);
+if ($className!='BookPage') $this->setOption("PageClass:{$res->id}", $className);
 $this->getSpine();
 $this->spineModified = true;
 if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
@@ -417,12 +412,12 @@ array( "\r", "\n", '{', '}', ';' ),
 array( ' ', ' ', "{\r\n", "}\r\n\r\n", ";\r\n" ),
 trim($newContents)));
 $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
-$contents = preg_replace('/^\s*#editor.*?\{.*?\}/ms', '', $contents);
+$contents = preg_replace('/^\s*\.editor.*?\{.*?\}/ms', '', $contents);
 $contents = trim($contents ."\r\n\r\n" .$newContents);
 }
 $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
-$contents = str_replace('#editor {', 'body {', $contents);
-$contents = str_replace('#editor ', '', $contents);
+$contents = str_replace('.editor {', 'body {', $contents);
+$contents = str_replace('.editor ', '', $contents);
 $this->getFileSystem() ->addFromString('EPUB/css/epub3.css', $contents);
 $item = $this->getItemByFileName('EPUB/css/epub3.css');
 if (!$item) {

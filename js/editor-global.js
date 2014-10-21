@@ -181,17 +181,6 @@ ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else 
 });//DialogBox
 }
 
-function Editor_save () {
-var editor = document.querySelector('#editor');
-if (!editor) return;
-var url = window.actionUrl.replace('@@', 'save');
-ajax('POST', url, 'content='+encodeURIComponent(editor.innerHTML), function(e){
-var div = document.getElementById('debug3');
-if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
-div.innerHTML = e;
-}, function(){alert('failed');});
-};
-
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
 if (!window.XMLHttpRequest && !window.ActiveXObject) return; // No AJAX

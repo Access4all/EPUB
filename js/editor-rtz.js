@@ -45,6 +45,7 @@ this.shiftTabKey = RTZ_shiftTabKey;
 this.cleanHTML = RTZ_cleanHTML;
 this.init = RTZ_init;
 this.loadStyles = RTZ_loadStyles;
+this.toString = RTZ_toString;
 this.implKeyDown = RTZ_implKeyDown;
 keys = {
 goToHome: vk.ctrl+vk.home,
@@ -88,10 +89,13 @@ insertTable: vk.ctrl+vk.shift+vk.t,
 
 function RTZ_init () {
 var _this = this;
+this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerCase())<0;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
+if (this.toolbar) {
 this.toolbar.$('button').each(function(o){ o.onclick = RTZ_toolbarButtonClick.bind(_this, o.getAttribute('data-action')); });
 this.toolbar.$('select').each(function(o){ o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); });
+}
 this.loadStyles();
 if (this.debug){
 var div = document.createElement('div');
@@ -102,9 +106,11 @@ this.zone.parentNode.insertBefore(div, this.zone.nextSibling);
 this.zone.onkeyup(null);
 }
 this.cleanHTML();
+if (window.onRTZCreate) window.onRTZCreate(this);
 }
 
 function RTZ_loadStyles () {
+if (this.inlineOnly) return;
 this.styles = {};
 this.positionalStyles = {};
 this.boxTypes = {};
@@ -115,7 +121,7 @@ try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against f
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
-if (!/^#editor /.test(rule.selectorText)) continue;
+if (!/^\.editor /.test(rule.selectorText)) continue;
 var m, selector = rule.selectorText.substring(8).trim();
 if (/^\.\w+$/.test(selector)) {
 var x = selector.substring(1).trim();
@@ -162,6 +168,10 @@ return re;
 }
 
 function RTZ_implKeyDown (k, simulated) {
+if (this.onkeydown) {
+var result = this.onkeydown(k,simulated);
+if (result===true || result===false) return result;
+}
 switch(k){
 case vk.enter:
 this.enterKey();
@@ -247,7 +257,7 @@ document.execCommand('paste', false, null);
 break;
 case keys.save :
 this.cleanHTML();
-Editor_save();
+if (this.onsave) this.onsave();
 break;
 case keys.preview:
 $('#previewLink')[0].click();
@@ -282,6 +292,7 @@ return false;
 }
 
 function RTZ_enterKey () {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var textNode = null;
 var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td']);
@@ -395,6 +406,10 @@ this.select(sel);
 }
 
 function RTZ_tabKey () {
+if (this.ontab) {
+var result = this.ontab();
+if (result===false || result===true) return result;
+}
 var sel = this.getSelection();
 var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
 if (!cell) return true;
@@ -486,6 +501,7 @@ return false;
 }
 
 function RTZ_formatAsCodeListing () {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p']);
@@ -508,6 +524,7 @@ sel.insertNode(pre);
 }
 
 function RTZ_simpleBlockFormat (tagName, attrs) {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var collapsed = sel.collapsed;
 var node = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
@@ -524,6 +541,7 @@ this.select(sel);
 }
 
 function RTZ_formatAsList (listType, oddItemType, evenItemType) {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p', 'li']);
@@ -574,6 +592,7 @@ this.select(sel);
 }}
 
 function RTZ_superBlockFormat (tagName, attrs) {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var realStartNode = sel.startContainer, realEndNode = sel.endContainer, realStartOffset = sel.startOffset, realEndOffset = sel.endOffset;
@@ -606,6 +625,7 @@ this.select(sel);
 }
 
 function RTZ_insertIllustration (url, alt, style) {
+if (this.inlineOnly) return false;
 var figure = document.createElement2('figure', {'class':style});
 var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'99%'});
 var capt = figure.appendElement('figcaption');
@@ -619,6 +639,7 @@ this.select(sel);
 }
 
 function RTZ_insertBox (type, position) {
+if (this.inlineOnly) return false;
 var t = type.split('.');
 var tagName = t[0];
 var classNames = t[1] + ' ' + position;
@@ -626,6 +647,7 @@ this.superBlockFormat(tagName, {'class':classNames});
 }
 
 function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
+if (this.inlineOnly) return false;
 var table = document.createElement2('table', {'class':style, 'data-th':thScheme});
 var firstCell = null;
 for (var i=0; i<nRows; i++) {
@@ -672,6 +694,7 @@ _this.zone.focus();
 }
 
 function RTZ_insertIllustrationDialog () {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var _this = this;
 DialogBox(msgs.InsertIllu, [
@@ -686,6 +709,7 @@ _this.zone.focus();
 }
 
 function RTZ_insertTableDialog () {
+if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var _this = this;
 DialogBox(msgs.InsertTable, [
@@ -704,6 +728,7 @@ _this.zone.focus();
 }
 
 function RTZ_insertBoxDialog () {
+if (this.inlineOnly) return false;
 var _this = this;
 var sel = this.getSelection();
 DialogBox(msgs.InsertBox, [
@@ -717,6 +742,7 @@ _this.zone.focus();
 }
 
 function RTZ_cleanHTML (sel, o) {
+if (this.inlineOnly) return;
 if (!sel||!o){
 var cursel = this.getSelection();
 var startNode = cursel.startContainer, endNode = cursel.endContainer, startOf = cursel.startOffset, endOf = cursel.endOffset;
@@ -782,7 +808,6 @@ case 3:
 if (o.nodeValue.trim().length==0) remove=6;
 if (o.parentNode.nodeType==11) surround='p';
 if (o.parentNode.nodeType==1 && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p';
-//if (o.nodeValue.trim().length>0) alert(o.parentNode+'{'+o.textContent+'}');
 break;
 case 1: {
 var nodeName = o.nodeName.toLowerCase();
@@ -847,6 +872,21 @@ setTimeout(f,1);
 return true;
 }
 
+function RTZ_defaultSave () {
+var editor = this.zone;
+if (!editor) return;
+var url = window.actionUrl.replace('@@', 'save');
+ajax('POST', url, 'content='+encodeURIComponent(editor.innerHTML), function(e){
+var div = document.getElementById('debug3');
+if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
+div.innerHTML = e;
+}, function(){alert('failed');});
+};
+
+function RTZ_toString () {
+return "RTZ"+JSON.stringify(this);
+}
+
 function RTZ_debug_updateHTMLPreview () {
 var code = this.zone.innerHTML;
 code = code.replace(/>\s*</g, '>\r\n<');
@@ -879,10 +919,16 @@ return !window.open(this.href);
 
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
-$('#previewLink')[0].onclick = RTZ_previewLinkClick;
-var rtz = new RTZ( $('#editor')[0], $('#toolbar')[0]);
-rtz.debug = true;
+$('#previewLink').each(function(){ this.onclick = RTZ_previewLinkClick; });
+$('.editor, *[contenteditable]').each(function(e){
+var toolbarId = e.getAttribute('data-toolbar');
+var toolbar = toolbarId? document.getElementById(toolbarId) : null;
+e.setAttribute('tabindex',0);
+var rtz = new RTZ( e, toolbar);
+rtz.debug = e.tagName.toLowerCase()=='div';
 rtz.init();
+if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
+});//each .editor/contenteditable
 });
 
 //alert('RTZ loaded');
