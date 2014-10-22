@@ -37,6 +37,7 @@ this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
+this.openPreview = RTZ_openPreview;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
@@ -260,7 +261,7 @@ this.cleanHTML();
 if (this.onsave) this.onsave();
 break;
 case keys.preview:
-$('#previewLink')[0].click();
+this.openPreview();
 break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
@@ -299,7 +300,7 @@ var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 
 if (!el) {
 el = document.createElement('p');
 var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
-sel.selectNOdeContents(sel.commonAncestorContainer);
+sel.selectNodeContents(sel.commonAncestorContainer);
 sel.surroundContents(el);
 sel.setStart(sc,so);
 sel.setEnd(ec,eo);
@@ -741,6 +742,14 @@ _this.zone.focus();
 });//Dialog box
 }
 
+function RTZ_openPreview () {
+var previewBtn = document.getElementById('previewBtn');
+if (!previewBtn || !previewBtn.hasAttribute('data-href')) return;
+var href = previewBtn.getAttribute('data-href');
+window.open(href);
+if (this.onsave) this.onsave();
+}
+
 function RTZ_cleanHTML (sel, o) {
 if (this.inlineOnly) return;
 if (!sel||!o){
@@ -760,13 +769,14 @@ this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
 return;
 }
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption var samp kbd span div'.split(' ');
-var allowedEmptyElements = ['br', 'img', 'hr'];
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption var samp kbd span div input'.split(' ');
+var allowedEmptyElements = ['br', 'img', 'hr', 'input'];
 var allowedAttrs = {
-'#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby'  ],
+'#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 img:['src', 'width', 'height', 'alt'],
+input:['value', 'type', 'size'],
 ol:['type', 'start'],
 };
 var remove = false, rename=null, surround=null;
@@ -872,11 +882,10 @@ setTimeout(f,1);
 return true;
 }
 
-function RTZ_defaultSave () {
-var editor = this.zone;
-if (!editor) return;
+function RTZ_defaultSave (code) {
+var data = code || this.zone.innerHTML;
 var url = window.actionUrl.replace('@@', 'save');
-ajax('POST', url, 'content='+encodeURIComponent(editor.innerHTML), function(e){
+ajax('POST', url, 'content='+encodeURIComponent(data), function(e){
 var div = document.getElementById('debug3');
 if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
 div.innerHTML = e;
@@ -912,15 +921,9 @@ w.removeAllRanges();
 w.addRange(sel);
 }
 
-function RTZ_previewLinkClick () {
-Editor_save();
-return !window.open(this.href);
-}
-
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
-$('#previewLink').each(function(){ this.onclick = RTZ_previewLinkClick; });
-$('.editor, *[contenteditable]').each(function(e){
+$('.editor, *[contenteditable=true]').each(function(e){
 var toolbarId = e.getAttribute('data-toolbar');
 var toolbar = toolbarId? document.getElementById(toolbarId) : null;
 e.setAttribute('tabindex',0);

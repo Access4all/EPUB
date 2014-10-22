@@ -5,6 +5,7 @@ $h = 'htmlspecialchars';
 echo <<<END
 <h1>{$t('PageOptions')} {$filename}</h1>
 <form action="" method="post">
+<h2>{$t('General')}</h2>
 END;
 if ($p->mediaType=='application/xhtml+xml') {
 echo <<<END
@@ -19,6 +20,10 @@ echo <<<END
 <input type="text" id="filename" name="fileName" readonly="readonly" value="{$p->fileName}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
 <input type="text" id="id" name="id" readonly="readonly" value="{$h($p->id)}" /></p>
+END;
+$apo = $p->getAdditionalPageOptions();
+if ($apo) { require("ed{$apo}PageOptions.php"); }
+echo <<<END
 <p>
 <button type="submit">{$t('Save')}</button>
 <button type="reset">{$t('Reset')}</button>	

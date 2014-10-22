@@ -16,15 +16,9 @@ if (@$this->doc) $this->doc = null;
 return array_keys(get_object_vars($this));
 }
 
-function decodeEntities ($str) {
-global $entities;
-if (!@$entities) $entities = unserialize(file_get_contents('./models/entities.dat'));
-return str_replace(array_keys($entities), array_values($entities), $str);
-}
-
 function getDoc () {
 if (!@$this->doc) {
-$this->doc = DOM::loadXMLString( $this->decodeEntities($this->book->getContentsByFileName($this->fileName)));
+$this->doc = DOM::loadXMLString( DOM::decodeEntities($this->book->getContentsByFileName($this->fileName)));
 }
 return $this->doc;
 }
@@ -64,17 +58,10 @@ function getEditorType () { return 'HTML'; }
 
 function updateContents ($contents) {
 if ($this->mediaType!='application/xhtml+xml') return parent::updateContents($contents);
-$contents = trim($this->decodeEntities($contents));
-$contents = preg_replace_callback( '#<((?:img|br)\b.*?)>#ms', function($m){ 
-if (substr($m[1], -1)!='/') $m[1].=' /';
-return "<$m[1]>";
-}, $contents);
 $doc = $this->getDoc();
-$frag = $doc->createDocumentFragment();
-$frag->appendXML($contents);
 $body = $doc->getFirstElementByTagName('body');
 $body->removeAllChilds();
-$body->appendChild($frag);
+$body->appendHTML($contents);
 $cssFound = false;
 foreach($doc->getElementsByTagName('link') as $link) {
 if ($link->getAttribute('rel')!='stylesheet') continue;
@@ -89,7 +76,7 @@ $head->appendElement('link', array('rel'=>'stylesheet', 'href'=>pathRelativize($
 $this->saveDoc();
 }
 
-function updatePageSettings ($info) {
+function updatePageSettings (&$info) {
 $doc = $this->getDoc();
 if (isset($info['title'])) {
 $title = $doc->getFirstElementByTagName('title');
@@ -103,6 +90,8 @@ $html->setAttribute('xml:lang', $lng);
 }
 $this->saveDoc();
 }
+
+function initNewPage ($b) {}
 
 }
 ?>

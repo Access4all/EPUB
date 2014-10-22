@@ -1,3 +1,4 @@
+RTZLabel=Document contents
 StructureDropDown=Structure
 ListsDropDown=Lists
 MakeALink=Make a link

@@ -1,1 +1,9 @@
+IntroText=Introductory Text
 Question=Question
+Answer=Answer
+MCQLong=Multiple choice Quiz
+QuizType=Quiz type
+QuizType_simple=Simple
+QuizTypeDesc_simple=In a simple multiple choise quiz, there is always exactly a single correct answer for each question.
+QuizType_complex=Complex
+QuizTypeDesc_complex=In a complex multiple choice quiz, each question can allow any number of correct answers, possibly including none or all.

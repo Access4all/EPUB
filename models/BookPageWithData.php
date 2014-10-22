@@ -25,7 +25,6 @@ $this->doc2 = DOM::loadXMLString( $this->book->getContentsByFileName($this->getD
 }
 if (!$this->doc2->documentElement) {
 $this->createDataDoc($this->doc2);
-$this->saveDataDoc();
 }
 return $this->doc2;
 }
@@ -47,6 +46,11 @@ $this->saveDataDoc();
 $this->closeDataDoc();
 }
 
+
+function initNewPage ($b) {
+$this->getDataDoc();
+$this->saveCloseDataDoc();
+}
 
 }
 ?>

@@ -28,6 +28,22 @@ $doc = DOM::newDocument();
 @$doc->loadHTML($data, DOM_LIBXML_OPTIONS);
 return $doc;
 }
+
+static function decodeEntities ($str) {
+global $entities;
+if (!@$entities) $entities = unserialize(file_get_contents('./core/entities.dat'));
+return str_replace(array_keys($entities), array_values($entities), $str);
+}
+
+static function HTMLToXML ($html) {
+$html = DOM::decodeEntities(trim($html));
+$html = preg_replace_callback( '#<((?:img|br)\b.*?)>#ms', function($m){ 
+if (substr($m[1], -1)!='/') $m[1].=' /';
+return "<$m[1]>";
+}, $html);
+return $html;
+}
+
 }
 
 class DOMElementIterator  implements Iterator {
@@ -61,6 +77,16 @@ $el = $this->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
 $this->appendChild($el);
 return $el;
+}
+
+function createXMLFragment ($xml) {
+$frag = $this->createDocumentFragment();
+$frag->appendXML($xml);
+return $frag;
+}
+
+function createHTMLFragment ($html) {
+return $this->createXMLFragment(DOM::HTMLToXML($html));
 }
 
 function __call ($name, $args) {
@@ -123,6 +149,16 @@ function appendText ($text) {
 $tn = $this->ownerDocument->createTextNode($text);
 $this->appendChild($tn);
 return $this;
+}
+
+function appendXML ($xml) {
+$frag = $this->ownerDocument->createDocumentFragment();
+@$frag->appendXML($xml);
+@$this->appendChild($frag);
+}
+
+function appendHTML ($html) {
+$this->appendXML(DOM::HTMLToXML($html));
 }
 
 function removeAllChilds ($tagName = null) {

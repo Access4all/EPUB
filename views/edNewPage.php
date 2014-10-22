@@ -16,13 +16,13 @@ echo <<<END
 <legend><h2>{$t('PageType')}</h2></legend>
 END;
 $first=true;
-foreach (array('document', 'freequestions', 'qcm', 'truefalse', 'fillthegaps') as $type) {
+foreach (array('document', 'freequestions', 'qcm', 'truefalse', 'fillgaps') as $type) {
 $checked = ((!isset($_POST['type'])&&$first) || (@$_POST['type']==$type) ? 'checked="checked" ':'');
 $first=false;
 echo <<<END
-<p><input type="radio" id="pagetype_$type" name="type" value="$type" $checked/>
-<label for="pagetype_$type">{$t("PageType_$type")}</label></p>
-<p>{$t("PageTypeDesc_$type")}</p>
+<p><input type="radio" id="pagetype_$type" name="type" value="$type" $checked aria-labelledby="pagetypeLbl_$type" aria-describedby="pagetypeDesc_$type" />
+<label for="pagetype_$type" id="pagetypeLbl_$type">{$t("PageType_$type")}</label></p>
+<p id="pagetypeDesc_$type">{$t("PageTypeDesc_$type")}</p>
 END;
 }
 echo <<<END

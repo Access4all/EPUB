@@ -5,8 +5,13 @@ function createEmptyPage ($b, &$info) {
 switch($info['type']){
 case 'qcm':
 $info['className'] = 'BookPageMCQ';
+break;
+case 'fillgaps':
+$info['className'] = 'BookPageFillGaps';
+break;
 case 'document':
-default: 
+break;
+}
 return <<<END
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML>
@@ -17,7 +22,7 @@ return <<<END
 <p></p>
 </body></html>
 END;
-}}
+}
 
 }
 ?>

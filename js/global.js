@@ -155,8 +155,10 @@ NodeList.prototype.each = function () {
 var f = arguments[0], args = [];
 for (var i=1; i<arguments.length; i++) args.push(arguments[i]);
 for (var i=0; i<this.length; i++) {
+args.unshift(i);
 args.unshift(this[i]);
 f.apply(null, args);
+args.shift();
 args.shift();
 }}
 

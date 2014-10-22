@@ -31,5 +31,6 @@ echo <<<END
 <li><a href="$root/editor/{$b->name}/fv_{$rightView}/$pn">{$t('FileView')}</a></li>
 <li><a href="$root/editor/{$b->name}/zv_{$rightView}/$pn">{$t('TemplateEditorView')}</a></li>
 </ul><!-- upper left buttons -->
+<div id="leftPanelTab">
 END;
 ?>

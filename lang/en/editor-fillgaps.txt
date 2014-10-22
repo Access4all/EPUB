@@ -1,0 +1,2 @@
+IntroText=Introductory text
+GapText=Text containing the gaps

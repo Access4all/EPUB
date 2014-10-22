@@ -314,6 +314,7 @@ $this->itemFileNameMap[$info['fileName']] = $res;
 if ($res instanceof BookPage) {
 $className = get_class($res);
 if ($className!='BookPage') $this->setOption("PageClass:{$res->id}", $className);
+$res->initNewPage($this);
 $this->getSpine();
 $this->spineModified = true;
 if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
@@ -321,7 +322,7 @@ else $this->spine[] = $info['id'];
 }}
 $this->saveBO();
 $this->saveOpf();
-return true;
+return $resources[0][0];
 }
 
 function getNavFileName () {
