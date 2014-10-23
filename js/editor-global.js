@@ -28,7 +28,7 @@ return false;
 
 function DialogBox (title, desc, okFunc, cancelFunc, readyFunc) {
 var lastFocus = document.activeElement;
-var first=null, form = document.createElement2('form', {'role':'dialog'});
+var first=null, form = document.createElement2('form', {'role':'dialog', 'class':'dialogBox'});
 form.appendElement('h1').appendText(title);
 for (var i=0; i<desc.length; i++) {
 var item = desc[i];

@@ -6,8 +6,7 @@ $doc = $p->getDataDoc();
 $ftg = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
 $gaptext = $doc->getFirstElementByTagName('gaptext')->saveInnerHTML();
-
-$gaptext = preg_replace('#<gap>(.*?)</gap>#ms', '<strong unselectable="ON" contenteditable="false">$1</strong>', $gaptext);
+$gapType = $ftg->getAttribute('type');
 
 echo <<<END
 <h1>$simpleFileName</h1>
@@ -19,7 +18,26 @@ echo <<<END
 $contents
 </div></div><!--editor-->
 END;
+
+if ($gapType=='indicative' || $gapType=='strict') {
+$gaplist = $ftg->getFirstElementByTagName('gaplist');
+if (!$gaplist) $gaplist = '';
+else $gaplist = implode("\r\n", DOM::nodeListToArray( $gaplist->getElementsByTagName('li') ));
+echo <<<END
+<p><label for="gaplist">{$t('GapList')}:</label>
+<textarea id="gaplist" rows="10" cols="50">
+$gaplist
+</textarea>
+</p><p>{$t('GapListTipp')}</p>
+END;
+}
+
 $theToolbarId = 'toolbar2';
+$theToolbarAdditionalItems = <<<END
+<span calss="buttonGroup">
+<button type="button" data-action="mark"><img src="$root/images/24px/gap.png" alt="{$t('MarkGap')}" title="{$t('MarkGap')}"></button>
+</span>
+END;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">

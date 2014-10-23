@@ -293,6 +293,10 @@ return false;
 }
 
 function RTZ_enterKey () {
+if (this.onenter) {
+var re = this.onenter();
+if (re===true || re===false) return re;
+}
 if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var textNode = null;
@@ -769,14 +773,13 @@ this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
 return;
 }
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption var samp kbd span div input'.split(' ');
-var allowedEmptyElements = ['br', 'img', 'hr', 'input'];
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
 var allowedAttrs = {
 '#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 img:['src', 'width', 'height', 'alt'],
-input:['value', 'type', 'size'],
 ol:['type', 'start'],
 };
 var remove = false, rename=null, surround=null;

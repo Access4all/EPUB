@@ -1,5 +1,6 @@
 <?php
 if (!isset($theToolbarId)) $theToolbarId = 'toolbar';
+if (!isset($theToolbarAdditionalItems)) $theToolbarAdditionalItems='';
 echo <<<END
 <div id="$theToolbarId" class="toolbar" role="toolbar">
 <p>
@@ -44,7 +45,8 @@ echo <<<END
 <button type="button" data-action="insertIcon"><img src="$root/images/24px/icon.png" alt="{$t('Icon')}" title="{$t('Icon')}"></button>
 <button type="button" data-action="abbreviation"><img src="$root/images/24px/abbreviation.png" alt="{$t('Abbreviation')}" title="{$t('Abbreviation')}"></button>
 <button type="button" data-action="strikeout"><img src="$root/images/24px/strikethrough.png" alt="{$t('Strikeout')}" title="{$t('Strikeout')}"></button>
-</span></p>
+</span>$theToolbarAdditionalItems
+</p>
 </div><!--toolbar-->
 END;
 ?>

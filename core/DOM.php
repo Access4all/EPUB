@@ -35,6 +35,12 @@ if (!@$entities) $entities = unserialize(file_get_contents('./core/entities.dat'
 return str_replace(array_keys($entities), array_values($entities), $str);
 }
 
+static function nodeListToArray ($nl) {
+$ar = array();
+foreach($nl as $x) $ar[]=$x;
+return $ar;
+}
+
 static function HTMLToXML ($html) {
 $html = DOM::decodeEntities(trim($html));
 $html = preg_replace_callback( '#<((?:img|br)\b.*?)>#ms', function($m){ 
@@ -142,6 +148,13 @@ function insertElementBefore ($tagName, $ref, $attrs=null) {
 $el = $this->ownerDocument->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
 $this->insertBefore($el, $ref);
+return $el;
+}
+
+function renameElement ($newTagName, $attrs=null) {
+$el = $this->parentNode->insertElementBefore($newTagName, $this, $attrs);
+while($this->firstChild) $el->appendChild($this->firstChild);
+$this->parentNode->removeChild($this);
 return $el;
 }
 

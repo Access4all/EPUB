@@ -14,8 +14,8 @@ function updatePageSettings (&$info) {
 parent::updatePageSettings($info);
 $ftg = $this->getDataDoc() ->documentElement;
 $modified = false;
-if (!empty($info['gapType'])) {
-$ftg->setAttribute('type', $info['gapType']);
+if (!empty($info['ftgType'])) {
+$ftg->setAttribute('type', $info['ftgType']);
 $modified = true;
 }
 if ($modified) $this->saveCloseDataDoc();
@@ -28,14 +28,52 @@ $t = 'getTranslation';
 $json = json_decode($json);
 $xml = $this->getDataDoc() ->documentElement;
 $doc = $this->getDoc() ->getFirstElementByTagName('body');
+$type = $xml->getAttribute('type');
 $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
+$xml->appendElement('gaptext')->appendHTML($json->gaptext);
 $section = $doc->appendElement('section');
 $section->appendHTML($json->intro);
 $form = $section->appendElement('form', array('epub:type'=>'assessment'));
-//$this->saveDoc();
-//$this->saveDataDoc();
+$form->appendHTML($json->gaptext);
+$answers = array();
+$gaps = DOM::nodeListToArray( $form->getElementsByTagName('mark') );
+for($i=0; $i<count($gaps); $i++) {
+$ii=$i+1;
+$gap = $gaps[$i];
+$answer = strval($gap);
+$answers[$answer]=true;
+$gap->removeAllChilds();
+$gap->parentNode->setAttribute('epub:type', 'fill-in-the-blank-problem question');
+if ($type=='strict') $gap = $gap->renameElement('select', array('id'=>"gap$i", 'name'=>"gaps[$i]"));
+else if ($type=='indicative') $gap = $gap->renameElement('input', array('id'=>"gap$i", 'type'=>'text', 'list'=>"gaplist$i", 'name'=>"gaps[$i]"));
+else $gap = $gap->renameElement('input', array('id'=>"gap$i", 'type'=>'text', 'name'=>"gaps[$i]"));
+$gap->parentNode->insertElementBefore('label', $gap, array('for'=>"gap$i", 'class'=>'gaplabel'))
+->appendElement('sub') ->appendText($ii);
+if ($type=='indicative') {
+$gap = $gap->parentNode->insertElementBefore('datalist', $gap->nextSibling, array('id'=>"gaplist$i"))
+->appendElement('select', array('onchange'=>"this.form.elements.gap$i.value=this.value"));
+}
+$gaps[$i] = $gap;
+}
+
+if ($type=='strict' || $type=='indicative') {
+if (isset($json->suggestions)) $answers = $json->suggestions;
+else $answers = array_keys($answers);
+sort($answers);
+$xmlList = $xml->appendElement('gaplist');
+foreach($answers as $answer) $xmlList->appendElement('li')->appendText($answer);
+foreach($gaps as $gap) {
+$sag = getTranslation('SelectAGap');
+$gap->appendElement('option', array('value'=>$sag))->appendText($sag);
+foreach($answers as $answer) {
+$gap->appendElement('option', array('value'=>$answer))->appendText($answer);
+}}
+}
+
+$this->saveDoc();
+$this->saveDataDoc();
 }
 
 

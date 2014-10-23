@@ -1,6 +1,13 @@
 function onRTZCreate (rtz) {
 rtz.ontab = RTZ_MCQ_onTab;
+rtz.onenter = RTZ_MCQ_onenter;
 rtz.onsave = RTZ_MCQ_save;
+}
+
+function RTZ_MCQ_onenter () {
+if (this.zone.tagName.toLowerCase()!='label') return;
+this.ontab();
+return false;
 }
 
 function RTZ_MCQ_onTab () {
@@ -85,4 +92,4 @@ window.onloads.push(function(){
 //todo
 });//onload
 
-alert('MCQ loaded');
+//alert('MCQ loaded');
