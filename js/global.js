@@ -68,42 +68,6 @@ function domGenerateId () {
 return 'rndid'+(new Date() .getTime()) +Math.floor(Math.random()*1000000);
 }
 
-/*function $$ (p1, p2, p3, p4) {
-if (!p2) return document.querySelectorAll(p1);
-else if (!p3) return p1.querySelectorAll(p2);
-else return $(p1,p2,p3,p4);
-}
-
-function $ (p1, p2, p3, p4) {
-if (!p2) return document.querySelector(p1);
-else if (!p3) return p1.querySelector(p2);
-else if (!p4) {
-if (typeof(p1)=='string') p1 = document.querySelectorAll(p1);
-if (p1.length()) for (var i=0; i<p1.length; i++) { p1[i][p2]=p3; }
-else p1[p2]=p3;
-}
-else {
-p2 = p1.querySelectorAll(p2);
-if (p2.length()) for (var i=0; i<p2.length; i++) { p2[i][p3]=p4; }
-}
-}
-
-function $c (tag, attrs) {
-var el = document.createElement(tag);
-if (attrs&&attrs.text) { 
-if (typeof(attrs.text)=='string') el.innerHTML = attrs.text;
-else if (attrs.text.isArray()) for (var i=0; i<attrs.text.length; i++) {
-var x = attrs.text[i];
-if (typeof(x)=='string') el.innerHTML+=x;
-else el.appendChild(x);
-}
-else el.appendChild(attrs.text);
-delete attrs.text;
-}
-if (attrs) for (var i in attrs) el.setAttribute(i, attrs[i]);
-return el;
-}*/
-
 if (!Array.prototype.indexOf) Array.prototype.indexOf = function (o, start) {
 if (typeof(start)!='number') start=0;
 for (var i=start; i<this.length; i++) if (this[i]==o) return i;
@@ -162,6 +126,11 @@ args.shift();
 args.shift();
 }}
 
+HTMLElement.prototype.querySelectorLast = function (selector) {
+var tab = this.querySelectorAll(selector);
+return (tab&&tab.length? tab[tab.length -1] : null);
+}
+
 HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
 
@@ -190,6 +159,11 @@ Element.prototype.appendText = function (str) {
 this.appendChild(this.ownerDocument.createTextNode(str));
 return this;
 }
+
+Node.prototype.isAfter = function(x) { return 0!=(this.compareDocumentPosition(x)&2); };
+Node.prototype.isBefore = function(x) { return 0!=(this.compareDocumentPosition(x)&4); };
+Node.prototype.isInside = function(x) { return 0!=(this.compareDocumentPosition(x)&8); };
+Node.prototype.containsNode = function(x) { return 0!=(this.compareDocumentPosition(x)&16); };
 
 Node.prototype.findAncestor = function (tagNames) {
 if (typeof(tagNames)=='string') tagNames=[tagNames];

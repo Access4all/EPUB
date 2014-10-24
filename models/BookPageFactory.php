@@ -9,6 +9,9 @@ break;
 case 'fillgaps':
 $info['className'] = 'BookPageFillGaps';
 break;
+case 'truefalse':
+$info['className'] = 'BookPageTrueFalse';
+break;
 case 'document':
 break;
 }

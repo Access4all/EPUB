@@ -36,7 +36,6 @@ RTZ_defaultSave.call(this,data);
 }
 
 function MCQ_createNewQuestion (last) {
-//alert(2);
 var fieldset = last.cloneNode(true);
 var qNumSpan = fieldset.querySelector('span.questionNumber');
 var qNum = parseInt(qNumSpan.textContent);
@@ -48,6 +47,7 @@ var input = ps[i].querySelector('input');
 var label = ps[i].querySelector('label');
 var id = 'q' + qNum + '_' + i;
 var name = 'q[' + qNum + (input.getAttribute('type')=='radio'? ']' : '][]');
+input.setAttribute('name', name);
 input.setAttribute('id', id);
 label.setAttribute('for', id);
 }
@@ -64,7 +64,6 @@ return false;
 }
 
 function MCQ_createNewAnswer (last) {
-//alert(3);
 var p = last.parentNode.cloneNode(true);
 var input = p.querySelector('input');
 var label = p.querySelector('label');
@@ -83,7 +82,6 @@ return false;
 }
 
 function MCQ_deleteAnswer (ref) {
-//alert(4);
 ref.parentNode.parentNode.removeChild(ref.parentNode);
 }
 

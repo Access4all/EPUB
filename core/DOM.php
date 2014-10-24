@@ -168,10 +168,11 @@ function appendXML ($xml) {
 $frag = $this->ownerDocument->createDocumentFragment();
 @$frag->appendXML($xml);
 @$this->appendChild($frag);
+return $this;
 }
 
 function appendHTML ($html) {
-$this->appendXML(DOM::HTMLToXML($html));
+return $this->appendXML(DOM::HTMLToXML($html));
 }
 
 function removeAllChilds ($tagName = null) {
@@ -210,6 +211,7 @@ $contents = substr($contents, 1+strpos($contents, '>')); // remove <body>
 $contents = substr($contents, 0, strrpos($contents, '<')); // remove </body>
 return $contents;
 }
+
 function saveInnerXML () {
 $contents = $this->saveXML();
 $contents = substr($contents, 1+strpos($contents, '>')); // remove <body>

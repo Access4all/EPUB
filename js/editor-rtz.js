@@ -417,7 +417,7 @@ if (result===false || result===true) return result;
 }
 var sel = this.getSelection();
 var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
-if (!cell) return true;
+if (!cell || !cell.isInside(this.zone)) return true;
 var nextCell = cell.nextElementSibling;
 if (!nextCell) {
 var tr = cell.parentNode;
@@ -439,7 +439,7 @@ return false;
 function RTZ_shiftTabKey () {
 var sel = this.getSelection();
 var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
-if (!cell) return true;
+if (!cell || !cell.isInside(this.zone)) return true;
 var prevCell = cell.previousElementSibling;
 if (!prevCell) {
 var tr = cell.parentNode;
