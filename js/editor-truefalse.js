@@ -91,4 +91,4 @@ $('#addColBtn')[0].onclick = TFQ_addColumn;
 $('#remColBtn')[0].onclick = TFQ_removeColumn;
 });//onload
 
-alert('TFQ loaded');
+//alert('TFQ loaded');

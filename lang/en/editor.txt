@@ -23,6 +23,7 @@ Rename=Rename
 General=General
 Preview=Preview
 Save=Save
+Submit=Submit
 Reset=Reset
 Cancel=Cancel
 OK=OK

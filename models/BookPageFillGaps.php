@@ -1,5 +1,5 @@
 <?php
-class BookPageFillGaps extends BookPageWithData {
+class BookPageFillGaps extends BookPageWithActivity {
 
 function getEditorType () { return 'HTML+FillGaps'; }
 function getAdditionalPageOptions() { return 'FillGaps'; }
@@ -29,13 +29,21 @@ $json = json_decode($json);
 $xml = $this->getDataDoc() ->documentElement;
 $doc = $this->getDoc() ->getFirstElementByTagName('body');
 $type = $xml->getAttribute('type');
+$submission = $xml->getAttribute('submission') or 'local';
 $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
 $xml->appendElement('gaptext')->appendHTML($json->gaptext);
 $section = $doc->appendElement('section');
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+if (substr($submission,0,4)=='http') {
+$form->setAttribute('action', $submission);
+$form->setAttribute('method', 'post');
+$form->setAttribute('data-submissionMode', 'url');
+$submission = 'url';
+}
+else $form->setAttribute('data-submissionMode', $submission);
 $form->appendHTML($json->gaptext);
 $answers = array();
 $gaps = DOM::nodeListToArray( $form->getElementsByTagName('mark') );
@@ -49,6 +57,7 @@ $gap->parentNode->setAttribute('epub:type', 'fill-in-the-blank-problem question'
 if ($type=='strict') $gap = $gap->renameElement('select', array('id'=>"gap$i", 'name'=>"gaps[$i]"));
 else if ($type=='indicative') $gap = $gap->renameElement('input', array('id'=>"gap$i", 'type'=>'text', 'list'=>"gaplist$i", 'name'=>"gaps[$i]"));
 else $gap = $gap->renameElement('input', array('id'=>"gap$i", 'type'=>'text', 'name'=>"gaps[$i]"));
+if ($submission=='local') $gap->setAttribute('data-answer', $answer);
 $gap->parentNode->insertElementBefore('label', $gap, array('for'=>"gap$i", 'class'=>'gaplabel'))
 ->appendElement('sub') ->appendText($ii);
 if ($type=='indicative') {
@@ -71,7 +80,13 @@ foreach($answers as $answer) {
 $gap->appendElement('option', array('value'=>$answer))->appendText($answer);
 }}
 }
+$form->appendHTML(<<<END
+<p><button type="submit">{$t('Submit')}</button></p>
+END
+);//
 
+$this->addJsResource('global', $doc);
+$this->addJsResource('book-fillgaps', $doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }

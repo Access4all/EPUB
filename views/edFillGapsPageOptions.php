@@ -4,6 +4,7 @@ $t = 'getTranslation';
 $h = 'htmlspecialchars';
 $d = $p->getDataDoc() ->documentElement;
 $ftgType = $d->getAttribute('type');
+require_once('edGeneralActivityPageOptions.php');
 echo <<<END
 <h2>{$t('FillTheGaps')}</h2>
 <fieldset>

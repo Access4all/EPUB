@@ -1,5 +1,5 @@
 <?php
-class BookPageTrueFalse extends BookPageWithData {
+class BookPageTrueFalse extends BookPageWithActivity  {
 
 function getEditorType () { return 'HTML+TrueFalse'; }
 function getAdditionalPageOptions() { return 'TrueFalse'; }
@@ -33,13 +33,21 @@ $t = 'getTranslation';
 $json = json_decode($json);
 $xml = $this->getDataDoc() ->documentElement;
 $doc = $this->getDoc() ->getFirstElementByTagName('body');
+$submission = $xml->getAttribute('submission') or 'local';
 $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
 $xmlChoices = $xml->appendElement('choices');
 $section = $doc->appendElement('section');
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+if (substr($submission,0,4)=='http') {
+$form->setAttribute('action', $submission);
+$form->setAttribute('method', 'post');
+$form->setAttribute('data-submissionMode', 'url');
+$submission = 'url';
+}
+else $form->setAttribute('data-submissionMode', $submission);
 $table = $form->appendElement('table');
 $thead = $table->appendElement('thead')->appendElement('tr');
 $thead->appendElement('th', array('scope'=>'col'))->appendText(getTranslation('Question'));
@@ -51,6 +59,7 @@ $tbody = $table->appendElement('tbody');
 $num=-1;
 $html = '';
 foreach($json->questions as $jq) {
+$opthtml = '';
 $qnum = ++$num+1;
 if (!$jq->q) continue;
 $q = $xml->appendElement('question');
@@ -67,13 +76,20 @@ $id = "q{$num}_$i";
 $itype = ($xml->getAttribute('type')=='simple'? 'radio' : 'checkbox');
 $name = ($itype=='radio'? "q[{$num}]" : "q[{$num}][]");
 //if (in_array($i, $jq->a)) $q->appendElement('an')->appendText($i);
+if ($submission=='local') $opthtml = ' data-checked="' .(in_array($i, $jq->a)? 'true':'false') .'"';
 $html.=<<<END
-<td><input type="$itype" name="$name" id="$id" value="$i" title="$choice" /></td>
+<td><input type="$itype" name="$name" id="$id" value="$i"$opthtml title="$choice" /></td>
 END;
 }
 $html.='</tr>';
 }
 $tbody->appendHTML($html);
+$form->appendHTML(<<<END
+<p><button type="submit">{$t('Submit')}</button></p>
+END
+);//
+$this->addJsResource('global', $doc);
+$this->addJsResource('book-truefalse', $doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }

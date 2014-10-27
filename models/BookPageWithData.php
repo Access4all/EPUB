@@ -52,5 +52,15 @@ $this->getDataDoc();
 $this->saveCloseDataDoc();
 }
 
+function addJsResource ($name, $body) {
+$jsfile = pathRelativize($this->fileName, "EPUB/js/$name.js");
+$jsid = "privateBookResource_js_$name";
+$body->appendElement('script', array('type'=>'text/javascript', 'src'=>$jsfile))->appendText('/* */');
+$info = array('id'=>$jsid, 'mediaType'=>'application/x-javascript', 'fileName'=>"EPUB/js/$name.js");
+$info['contents'] = @file_get_contents("js/$name.js");
+$info['contents'] = preg_replace_callback('/@([-a-zA-Z_0-9:]+)/', function($m){ return getTranslation($m[1]); }, $info['contents']);
+$this->book->addResourceOnce($info, new MemoryFile($info));
+}
+
 }
 ?>

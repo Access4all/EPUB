@@ -283,6 +283,12 @@ $info['contents'] = str_replace("\r\n", "\n", $bpf->createEmptyPage($this, $info
 return $this->addNewResource($info, new MemoryFile($info), $pageFrom);
 }
 
+function addResourceOnce (&$info, $srcFile=null, $pageFrom=null) {
+if (!empty($info['id']) && null!=$this->getItemById($info['id'])) return;
+if (!$srcFile) $srcFile = new MemoryFile($info);
+return $this->addNewResource($info, $srcFile, $pageFrom);
+}
+
 function addNewResource (&$info, $srcFile, $pageFrom = null) {
 if (!$srcFile) return 'No file provided';
 if (!empty($info['id']) && !preg_match('/^[-a-zA-Z_0-9]+$/', $info['id'])) return 'Invalid ID';
