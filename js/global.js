@@ -172,6 +172,14 @@ else if (this.parentNode) return this.parentNode.findAncestor(tagNames);
 else return null;
 }
 
+Node.prototype.queryAncestor = function (selector) {
+if (this.matches(selector)) return this;
+else if (this.parentNode) return this.parentNode.queryAncestor(selector);
+else return false;
+}
+
+if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector;
+
 window.onload = function () {
 if (window.onloads) {
 for (var i=0; i<window.onloads.length; i++) 

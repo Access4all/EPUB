@@ -38,12 +38,10 @@ require('edLeftFooter.php');
 switch($rightView){
 case 'editor': 
 loadTranslation('editor-rtz');
-require('edRightHeader.php');
 require("ed{$p->getEditorType()}Editor.php"); 
 break;
 case 'options': 
 loadTranslation('editor-pageOptions');
-require('edRightHeader.php');
 require('edPageOptions.php'); 
 break;
 case 'newpage' :

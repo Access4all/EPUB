@@ -5,7 +5,7 @@ function getEditorType () { return 'HTML+MCQ'; }
 function getAdditionalPageOptions() { return 'MCQ'; }
 
 function createDataDoc ($doc) {
-$quiz = $doc->appendElement('quiz', array('type'=>'simple'));
+$quiz = $doc->appendElement('quiz', array('type'=>'simple', 'submission'=>'local'));
 $quiz->appendElement('intro');
 $q = $quiz->appendElement('question');
 $q->appendElement('q');

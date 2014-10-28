@@ -501,7 +501,6 @@ var text = this.elements.url.value;
 _this.select(sel);
 _this.inlineFormat('a', false, {'href':text});
 _this.zone.focus();
-return false;
 }, null); //DialogBox
 }
 

@@ -28,7 +28,7 @@ return false;
 
 function DialogBox (title, desc, okFunc, cancelFunc, readyFunc) {
 var lastFocus = document.activeElement;
-var first=null, form = document.createElement2('form', {'role':'dialog', 'class':'dialogBox'});
+var first=null, overlay = document.createElement2('div', {'class':'overlay'}), form = document.createElement2('form', {'role':'dialog', 'class':'dialogBox'});
 form.appendElement('h1').appendText(title);
 for (var i=0; i<desc.length; i++) {
 var item = desc[i];
@@ -54,14 +54,14 @@ var p = form.appendElement('p');
 var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
 var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
 form.onsubmit = function(){ 
-//try {
 var re;
 if (okFunc) re = okFunc.call(this);
 if (re!==false) {
 this.parentNode.removeChild(this); 
+overlay.parentNode.removeChild(overlay);
+document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
-//} catch(e) { for (var i in e) alert(i+'='+e[i]); }
 return false;
 };
 form.onreset = function(){ 
@@ -69,16 +69,20 @@ var re;
 if (cancelFunc) re = cancelFunc.call(this);
 if (re!==false) {
 this.parentNode.removeChild(this); 
+overlay.parentNode.removeChild(overlay);
+document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 return false; 
 };
-document.querySelector('body').appendChild(form);
+var body = document.querySelector('body');
+body.appendChild(overlay);
+body.appendChild(form);
+document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (first.select) first.select();
 if (first.focus) first.focus();
 if (readyFunc) readyFunc.call(form);
 }
-DialogBox.SUBMIT = 391;
 
 function FileTree_init (e) {
 var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+e.getAttribute('data-ctxtype')] ,this);

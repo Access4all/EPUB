@@ -1,0 +1,8 @@
+IntroText=Introductory Text
+leftELbl=Left item
+rightELbl=Right item
+leftSLbl=Map to
+rightSLbl=Map to
+h2left=List 1
+h2right=List 2
+QuizResult=You answered correctly to %1 questions out of %2.

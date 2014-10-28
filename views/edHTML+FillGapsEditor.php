@@ -7,10 +7,8 @@ $ftg = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
 $gaptext = $doc->getFirstElementByTagName('gaptext')->saveInnerHTML();
 $gapType = $ftg->getAttribute('type');
-
-echo <<<END
-<h1>$simpleFileName</h1>
-END;
+$pageTitle = $simpleFileName;
+require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">

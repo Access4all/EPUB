@@ -184,4 +184,4 @@ var ste = new StyleEditor($('#styleEditor')[0]);
 ste.init();
 });
 
-alert('Template editor loaded');
+//alert('Template editor loaded');

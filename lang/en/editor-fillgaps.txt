@@ -12,3 +12,4 @@ FTGType_strict=Predefined list of suggestions
 FTGTypeDesc_simple=No suggestion is given at all to help finding the answers. Whatever can be entered in the gaps.
 FTGTypeDesc_indicative=A list of suggestions is given to help finding the answers, but they are only indicative and should in general not be taken as is. Use this type to give a list that the person tested has to use to fill the gaps, but has still to change them a bit so that they are definitely correct. For example, a list of verbs, adjectives, etc. to be put in their correct form.
 FTGTypeDesc_strict=A predefined list of suggestions is given, and all gaps are filled by exactly the answers drawn from this list. It is not clearly defined if each suggestion should be used only once, or if they can be used multiple times.
+QuizResult=You answered correctly to %1 questions out of %2.

@@ -16,7 +16,7 @@ echo <<<END
 <legend><h2>{$t('PageType')}</h2></legend>
 END;
 $first=true;
-foreach (array('document', 'freequestions', 'qcm', 'truefalse', 'fillgaps') as $type) {
+foreach (array('document', /*'freequestions',*/ 'qcm', 'truefalse', 'fillgaps', 'matching', 'ordering') as $type) {
 $checked = ((!isset($_POST['type'])&&$first) || (@$_POST['type']==$type) ? 'checked="checked" ':'');
 $first=false;
 echo <<<END

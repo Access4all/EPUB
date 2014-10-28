@@ -12,6 +12,12 @@ break;
 case 'truefalse':
 $info['className'] = 'BookPageTrueFalse';
 break;
+case 'matching':
+$info['className'] = 'BookPageMatching';
+break;
+case 'ordering':
+$info['className'] = 'BookPageSequenceOrdering';
+break;
 case 'document':
 break;
 }

@@ -5,6 +5,7 @@ quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
 });
 
 function QuizSubmit_local () {
+try {
 var count=0, total=0, fields = this.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
@@ -13,7 +14,8 @@ total++;
 if (input.value==answer) count++;
 input.value = answer;
 }
-alert("%1 out of %2".replace('%1',count).replace('%2',total));
+alert("@QuizResult".replace('%1',count).replace('%2',total));
+} catch(e) { alert(e.message); }
 return false;
 }
 
@@ -39,4 +41,4 @@ return true;
 }
 
 
-alert('ftg1 loaded');
+//alert('ftg1 loaded');

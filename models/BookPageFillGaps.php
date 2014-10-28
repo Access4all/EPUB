@@ -5,7 +5,7 @@ function getEditorType () { return 'HTML+FillGaps'; }
 function getAdditionalPageOptions() { return 'FillGaps'; }
 
 function createDataDoc ($doc) {
-$ftg = $doc->appendElement('fillthegaps', array('type'=>'free'));
+$ftg = $doc->appendElement('fillthegaps', array('type'=>'simple', 'submission'=>'local'));
 $ftg->appendElement('intro');
 $ftg->appendElement('gaptext');
 }

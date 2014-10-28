@@ -2,8 +2,9 @@
 $t = 'getTranslation';
 $filename = basename($p->fileName);
 $h = 'htmlspecialchars';
+$pageTitle = "{$t('PageOptions')} {$filename}";
+require('edRightHeader.php');
 echo <<<END
-<h1>{$t('PageOptions')} {$filename}</h1>
 <form action="" method="post">
 <h2>{$t('General')}</h2>
 END;

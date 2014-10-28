@@ -6,9 +6,8 @@ $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
 $simple = $quiz->getAttribute('type')=='simple';
-echo <<<END
-<h1>$simpleFileName</h1>
-END;
+$pageTitle = $simpleFileName;
+require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">

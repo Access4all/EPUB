@@ -4,9 +4,8 @@ $simpleFileName = basename($p->fileName);
 $doc = $p->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $contents = $body->saveInnerHTML();
-echo <<<END
-<h1>$simpleFileName</h1>
-END;
+$pageTitle = $simpleFileName;
+require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
