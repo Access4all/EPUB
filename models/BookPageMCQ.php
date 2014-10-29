@@ -35,9 +35,9 @@ $submission = $xml->getAttribute('submission') or 'local';
 $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
-$section = $doc->appendElement('section');
+$section = $doc->appendElement('section', array('epub:type'=>'assessment'));
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz'));
 if (substr($submission,0,4)=='http') {
 $form->setAttribute('action', $submission);
 $form->setAttribute('method', 'post');
@@ -52,8 +52,9 @@ $qnum = ++$num+1;
 if (!$jq->q) continue;
 $q = $xml->appendElement('question');
 $q->appendElement('q')->appendHTML($jq->q);
+$NS_EPUB = NS_EPUB;
 $html .= <<<END
-<fieldset epub:type="multiple-choice-problem">
+<fieldset epub:type="multiple-choice-problem" xmlns:epub="$NS_EPUB">
 <legend epub:type="question">{$t('Question')} $qnum: {$jq->q}</legend>
 END;
 for ($i=0; $i<count($jq->c); $i++) {
@@ -66,7 +67,7 @@ $choice->appendHTML($jq->c[$i]);
 if (in_array($i, $jq->a)) $choice->setAttribute('checked', 'true');
 if ($submission=='local') $opthtml = ' data-checked="' .(in_array($i, $jq->a)? 'true':'false') .'"';
 $html.=<<<END
-<p><input type="$itype" name="$name" id="$id" value="$i"$opthtml />
+<p epub:type="answer-choice"><input type="$itype" name="$name" id="$id" value="$i"$opthtml />
 <label for="$id">{$jq->c[$i]}</label></p>
 END;
 }

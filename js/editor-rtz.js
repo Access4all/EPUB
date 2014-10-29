@@ -533,6 +533,7 @@ var sel = this.getSelection();
 var collapsed = sel.collapsed;
 var node = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 if (!node) return;
+if (!node.isInside(this.zone)) return;
 sel.selectNodeContents(node);
 var extracted = sel.extractContents();
 var newNode = document.createElement(tagName);

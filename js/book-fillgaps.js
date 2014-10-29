@@ -25,7 +25,6 @@ for (var i=0; i<fields.length; i++) {
 var input = fields[i];
 csv += (i+1) + ',' + input.value + '\r\n';
 }
-alert(csv);
 var uri = 'data:text/csv,'+encodeURIComponent(csv);
 var a = document.createElement2('a', {href:uri, type:'text/csv', download:'quiz.csv', target:'_blank'});
 a.appendText('Download');

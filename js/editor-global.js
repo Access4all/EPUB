@@ -84,6 +84,40 @@ if (first.focus) first.focus();
 if (readyFunc) readyFunc.call(form);
 }
 
+function MessageBox (title, msg, btns, okFunc, readyFunc) {
+var lastFocus = document.activeElement;
+var first=null, overlay = document.createElement2('div', {'class':'overlay'}), form = document.createElement2('div', {'role':'alertdialog', 'class':'dialogBox'});
+form.appendElement('h1').appendText(title);
+var p = form.appendElement('p', {id:'MessageBoxLabel', 'aria-live':'assertive'});
+p.innerHTML = msg;
+p = form.appendElement('p');
+var btnClick = function(btnIndex, btnLabel){ 
+return function(){
+var re;
+if (okFunc) re = okFunc.call(this, btnIndex, btnLabel);
+if (re!==false) {
+this.parentNode.removeChild(this); 
+overlay.parentNode.removeChild(overlay);
+document.getElementById('fullWrapper').removeAttribute('aria-hidden');
+if (lastFocus && lastFocus.focus) lastFocus.focus();
+} }; };
+for (var i=0; i<btns.length; i++) {
+var btn= p.appendElement('button', {'type':'button'});
+btn.innerHTML = btns[i];
+btn.onclick = btnClick(i, btns[i]).bind(form);
+btn.setAttribute('aria-describedby', 'MessageBoxLabel');
+btn.setAttribute('aria-label', btns[i].stripHTML() );
+if (!first) first=btn;
+}
+var body = document.querySelector('body');
+body.appendChild(overlay);
+body.appendChild(form);
+document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
+if (first.select) first.select();
+if (first.focus) first.focus();
+if (readyFunc) readyFunc.call(form);
+}
+
 function FileTree_init (e) {
 var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+e.getAttribute('data-ctxtype')] ,this);
 e.$('a').each(function(o){

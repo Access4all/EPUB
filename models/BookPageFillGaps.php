@@ -34,9 +34,9 @@ $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
 $xml->appendElement('gaptext')->appendHTML($json->gaptext);
-$section = $doc->appendElement('section');
+$section = $doc->appendElement('section', array('epub:type'=>'assessment'));
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz'));
 if (substr($submission,0,4)=='http') {
 $form->setAttribute('action', $submission);
 $form->setAttribute('method', 'post');

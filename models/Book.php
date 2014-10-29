@@ -377,6 +377,7 @@ $modified = false;
 $doc = $item->getDoc();
 $url = pathRelativize($navItem->fileName, $item->fileName);
 foreach($doc->getElements(function($e){ return !!preg_match('/^h\d$/i', $e->nodeName); }) as $heading) {
+if ($heading->hasAttribute('data-notoc')) continue;
 $level = 0+substr($heading->nodeName,1);
 if ($level>$maxDepth) continue;
 if (!$heading->hasAttribute('id')) { $heading->setAttribute('id', Misc::generateId($heading->nodeName) ); $modified=true; }

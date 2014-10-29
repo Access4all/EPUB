@@ -8,6 +8,7 @@ $doc = new DOMDocument2();
 $doc->registerNodeClass('DOMElement', 'DOMElement2');
 $doc->formatOutput = true;
 $doc->preserveWhiteSpace = false;
+$doc->strictErrorChecking = false;
 return $doc;
 }
 
@@ -166,8 +167,8 @@ return $this;
 
 function appendXML ($xml) {
 $frag = $this->ownerDocument->createDocumentFragment();
-@$frag->appendXML($xml);
-@$this->appendChild($frag);
+$frag->appendXML($xml);
+$this->appendChild($frag);
 return $this;
 }
 
@@ -200,6 +201,16 @@ $parent->insertBefore($child, $this->nextSibling);
 }
 $parent->removeChild($this);
 return $parent;
+}
+
+function subenclose ($tagName, $args=null) {
+$frag = $this->extractNodeContents();
+$this->appendElement($tagName, $args) ->appendChild($frag);
+}
+
+function surround ($tagName, $args=null) {
+$el = $this->parentNode->insertElementBefore($tagName, $this, $args);
+$el->appendChild($this);
 }
 
 function saveHTML () { return $this->ownerDocument->saveHTML($this); }

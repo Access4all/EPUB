@@ -38,9 +38,9 @@ $xml->removeAllChilds();
 $doc->removeAllChilds();
 $xml->appendElement('intro')->appendHTML($json->intro);
 $xmlChoices = $xml->appendElement('choices');
-$section = $doc->appendElement('section');
+$section = $doc->appendElement('section', array('epub:type'=>'assessment'));
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz'));
 if (substr($submission,0,4)=='http') {
 $form->setAttribute('action', $submission);
 $form->setAttribute('method', 'post');
@@ -58,6 +58,7 @@ $thead->appendElement('th', array('scope'=>'col'))->appendText($choice);
 $tbody = $table->appendElement('tbody');
 $num=-1;
 $html = '';
+$NS_EPUB = NS_EPUB;
 foreach($json->questions as $jq) {
 $opthtml = '';
 $qnum = ++$num+1;
@@ -66,7 +67,7 @@ $q = $xml->appendElement('question');
 $q->appendElement('q')->appendHTML($jq->q);
 foreach ($jq->a as $a) $q->appendElement('an')->appendText($a);
 $html .= <<<END
-<tr epub:type="true-false-problem">
+<tr epub:type="true-false-problem" xmlns:epub="$NS_EPUB">
 <th scope="row" epub:type="question">$qnum. {$jq->q}</th>
 END;
 for ($i=0; $i<count($json->choices); $i++) {

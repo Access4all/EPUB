@@ -1,0 +1,2 @@
+IntroText=Introductory Text
+TheItem=Item %1

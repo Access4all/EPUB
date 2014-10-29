@@ -10,8 +10,10 @@ var count=0, total=0, fields = this.querySelectorAll('select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
 var answer = input.getAttribute('data-answer');
+if (input.id.indexOf('left')>=0) {
 total++;
 if (input.value==answer) count++;
+}
 input.value = answer;
 }
 alert("@QuizResult".replace('%1',count).replace('%2',total));
@@ -25,7 +27,6 @@ var input = fields[i];
 var val = (input.value=='-'?'-': String.fromCharCode(65+parseInt(input.value)));
 csv += (i+1) + ',' + val + '\r\n';
 }
-alert(csv);
 var uri = 'data:text/csv,'+encodeURIComponent(csv);
 var a = document.createElement2('a', {href:uri, type:'text/csv', download:'quiz.csv', target:'_blank'});
 a.appendText('Download');
@@ -61,7 +62,6 @@ this.setAttribute('data-oldValue', this.value);
 newSelect.value = this.id.match(/\d+/);
 newSelect.setAttribute('data-oldValue', newSelect.value);
 }
-
 
 
 

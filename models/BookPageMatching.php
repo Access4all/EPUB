@@ -5,10 +5,13 @@ function getEditorType () { return 'HTML+Matching'; }
 function getAdditionalPageOptions() { return 'Matching'; }
 
 function createDataDoc ($doc) {
+loadTranslation('editor-matching');
 $quiz = $doc->appendElement('listmatching', array('submission'=>'local'));
 $quiz->appendElement('intro');
 for ($i=0; $i<2; $i++) {
-$lst = $quiz->appendElement('list') ->appendElement('item');
+$lst = $quiz->appendElement('list');
+$lst->appendElement('h')->appendText(getTranslation("hList$i"));
+$lst->appendElement('item');
 }
 $quiz->appendElement('matches');
 }
@@ -34,15 +37,17 @@ $xml->appendElement('intro')->appendHTML($json->intro);
 $xmlList1 = $xml->appendElement('list');
 $xmlList2 = $xml->appendElement('list');
 $xmlMatches = $xml->appendElement('matches');
+$xmlList1->appendElement('h')->appendHTML($json->list1h);
+$xmlList2->appendElement('h')->appendHTML($json->list2h);
 $ltr = array(); $rtl = array();
 foreach($json->matches as $l=>$r) {
 $ltr[$l]=$r;
 $rtl[$r]=$l;
 $xmlMatches->appendElement('m', array('from'=>$l, 'to'=>$r));
 }
-$section = $doc->appendElement('section');
+$section = $doc->appendElement('section', array('epub:type'=>'assessment'))->appendElement('div', array('epub:type'=>'match-problem'));
 $section->appendHTML($json->intro);
-$form = $section->appendElement('form', array('id'=>'quiz', 'epub:type'=>'assessment'));
+$form = $section->appendElement('form', array('id'=>'quiz'));
 if (substr($submission,0,4)=='http') {
 $form->setAttribute('action', $submission);
 $form->setAttribute('method', 'post');
@@ -52,12 +57,15 @@ $submission = 'url';
 else $form->setAttribute('data-submissionMode', $submission);
 $f1 = function($x) { return $x+1; };
 $f2 = function($x){ return chr(ord('A')+$x); };
-$processList = function (&$jsonList, &$oList, $xmlList, &$matches, &$html, $f1, $f2, $side, $submission) {
+$processList = function (&$jsonList, &$oList, $xmlList, &$matches, &$html, $f1, $f2, $side, $submission, $jsonListHeading) {
 $t = 'getTranslation';
 $i=-1;
 $oItemCount = 0;
 $listType = $f1(0);
+$jsonListHeading2 = strip_tags($jsonListHeading);
 $html.=<<<END
+<section  class="matchingActivity_{$side}List" aria-label="$jsonListHeading2">
+<h3 role="heading" aria-lavel="3" data-notoc="true">$jsonListHeading</h3>
 <ol class="matchingActivity_{$side}List" type="$listType" start="1">
 END;
 for ($j=0; $j<count($oList); $j++) if ($oList[$j]) $oItemCount++;
@@ -68,9 +76,10 @@ $xmlList->appendElement('item')->appendHTML($item);
 $answer = (isset($matches[$i])? $matches[$i] : '-');
 $opthtml = ($submission=='local'? " data-answer=\"$answer\"" : '');
 $selectId = "match$side$i";
+$selectLabel = str_replace('%1', $f1($i), getTranslation("{$side}SLbl2"));
 $html.=<<<END
 <li><span class="matchingItem">$item</span>
-<select id="$selectId" name="q[$side][$i]"$opthtml title="{$t($side.'SLbl')}">
+<select id="$selectId" name="q[$side][$i]"$opthtml title="$selectLabel">
 <option value="-">---</option>
 END;
 for ($j=0; $j<$oItemCount; $j++) {
@@ -82,12 +91,16 @@ END;
 }
 $html.='</select></li>';
 }
-$html.='</ol>';
+$html.='</ol></section>';
 };//processList
-$html = '';
-$processList($json->list1, $json->list2, $xmlList1, $ltr, $html, $f1, $f2, 'left', $submission);
-$processList($json->list2, $json->list1, $xmlList2, $rtl, $html, $f2, $f1, 'right', $submission);
+$NS_EPUB = NS_EPUB;
+$html = <<<END
+<div epub:type="question" xmlns:epub="$NS_EPUB">
+END;
+$processList($json->list1, $json->list2, $xmlList1, $ltr, $html, $f1, $f2, 'left', $submission, $json->list1h);
+$processList($json->list2, $json->list1, $xmlList2, $rtl, $html, $f2, $f1, 'right', $submission, $json->list2h);
 $html.=<<<END
+</div><!--question-->
 <p><button type="submit">{$t('Submit')}</button></p>
 END;
 $form->appendHTML($html);

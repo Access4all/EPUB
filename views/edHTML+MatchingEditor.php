@@ -30,23 +30,25 @@ $i=0;
 foreach($lst->getElementsByTagName('item') as $it) $i++;
 return $i;
 }
-function printList ($lst, $match, $side, $c1, $c2, $f1, $f2) {
+function printList ($lst, $match, $side, $c1, $c2, $f1, $f2, $ltxt) {
 $t = 'getTranslation';
 $listType = $f1(0);
 $className = "matchingActivity_{$side}List";
+$ltxt = $ltxt->saveInnerHTML();
 echo <<<END
 <div class="$className">
-<h2>{$t('h2'.$side)}</h2>
+<h2><span contenteditable="true" id="{$side}ListHeading">$ltxt</span></h2>
 <ol class="$className" type="$listType" start="1">
 END;
 $i=-1;
 foreach($lst->getElementsByTagName('item') as $it) {
 $ii = ++$i+1;
 $str = $it->saveInnerHTML();
+$selectLabel = str_replace('%1', $f1($i), getTranslation($side.'SLbl2'));
 echo <<<END
 <li>
 <span contenteditable="true" class="matchingItem" aria-label="{$t($side.'ELbl')} $ii">$str</span>
-<select class="$className" id="match$side$i" title="{$t($side.'SLbl')}">
+<select class="$className" id="match$side$i" title="$selectLabel" data-langmsg1="{$t($side.'SLbl2')}">
 <option value="-">---</option>
 END;
 for($j=0; $j<$c2; $j++) {
@@ -65,8 +67,8 @@ $lists = $quiz->getElementsByTagName('list');
 $c1 = countItems($lists->item(0));
 $c2 = countItems($lists->item(1));
 $f1 = 'numNum'; $f2 = 'alphaNum';
-printList($lists->item(0), $ltr, 'left', $c1, $c2, $f1, $f2);
-printList($lists->item(1), $rtl, 'right', $c2, $c1, $f2, $f1);
+printList($lists->item(0), $ltr, 'left', $c1, $c2, $f1, $f2, $lists->item(0)->getFirstElementByTagName('h'));
+printList($lists->item(1), $rtl, 'right', $c2, $c1, $f2, $f1, $lists->item(1)->getFirstElementByTagName('h'));
 echo <<<END
 </form>
 <script type="text/javascript" src="$root/js/editor-matching.js?rnd=$rnd"></script>
