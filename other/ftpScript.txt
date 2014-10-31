@@ -1,5 +1,5 @@
 open access4all.ch
-user ###username###
+user ###user###
 ###password###
 cd httpdocs
 binary
@@ -35,6 +35,13 @@ cd lang
 mkdir en
 cd en
 mput lang\en\*
+cd ..
+cd ..
+mkdir images
+cd images
+mkdir 24px
+cd 24px
+mput images\24px\*
 cd ..
 cd ..
 mkdir data

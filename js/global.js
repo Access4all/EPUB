@@ -74,6 +74,17 @@ for (var i=start; i<this.length; i++) if (this[i]==o) return i;
 return -1;
 }
 
+if (!Array.prototype.each) Array.prototype.each = function () {
+var f = arguments[0], args = [];
+for (var i=1; i<arguments.length; i++) args.push(arguments[i]);
+for (var i=0; i<this.length; i++) {
+args.unshift(i);
+args.unshift(this[i]);
+f.apply(null, args);
+args.shift();
+args.shift();
+}}
+
 Array.prototype.merge = function (ar) {
 for (var i=0; i<ar.length; i++) this.push(ar[i]);
 }

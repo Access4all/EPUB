@@ -42,4 +42,4 @@ if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 });
 
-alert('SQO loaded');
+//alert('SQO loaded');

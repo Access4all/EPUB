@@ -68,8 +68,8 @@ $html.=<<<END
 END;
 
 $form->appendHTML($html);
-//$this->addJsResource('global', $doc);
-//$this->addJsResource('book-ordering', $doc);
+$this->addJsResource('global', $doc);
+$this->addJsResource('book-ordering', $doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }

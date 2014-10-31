@@ -24,8 +24,8 @@ return true;
 var oldSelect = document.getElementById('match'+(left?'right':'left')+oldVal);
 var newSelect = document.getElementById('match'+(left?'right':'left')+newVal);
 var newOtherSelect = document.getElementById('match'+(!left?'right':'left')+newSelect.value);
-if (oldSelect) { oldSelect.value = newSelect.value; oldSelect.setAttribute('data-oldValue', oldSelect.value); }
-if (newOtherSelect) { newOtherSelect.value = oldVal; newOtherSelect.setAttribute('data-oldValue', newOtherSelect.value); }
+if (oldSelect) { oldSelect.value = '-'; /*newSelect.value;*/ oldSelect.setAttribute('data-oldValue', oldSelect.value); }
+if (newOtherSelect) { newOtherSelect.value = '-'; /*oldVal;*/ newOtherSelect.setAttribute('data-oldValue', newOtherSelect.value); }
 this.setAttribute('data-oldValue', this.value);
 newSelect.value = this.id.match(/\d+/);
 newSelect.setAttribute('data-oldValue', newSelect.value);
