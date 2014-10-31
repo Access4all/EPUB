@@ -3,6 +3,7 @@
 data/*
 cache/*
 *test*
+out*
 *tmp*
 *old*
 upload_ftp.txt
