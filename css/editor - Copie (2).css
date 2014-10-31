@@ -45,15 +45,11 @@ padding-left: 1em;
 border-left: 2px solid #aaa;
 }
 
-#pageTabs {
-margin-top: -2.4em;
-border-bottom: 3px solid #aaa;
-}
-
-.edWrapper {
+#edWrapper {
 position: relative;
 left: 0px;
 top: 0px;
+/*width: 100%;*/
 width: auto;
 height: auto;
 border: 3px solid #86B918;
@@ -70,7 +66,10 @@ display: inline;
 
 .toolbar {
 background-color: #86B918;
-border: 3px solid #86B918;
+border-top: 3px solid #aaa;
+border-left: 3px solid #86B918;
+border-right: 3px solid #86B918;
+border-bottom: 3px solid #86B918;
 }
 
 .editor {
@@ -78,28 +77,6 @@ margin: 1em 2em;
 min-height: 200px;
 }
 
-.dialogBox {
-   position:fixed;
-   top:33%;
-   left:25%;
-   z-index:200;
-   width: auto;
-   height: auto;
-   min-height:200px;
-   background-color:#fff;
-   padding: 1em;
-   border: 3px solid #86B918;
-}
-
-.overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: black;
-opacity: 0.7;
-} 
 
 a, a:link {
 color: blue;
@@ -155,7 +132,6 @@ color: black;
 border: 3px solid #86B918;
 vertical-align: bottom;
 }
-
 input, select, textarea{
 background-color: #eee;
 color: black;
@@ -179,7 +155,6 @@ border: 3px solid orange;
 }
 
 label, button, input[type=submit], input[type=reset], input[type=button], *[tabindex] { cursor: pointer }
-
 p>label, p>input[type=hidden]+label { 
 display: inline-block;
 min-width: 23em;
@@ -191,19 +166,6 @@ margin-right:  1em;
 p>button, p>input[type=checkbox], p>input[type=radio], p>input[type=submit], p>input[type=reset], p>input[type=button]  { margin-left: 23em; }
 p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; margin-left: initial; }
 
-form.dialogBox label {
-min-width: 16em;
-text-align: right;
-vertical-align: top;
-margin: 1em 1em 0 0;
-}
-
-form.dialogBox button {
-width: auto;
-vertical-align: bottom;
-margin: 2em 1em 0 0;
-} 
-
 .hidden {
   position: absolute;
   top: -9999em;
@@ -213,8 +175,7 @@ margin: 2em 1em 0 0;
   overflow:hidden;
 }
 
-#rightPanel > h1{
+h1#filename {
 clear: right;
-text-align: right;
 font-size: 100%;
 }
