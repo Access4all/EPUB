@@ -321,6 +321,7 @@ if (node.length<=0) node.parentNode.removeChild(node);
 }
 if (!el.hasChildNodes()) this.enterKeyOnEmptyParagraph(sel, el, textNode);
 else this.enterKeyOnNonEmptyParagraph(sel, el, textNode);
+return false;
 }
 
 function RTZ_listDetectType (s) {
@@ -383,12 +384,14 @@ return;
 }
 if (tgn=='dd') tgn='dt';
 else if (tgn=='dt') tgn='dd';
+else if (/^h[1-6]$/ .test(tgn)) tgn='p';
 var newEl = document.createElement(tgn);
 el.parentNode.insertBefore(newEl, el.nextSibling);
 if (textNode) newEl.appendChild(textNode);
 sel.selectNodeContents(newEl);
 sel.collapse(true);
 this.select(sel);
+return false;
 }
 
 function RTZ_enterKeyOnEmptyParagraph (sel, el, textNode) {
@@ -408,6 +411,7 @@ parent.parentNode.insertBefore(newEl, parent.nextSibling);
 sel.selectNodeContents(newEl);
 sel.collapse(true);
 this.select(sel);
+return false;
 }
 
 function RTZ_tabKey () {

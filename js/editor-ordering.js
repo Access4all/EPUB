@@ -12,7 +12,7 @@ return false;
 
 function RTZ_SQO_ontab () {
 var li = this.zone.queryAncestor('li');
-if (li.nextElementSibling) return true;
+if (li.nextElementSibling && li.nextElementSibling.tagName.toLowerCase()=='li') return true;
 if (this.zone.textContent.trim()) return SQO_createNewItem(this.zone);
 else return true;
 }
