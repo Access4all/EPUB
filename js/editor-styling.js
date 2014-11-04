@@ -172,9 +172,11 @@ DialogBox(msgs.ImportTemplate, [
 {type:'file', label:msgs.ImportTemplateFile, name:'upload'}
 ], function(){
 var up = this.elements.upload;
-alert(up);
-alert(up.files);
-for (var i in up) alert(i);
+if (!up || !up.files || up.files.length<=0 || !up.files[0] || !window.FormData) return;
+var data = new FormData(), file = up.files[0];
+var url = window.actionUrl.replace('@@', 'importTemplate');
+data.append('upload', file, file.name);
+ajax('POST', url, data, function(text){ alert('Upload succeeded? '+text); }, function(){ alert('Upload failed'); });
 });//DialogBox
 }
 

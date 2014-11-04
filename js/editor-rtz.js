@@ -100,12 +100,20 @@ this.toolbar.$('select').each(function(o){ o.onchange = RTZ_toolbarStyleSelect.b
 this.loadStyles();
 if (this.debug){
 var div = document.createElement('div');
+var div2 = document.getElementById('debugdiv2');
+if (!div2) {
+div2 = document.createElement2('div', {id:'debugdiv2'});
+div2.appendElement('h1').appendText('Debug messages');
+//document.body.appendChild(div2);
+}
 div.appendElement('h1').appendText('Debug HTML code');
 this.htmlCodePreview = div.appendElement('pre');
 this.zone.onkeyup = RTZ_debug_updateHTMLPreview.bind(this);
 this.zone.parentNode.insertBefore(div, this.zone.nextSibling);
 this.zone.onkeyup(null);
+this.debug = function(str){ div2.insertAdjacentHTML('beforeEnd', str+'<br />'); };
 }
+else this.debug = function(str) {};
 this.cleanHTML();
 if (window.onRTZCreate) window.onRTZCreate(this);
 }
@@ -302,7 +310,7 @@ var sel = this.getSelection();
 var textNode = null;
 var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td']);
 if (!el) {
-el = document.createElement('p');
+Fel = document.createElement('p');
 var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
 sel.selectNodeContents(sel.commonAncestorContainer);
 sel.surroundContents(el);
@@ -313,6 +321,7 @@ if (!sel.collapsed) {
 sel.deleteContents();
 sel.collapse(false);
 }
+el.normalize2();
 if (sel.commonAncestorContainer.nodeType==3 && sel.endOffset<sel.endContainer.length) {
 var node = sel.endContainer;
 textNode = node.splitText(sel.endOffset);
@@ -388,7 +397,7 @@ else if (/^h[1-6]$/ .test(tgn)) tgn='p';
 var newEl = document.createElement(tgn);
 el.parentNode.insertBefore(newEl, el.nextSibling);
 if (textNode) newEl.appendChild(textNode);
-sel.selectNodeContents(newEl);
+sel.selectNodeContents(textNode? textNode : newEl);
 sel.collapse(true);
 this.select(sel);
 return false;
@@ -408,7 +417,7 @@ var parentTgn = (parent.parentNode? parent.parentNode.tagName.toLowerCase() : '#
 if (parentTgn=='li' || parentTgn=='dd') parent = parent.parentNode;
 parent.parentNode.insertBefore(newEl, parent.nextSibling);
 }
-sel.selectNodeContents(newEl);
+sel.selectNodeContents(textNode? textNode : newEl);
 sel.collapse(true);
 this.select(sel);
 return false;
@@ -536,6 +545,14 @@ if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var collapsed = sel.collapsed;
 var node = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+if (!node && sel.commonAncestorContainer && sel.commonAncestorContainer.parentNode==this.zone) {
+node = document.createElement('p');
+var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
+sel.selectNodeContents(sel.commonAncestorContainer);
+sel.surroundContents(node);
+sel.setStart(sc,so);
+sel.setEnd(ec,eo);
+}
 if (!node) return;
 if (!node.isInside(this.zone)) return;
 sel.selectNodeContents(node);
@@ -778,6 +795,7 @@ this.select(cursel);
 return;
 }
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
 var allowedAttrs = {
 '#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
@@ -787,6 +805,7 @@ img:['src', 'width', 'height', 'alt'],
 ol:['type', 'start'],
 };
 var remove = false, rename=null, surround=null;
+if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return;
 if (o.nodeType==11) {
 var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, figure');
 for (var i=0; i<blocks.length; i++) {

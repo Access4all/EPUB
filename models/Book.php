@@ -275,6 +275,9 @@ $path = ($pageFrom? $pageFrom->fileName : $this->getOpfFileName());
 $fn = Misc::toValidName($info['title']).'.xhtml' ;
 $info['fileName'] = pathResolve($path, $fn);
 }
+else if (!preg_match('/\.xhtml$/i', $info['fileName'])) {
+$info['fileName'].='.xhtml';
+}
 if (empty($info['id'])) $info['id'] = Misc::toValidName($info['title']);
 if (empty($info['type'])) $info['type'] = 'document';
 $info['mediaType'] = 'application/xhtml+xml';

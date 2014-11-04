@@ -40,6 +40,23 @@ $b->directEchoFile('META-INF/template.css');
 exit();
 }
 
+public function importTemplate ($bookName) {
+global $root;
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+$file = null;
+if (isset($_FILES['upload'])) {
+$f = &$_FILES['upload'];
+$ext = strrchr($f['name'], '.');
+$name = Misc::toValidName(basename($f['name'], $ext));
+$name = 'data/uploads/'.$name .$ext;
+move_uploaded_file($f['tmp_name'], $name);
+$file = new UploadedFile($name);
+}
+if ($file) die('File received: ' .$file->getFileName() .'. But importation not supported at the moment.');
+else die('No file received');
+}
+
 public function preview ($bookName, $pageName) {
 global $root;
 $b = Book::getWorkingBook($bookName);
@@ -124,12 +141,12 @@ $f = &$_FILES['upload'];
 $ext = strrchr($f['name'], '.');
 $name = Misc::toValidName(basename($f['name'], $ext));
 $name = 'data/uploads/'.$name .$ext;
-@move_uploaded_file($f['tmp_name'], $name);
+move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
 $b->addNewResource($_POST, $file, $p);
 header("Location:{$_SERVER['REQUEST_URI']}");
-exit();
+die('uploaded');
 }
 else if (isset($_POST['authors'], $_POST['title'])) {
 $b->updateBookSettings($_POST);
