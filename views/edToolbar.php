@@ -29,8 +29,8 @@ echo <<<END
 <select id="listsDropDown">
 <option value="nothing">{$t('ListsDropDown')}</option>
 <option value="orderedList">{$t('OrderedList')}</option>
-<option value="unorderedList"<{$t('UnorderedList')}</option>
-<option value="definitionList"<{$t('DefinitionList')}</option>
+<option value="unorderedList">{$t('UnorderedList')}</option>
+<option value="definitionList">{$t('DefinitionList')}</option>
 </select>
 </span>
 <!--</p><p>-->

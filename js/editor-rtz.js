@@ -41,6 +41,7 @@ this.openPreview = RTZ_openPreview;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
+this.enterKeyAtBeginningOfParagraph = RTZ_enterKeyAtBeginningOfParagraph;
 this.tabKey = RTZ_tabKey;
 this.shiftTabKey = RTZ_shiftTabKey;
 this.cleanHTML = RTZ_cleanHTML;
@@ -57,7 +58,7 @@ copy: vk.ctrl+vk.c,
 paste: vk.ctrl+vk.v,
 cut: vk.ctrl+vk.x,
 save: vk.ctrl+vk.s,
-preview: vk.f9,
+preview: vk.impossible+vk.f9,
 link: vk.ctrl+vk.k,
 bold: vk.ctrl+vk.b,
 italic: vk.ctrl+vk.i,
@@ -94,8 +95,24 @@ this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerC
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 if (this.toolbar) {
-this.toolbar.$('button').each(function(o){ o.onclick = RTZ_toolbarButtonClick.bind(_this, o.getAttribute('data-action')); });
-this.toolbar.$('select').each(function(o){ o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); });
+this.toolbar.$('button').each(function(o){ 
+var action = o.getAttribute('data-action');
+o.onclick = RTZ_toolbarButtonClick.bind(_this, action); 
+var img = o.querySelector('img'), alt = img.getAttribute('alt');
+if (keys[action] && keys[action]<vk.impossible) alt += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
+o.setAttribute('title', alt);
+o.setAttribute('aria-label', alt);
+img.setAttribute('title', alt);
+img.setAttribute('alt', alt);
+});
+this.toolbar.$('select').each(function(o){ 
+o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); 
+o.$('option').each(function (opt){
+var action = opt.getAttribute('value');
+var text = opt.firstChild;
+if (keys[action] && keys[action]<vk.impossible) text.appendData('\t(' + RTZ_keyCodeToString(keys[action]) + ')');
+});
+});
 }
 this.loadStyles();
 if (this.debug){
@@ -306,30 +323,36 @@ var re = this.onenter();
 if (re===true || re===false) return re;
 }
 if (this.inlineOnly) return false;
-var sel = this.getSelection();
-var textNode = null;
-var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td']);
+var followFrag=null, sel = this.getSelection();
+var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td', 'caption']);
 if (!el) {
-Fel = document.createElement('p');
-var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
+el = document.createElement('p');
 sel.selectNodeContents(sel.commonAncestorContainer);
 sel.surroundContents(el);
-sel.setStart(sc,so);
-sel.setEnd(ec,eo);
+sel.selectNodeContents(el);
+sel.collapse(false);
+}
+else {
+var tagName = el.tagName.toLowerCase();
+if (['td', 'th'] .indexOf(tagName) >=0) { this.tabKey(); return false; }
+else if (tagName=='caption') return false;
 }
 if (!sel.collapsed) {
 sel.deleteContents();
 sel.collapse(false);
 }
-el.normalize2();
-if (sel.commonAncestorContainer.nodeType==3 && sel.endOffset<sel.endContainer.length) {
-var node = sel.endContainer;
-textNode = node.splitText(sel.endOffset);
-node.parentNode.removeChild(textNode);
-if (node.length<=0) node.parentNode.removeChild(node);
+if (el.lastChild) {
+sel.setStart(sel.startContainer, sel.startOffset);
+sel.setEndAfter(el.lastChild);
+followFrag = sel.extractContents();
 }
-if (!el.hasChildNodes()) this.enterKeyOnEmptyParagraph(sel, el, textNode);
-else this.enterKeyOnNonEmptyParagraph(sel, el, textNode);
+el.normalize();
+el.normalize2();
+if (!el.hasChildNodes()) {
+if (followFrag&&followFrag.childNodes.length>0) this.enterKeyAtBeginningOfParagraph(sel, el, followFrag);
+else this.enterKeyOnEmptyParagraph(sel, el, followFrag);
+}
+else this.enterKeyOnNonEmptyParagraph(sel, el, followFrag);
 return false;
 }
 
@@ -346,9 +369,10 @@ var romanNumbers = [null, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix'
 return romanNumbers.indexOf(s.toLowerCase());
 }
 
-function RTZ_enterKeyOnNonEmptyParagraph (sel, el, textNode) {
-var match, ok, tgn=el.tagName.toLowerCase();
+function RTZ_enterKeyOnNonEmptyParagraph (sel, el, followFrag) {
+var match, ok, firstTextNode, tgn=el.tagName.toLowerCase();
 ok = tgn!='caption' && tgn!='td' && tgn!='th';
+firstTextNode = (followFrag&&followFrag.firstChild? followFrag.getFirstTextNode() : null);
 if (ok && (match = el.textContent.match(/^(\d+|[a-zA-Z]{1,4})[.)]\s/))) {
 sel.selectNodeContents(el);
 var text = sel.extractContents();
@@ -361,14 +385,14 @@ var start = RTZ_listDetectStart(match[1], type);
 ol.setAttribute('start', start);
 ol.setAttribute('type', type);
 li = ol.appendElement('li');
-if (textNode) li.appendChild(textNode);
+if (followFrag) li.appendChild(followFrag);
 if (el.nodeName.toLowerCase()=='li') el.appendChild(ol);
 else {
 el.parentNode.insertBefore(ol, el);
 el.parentNode.removeChild(el);
 }
 sel.selectNodeContents(li);
-sel.collapse(false);
+sel.collapse(true);
 this.select(sel);
 return;
 }
@@ -380,14 +404,14 @@ var ul = document.createElement('ul');
 var li = ul.appendElement('li');
 li.appendChild(text);
 li = ul.appendElement('li');
-if (textNode) li.appendChild(textNode);
+if (followFrag) li.appendChild(followFrag);
 if (el.nodeName.toLowerCase()=='li') el.appendChild(ul);
 else {
 el.parentNode.insertBefore(ul, el);
 el.parentNode.removeChild(el);
 }
 sel.selectNodeContents(li);
-sel.collapse(false);
+sel.collapse(true);
 this.select(sel);
 return;
 }
@@ -396,20 +420,21 @@ else if (tgn=='dt') tgn='dd';
 else if (/^h[1-6]$/ .test(tgn)) tgn='p';
 var newEl = document.createElement(tgn);
 el.parentNode.insertBefore(newEl, el.nextSibling);
-if (textNode) newEl.appendChild(textNode);
-sel.selectNodeContents(textNode? textNode : newEl);
+if (followFrag) newEl.appendChild(followFrag);
+sel.selectNodeContents(firstTextNode? firstTextNode : newEl);
 sel.collapse(true);
 this.select(sel);
 return false;
 }
 
-function RTZ_enterKeyOnEmptyParagraph (sel, el, textNode) {
+function RTZ_enterKeyOnEmptyParagraph (sel, el, followFrag) {
 var parent = el.parentNode;
 var tgn = 'p';
+var firstTextNode = (followFrag&&followFrag.firstChild? followFrag.getFirstTextNode() : null);
 if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='li') tgn='li';
 else if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='dd') tgn='dt';
 var newEl = document.createElement(tgn);
-if (textNode) newEl.appendChild(textNode);
+if (followFrag) newEl.appendChild(followFrag);
 if (parent==this.zone) parent.replaceChild(newEl, el);
 else {
 parent.removeChild(el);
@@ -417,7 +442,18 @@ var parentTgn = (parent.parentNode? parent.parentNode.tagName.toLowerCase() : '#
 if (parentTgn=='li' || parentTgn=='dd') parent = parent.parentNode;
 parent.parentNode.insertBefore(newEl, parent.nextSibling);
 }
-sel.selectNodeContents(textNode? textNode : newEl);
+sel.selectNodeContents(firstTextNode? firstTextNode : newEl);
+sel.collapse(true);
+this.select(sel);
+return false;
+}
+
+function RTZ_enterKeyAtBeginningOfParagraph (sel, el, followFrag) {
+var newEl = document.createElement(el.tagName);
+var firstTextNode = followFrag&&followFrag.firstChild? followFrag.getFirstTextNode() : null;
+el.parentNode.insertBefore(newEl, el);
+if (followFrag) el.appendChild(followFrag);
+sel.selectNodeContents(firstTextNode? firstTextNode : el);
 sel.collapse(true);
 this.select(sel);
 return false;
@@ -478,11 +514,11 @@ node = node.parentNode;
 
 if (same) { // We are already within a tag of the same type
 if (justCheck) return false;
-if (sel.collapsed && sel.commonAncestorContainer.nodeType==3 && sel.endOffset==sel.commonAncestorContainer.nodeValue.length) { // Are we exactly at the end of the element ? In this case we would perhaps like to continue writing without the attribute, not remove it
+if (sel.collapsed && sel.commonAncestorContainer.nodeType==3 && sel.endOffset==sel.commonAncestorContainer.nodeValue.length) { // Are we exactly at the end of the element ? In this case we would very probably like to continue writing without the bold/italic/etc attribute, not remove it
 sel.setEndAfter(same);
 sel.collapse(false);
 this.select(sel);
-} else {
+} else { // In other case, assume that we want to remove the bold/italic/etc attribute completely
 sel.selectNodeContents(same);
 var extracted = sel.extractContents	();
 same.parentNode.replaceChild(extracted, same);
@@ -496,8 +532,8 @@ node = document.createElement(tagName);
 if (attrs) for (var i in attrs) node.setAttribute(i, attrs[i]);
 try {
 sel.surroundContents(node);
-} catch(e) { alert('failed'); return; }
-if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  var ex = sel.extractContents();  o.parentNode.replaceChild(ex, o);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection
+} catch(e) { alert('Inline formatting failed'); return; }
+if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  var ex = sel.extractContents();  o.parentNode.replaceChild(ex, o);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection; this can happen for example when requesting <b> for a selection like a[b<b>c</b>d<b>e</b>f]g
 sel.selectNodeContents(node);
 this.select(sel);
 }
@@ -547,11 +583,9 @@ var collapsed = sel.collapsed;
 var node = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 if (!node && sel.commonAncestorContainer && sel.commonAncestorContainer.parentNode==this.zone) {
 node = document.createElement('p');
-var sc = sel.startContainer, so = sel.startOffset, ec = sel.endContainer, eo = sel.endOffset;
 sel.selectNodeContents(sel.commonAncestorContainer);
 sel.surroundContents(node);
-sel.setStart(sc,so);
-sel.setEnd(ec,eo);
+sel.selectNodeContents(node);
 }
 if (!node) return;
 if (!node.isInside(this.zone)) return;
@@ -630,7 +664,7 @@ var node = document.createElement(tagName);
 if (attrs) for (var i in attrs) node.setAttribute(i, attrs[i]);
 try {
 sel.surroundContents(node);
-} catch(e) { alert('Failed!'); return; }
+} catch(e) { alert('Superblock formatting failed'); return; }
 if (!wasCollapsed) sel.selectNodeContents(node);
 else {
 sel.setStart(realStartNode, realStartOffset);
@@ -915,7 +949,7 @@ ajax('POST', url, 'content='+encodeURIComponent(data), function(e){
 var div = document.getElementById('debug3');
 if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
 div.innerHTML = e;
-}, function(){alert('failed');});
+}, function(){alert('Save failed');});
 };
 
 function RTZ_toString () {
@@ -928,6 +962,18 @@ code = code.replace(/>\s*</g, '>\r\n<');
 code = code.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('\r\n').join('<br />');
 code = code.replace(/^\s+/m, '').replace(/\s+$/m, '');
 this.htmlCodePreview.innerHTML = code;
+}
+
+function RTZ_keyCodeToString (k) {
+var mods = [];
+if (k&vk.ctrl) mods.push(msgs.Ctrl);
+if (k&vk.shift) mods.push(msgs.Shift);
+if (k&vk.alt) mods.push(msgs.Alt);
+k&=0x7F;
+if (k>=65 && k<=90) k = String.fromCharCode(k);
+else if (k>=48 && k<=57) k -= 48;
+mods.push(k);
+return mods.join('+');
 }
 
 function RTZ_getSelection () {
@@ -960,4 +1006,4 @@ if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
 });
 
-//alert('RTZ loaded');
+//alert('RTZ13 loaded');
