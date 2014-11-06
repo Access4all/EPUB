@@ -28,6 +28,8 @@ this.superBlockFormat = RTZ_superBlockFormat;
 this.formatAsList = RTZ_formatAsList;
 this.formatAsLink = RTZ_formatAsLink;
 this.formatAsCodeListing = RTZ_formatAsCodeListing;
+this.removeFormatting = RTZ_removeFormatting;
+this.insertElement = RTZ_insertElement;
 this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
 this.insertTable = RTZ_insertTable;
@@ -45,6 +47,7 @@ this.enterKeyAtBeginningOfParagraph = RTZ_enterKeyAtBeginningOfParagraph;
 this.tabKey = RTZ_tabKey;
 this.shiftTabKey = RTZ_shiftTabKey;
 this.cleanHTML = RTZ_cleanHTML;
+this.cleanHTMLElement = RTZ_cleanHTMLElement;
 this.init = RTZ_init;
 this.loadStyles = RTZ_loadStyles;
 this.toString = RTZ_toString;
@@ -58,7 +61,7 @@ copy: vk.ctrl+vk.c,
 paste: vk.ctrl+vk.v,
 cut: vk.ctrl+vk.x,
 save: vk.ctrl+vk.s,
-preview: vk.impossible+vk.f9,
+preview: vk.impossible +1,
 link: vk.ctrl+vk.k,
 bold: vk.ctrl+vk.b,
 italic: vk.ctrl+vk.i,
@@ -86,6 +89,7 @@ insertBox: vk.ctrl+vk.shift+vk.a,
 insertIcon: vk.ctrl+vk.shift+vk.i,
 insertIllustration: vk.ctrl+vk.shift+vk.g,
 insertTable: vk.ctrl+vk.shift+vk.t,
+cleanHTML: vk.f9,
 };
 }
 
@@ -95,6 +99,7 @@ this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerC
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 if (this.toolbar) {
+setInterval(RTZ_selectionTimer.bind(this), 50);
 this.toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action');
 o.onclick = RTZ_toolbarButtonClick.bind(_this, action); 
@@ -209,7 +214,7 @@ case vk.shift+vk.tab:
 if (this.shiftTabKey()) return true;
 else break;
 case keys.regular:
-this.simpleBlockFormat('p');
+this.removeFormatting();
 break;
 case keys.h1alt:
 case keys.h2alt:
@@ -288,6 +293,9 @@ break;
 case keys.preview:
 this.openPreview();
 break;
+case keys.cleanHTML:
+this.cleanHTML();
+break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
 sel.selectNode( this.zone.getFirstTextNode() );
@@ -336,6 +344,7 @@ else {
 var tagName = el.tagName.toLowerCase();
 if (['td', 'th'] .indexOf(tagName) >=0) { this.tabKey(); return false; }
 else if (tagName=='caption') return false;
+else if (tagName=='pre') return this.insertElement('br');
 }
 if (!sel.collapsed) {
 sel.deleteContents();
@@ -419,8 +428,9 @@ if (tgn=='dd') tgn='dt';
 else if (tgn=='dt') tgn='dd';
 else if (/^h[1-6]$/ .test(tgn)) tgn='p';
 var newEl = document.createElement(tgn);
-el.parentNode.insertBefore(newEl, el.nextSibling);
+el.parentNode.insertBefore(newEl, el.nextElementSibling);
 if (followFrag) newEl.appendChild(followFrag);
+if (firstTextNode&&firstTextNode.length==0) firstTextNode.appendData('\u00A0');
 sel.selectNodeContents(firstTextNode? firstTextNode : newEl);
 sel.collapse(true);
 this.select(sel);
@@ -450,6 +460,7 @@ return false;
 
 function RTZ_enterKeyAtBeginningOfParagraph (sel, el, followFrag) {
 var newEl = document.createElement(el.tagName);
+newEl.appendText('\u00A0'); // stupid firefox ! IF we don't add this unbreakable space, the paragraph is unreachable with the cursor
 var firstTextNode = followFrag&&followFrag.firstChild? followFrag.getFirstTextNode() : null;
 el.parentNode.insertBefore(newEl, el);
 if (followFrag) el.appendChild(followFrag);
@@ -559,6 +570,7 @@ var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p']);
 var endNode = sel.endContainer.findAncestor(['p']);
+if (!startNode || !endNode) return;
 sel.setStartBefore(startNode);
 sel.setEndAfter(endNode);
 if (startNode.tagName!=endNode.tagName) return;
@@ -672,6 +684,96 @@ sel.setEnd(realEndNode, realEndOffset);
 sel.collapse(false);
 }
 this.select(sel);
+}
+
+function RTZ_removeFormatting () {
+if (this.inlineOnly) return false;
+var sel = this.getSelection();
+var startNode = sel.startContainer.findAncestor(['p', 'li', 'dd', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre']);
+var endNode = sel.endContainer.findAncestor(['p', 'li', 'dd', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre']);
+var startTag = startNode.tagName.toLowerCase(), endTag = endNode.tagName.toLowerCase();
+if ((startTag=='dd' || startTag=='dt') && endTag!='dd' && endTag!='dt') return false;
+else if (startTag!='dd' && startTag!='dt' && startTag!=endTag) return false;
+if (startNode==endNode && ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(startTag)>=0) return this.simpleBlockFormat('p'); // An heading is selected: simply reset it to <p>
+sel.setStartBefore(startNode);
+sel.setEndAfter(endNode);
+if (startNode.parentNode.firstElementChild==startNode && ['li', 'dd', 'dt'].indexOf(startTag)>=0) { // The first few items of a list are selected, put them out of the list
+var parent = startNode.parentNode, grandParent = parent.parentNode, grandParentTag = grandParent.tagName.toLowerCase();
+var frag = sel.extractContents();
+if (grandParentTag!='li') frag.eachChild(function(li){
+if (!li.tagName || ['li', 'dd', 'dt'].indexOf(li.tagName.toLowerCase())<0) return;
+sel.selectNodeContents(li);
+var frag2 = sel.extractContents();
+var p = document.createElement('p');
+p.appendChild(frag2);
+li.parentNode.insertBefore(p,li);
+li.parentNode.removeChild(li);
+});//each fragment child
+else { parent=grandParent; grandParent = grandParent.parentNode; }
+var fs = frag.firstChild, ls = frag.lastChild;
+grandParent.insertBefore(frag, parent);
+this.cleanHTMLElement(sel,parent);
+try {
+sel.setStartBefore(fs);
+sel.setEndAfter(ls);
+this.select(sel);
+} catch(e){}//Just in case the elements aren't any longer in the document
+}
+else if (endNode.parentNode.lastElementChild==endNode && ['li', 'dd', 'dt'].indexOf(startTag)>=0) { // The last few items of a list are selected: put them out of the list
+var parent = startNode.parentNode, grandParent = parent.parentNode, grandParentTag = grandParent.tagName.toLowerCase();
+var frag = sel.extractContents();
+if (grandParentTag!='li') frag.eachChild(function(li){
+if (!li.tagName || ['li', 'dd', 'dt'].indexOf(li.tagName.toLowerCase())<0) return;
+sel.selectNodeContents(li);
+var frag2 = sel.extractContents();
+var p = document.createElement('p');
+p.appendChild(frag2);
+li.parentNode.insertBefore(p,li);
+li.parentNode.removeChild(li);
+});//each fragment child
+else { parent=grandParent; grandParent = grandParent.parentNode; }
+var fs = frag.firstChild, ls = frag.lastChild;
+grandParent.insertBefore(frag, parent.nextElementSibling);
+this.cleanHTMLElement(sel,parent);
+try {
+sel.setStartBefore(fs);
+sel.setEndAfter(ls);
+this.select(sel);
+} catch(e){}//Just in case the elements aren't any longer in the document
+}
+else if (['li', 'dd', 'dt'].indexOf(startTag)>=0) { // A few items in the middle of a list are selected: let's assume that we want to remove the whole list
+var lst = startNode.parentNode;
+sel.setStartBefore(lst.firstChild.firstChild);
+sel.setEndAfter(lst.lastChild.lastChild);
+this.select(sel);
+this.removeFormatting(); // This will fall in one of the two above cases
+}
+else if (startTag=='pre') { // Code block: make it simple, assume we want to remove the entire block
+var node = startNode;
+if (startNode.firstElementChild && startNode.firstElementChild.tagName.toLowerCase()=='code') node = startNode.firstElementChild;
+var frag = document.createDocumentFragment(), p = frag.appendElement('p');
+node.eachChild(true, function(el){
+if (el.tagName && el.tagName.toLowerCase()=='br') p = frag.insertElementBefore('p', frag.firstChild); 
+else p.insertBefore(el, p.firstChild);
+});//each pre/code child
+var fs = frag.firstChild, ls = frag.lastChild;
+startNode.parentNode.insertBefore(frag, startNode);
+startNode.parentNode.removeChild(startNode);
+sel.setStartBefore(fs);
+sel.setEndAfter(ls);
+this.select(sel);
+}
+// other cases
+}
+
+function RTZ_insertElement (tagName, attrs) {
+var sel = this.getSelection();
+var node = document.createElement2(tagName, attrs);
+sel.insertNode(node);
+sel.setStartAfter(node);
+sel.setEndAfter(node);
+this.select(sel);
+return false;
 }
 
 function RTZ_insertIcon (url, alt) {
@@ -809,15 +911,14 @@ window.open(href);
 if (this.onsave) this.onsave();
 }
 
-function RTZ_cleanHTML (sel, o) {
+function RTZ_cleanHTML () {
 if (this.inlineOnly) return;
-if (!sel||!o){
-var cursel = this.getSelection();
+var cursel = this.getSelection() || document.createRange();
 var startNode = cursel.startContainer, endNode = cursel.endContainer, startOf = cursel.startOffset, endOf = cursel.endOffset;
 var sel = document.createRange();
 sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
-this.cleanHTML(sel, frag);
+this.cleanHTMLElement(sel, frag);
 cleanHTML2(sel, frag);
 frag.querySelectorAll('div, aside, section, figure').each(cleanHTML2.bind(this, sel));
 this.zone.appendChild(frag);
@@ -826,8 +927,9 @@ cursel.setStart(startNode, startOf);
 cursel.setEnd(endNode, endOf);
 this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
-return;
 }
+
+function RTZ_cleanHTMLElement (sel, o) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
@@ -839,8 +941,9 @@ img:['src', 'width', 'height', 'alt'],
 ol:['type', 'start'],
 };
 var remove = false, rename=null, surround=null;
-if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return;
-if (o.nodeType==11) {
+if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return; // Ignored type of element: don't go further
+if (o.nodeType==11) { // document fragment
+// Look for blocks incorrectly present within <p>; this can happen when pasting 
 var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, figure');
 for (var i=0; i<blocks.length; i++) {
 var block = blocks[i];
@@ -852,8 +955,10 @@ var extracted = sel3.extractContents();
 p.parentNode.insertBefore(extracted, p);
 p.parentNode.removeChild(p);
 }}
+// Normalize and clean children
 if (o.normalize) o.normalize();
-if (o.childNodes) for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTML(sel, o.childNodes[i]);
+if (o.childNodes) for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTMLElement(sel, o.childNodes[i]);
+// Clean attributes
 if (o.attributes) for (var i=o.attributes.length -1; i>=0; i--) {
 var removeA=true, attr = o.attributes[i], nodeName = o.nodeName.toLowerCase();
 if (attr.name.startsWith('data-')) continue;
@@ -874,22 +979,24 @@ if (!attr.value || attr.value.length<=0) removeA=true;
 if (removeA) o.removeAttributeNode(attr);
 }
 switch(o.nodeType) {
-case 3:
-if (o.nodeValue.trim().length==0) remove=6;
-if (o.parentNode.nodeType==11) surround='p';
-if (o.parentNode.nodeType==1 && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p';
+case 3: // textnode
+if (o.nodeValue.trim().length==0) remove=6; // empty or entirely composed of spaces
+if (o.parentNode.nodeType==11) surround='p'; // Text node directly within the fragment or a node which should normally not contain direct text children; probably not correct, should be surrounded by <p>
+if (o.parentNode.nodeType==1 && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
 break;
-case 1: {
+case 1: { // Normal element
 var nodeName = o.nodeName.toLowerCase();
-if (allowedElements.indexOf(nodeName)<0) remove=5;
-if (!o.hasChildNodes() && allowedEmptyElements.indexOf(nodeName)<0) remove=4;
-if ((!o.attributes || o.attributes.length<=0) && (nodeName=='div' || nodeName=='span')) remove=3;
-if (nodeName=='p' && ['p', 'td', 'th', 'li', 'dt', 'dd', 'caption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) remove=2;
-if (nodeName=='i') rename='em';
+if (allowedElements.indexOf(nodeName)<0) remove=5; // element not explicitely allowed: remove but keep children
+if (!o.hasChildNodes() && allowedEmptyElements.indexOf(nodeName)<0) remove=4; // Empty element which isn't permitted to be: remove
+if ((!o.attributes || o.attributes.length<=0) && (nodeName=='div' || nodeName=='span')) remove=3; // a div or span without any attribute is meaningless: remove
+if (nodeName=='p' && ['p', 'td', 'th', 'li', 'dt', 'dd', 'caption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) remove=2; // p isn't strictly disallowed within elements listed, but it isn't good semantic: remove but keep children
+if (nodeName=='br' && o.parentNode.firstElementChild==o) remove = 7; // <br> as a first child is useless: remove
+if (nodeName=='br' && o.parentNode.lastElementChild==o) remove = 8; // <br> as a last child is useless: remove
+if (nodeName=='i') rename='em'; 
 else if (nodeName=='b') rename='strong';
 }break;
 case 11: break;
-default: remove=1; break;
+default: remove=1; break; // Any other bizarre XML element
 }
 if (remove && o.hasChildNodes()) {
 sel.selectNodeContents(o);
@@ -976,10 +1083,20 @@ mods.push(k);
 return mods.join('+');
 }
 
+function RTZ_selectionTimer () {
+var sel = this.getSelection();
+if (!this.lastSelection || this.lastSelection.so!=sel.startOffset || this.lastSelection.eo!=sel.endOffset || this.lastSelection.sc!=sel.startContainer || this.lastSelection.ec!=sel.endContainer) {
+this.lastSelection = {sc:sel.startContainer, so:sel.startOffset, ec:sel.endContainer, eo:sel.endOffset};
+this.lastSelectionIdentifier = this.lastSelectionIdentifier? this.lastSelectionIdentifier+1 : 1;
+if (sel.commonAncestorContainer.isInside(this.zone) && this.onselchanged) this.onselchanged(sel, this.lastSelectionIdentifier);
+}
+}
+
 function RTZ_getSelection () {
 var selectionObject = window.getSelection();
-if (selectionObject.getRangeAt)
-		return selectionObject.getRangeAt(0);
+if (selectionObject.getRangeAt) try {
+return selectionObject.getRangeAt(0);
+} catch(exc){ return null; }
 	else { // Safari!
 		var range = document.createRange();
 		range.setStart(selectionObject.anchorNode,selectionObject.anchorOffset);

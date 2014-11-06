@@ -22,6 +22,7 @@ exit();
 }
 ob_end_clean();
 header("Content-Type: $contentType");
+header('Content-Disposition: attachment; filename="' .basename($fileName) .'"');
 readfile($fileName);
 exit();
 }

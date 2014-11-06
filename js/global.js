@@ -159,16 +159,23 @@ if (attrs) for (var i in attrs) e.setAttribute(i, attrs[i]);
 return e;
 }
 
-Element.prototype.appendElement = function (tagName, attrs) {
+Node.prototype.appendElement = function (tagName, attrs) {
 var o = this.ownerDocument.createElement(tagName);
 if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
 this.appendChild(o);
 return o;
 }
 
-Element.prototype.appendText = function (str) {
+Node.prototype.appendText = function (str) {
 this.appendChild(this.ownerDocument.createTextNode(str));
 return this;
+}
+
+Node.prototype.insertElementBefore = function (tagName, ref, attrs) {
+var o = this.ownerDocument.createElement(tagName);
+if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
+this.insertBefore(o,ref);
+return o;
 }
 
 Node.prototype.isAfter = function(x) { return 0!=(this.compareDocumentPosition(x)&2); };
@@ -197,6 +204,19 @@ this.parentNode.removeChild(adjacent);
 }
 for (var i=this.childNodes.length -1; i>=0; i--) this.childNodes[i].normalize2();
 };
+
+Node.prototype.eachChild = function () {
+var k=0, f = arguments[k], args = [], reverse=false, start=0, end=this.childNodes.length, step=1;
+if (typeof(f)=='boolean') { reverse=f; f=arguments[++k]; }
+for (var i=1+k; i<arguments.length; i++) args.push(arguments[i]);
+if (reverse) { start=this.childNodes.length -1; end=-1; step=-1; }
+for (var i=start; i!=end; i+=step) {
+args.unshift(i);
+args.unshift(this.childNodes[i]);
+f.apply(null, args);
+args.shift();
+args.shift();
+}}
 
 if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector;
 
