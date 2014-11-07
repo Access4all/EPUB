@@ -205,7 +205,9 @@ if (result===true || result===false) return result;
 }
 switch(k){
 case vk.enter:
+//try {
 this.enterKey();
+//} catch(e){ alert(e.message); }
 break;
 case vk.tab :
 if (this.tabKey()) return true;
@@ -358,6 +360,7 @@ followFrag = sel.extractContents();
 el.normalize();
 el.normalize2();
 if (!el.hasChildNodes()) {
+if (followFrag) this.cleanHTMLElement(sel, followFrag, true); // Required for firefox and chrome, which add useless <br> and/or empty text nodes all the time
 if (followFrag&&followFrag.childNodes.length>0) this.enterKeyAtBeginningOfParagraph(sel, el, followFrag);
 else this.enterKeyOnEmptyParagraph(sel, el, followFrag);
 }
@@ -430,7 +433,7 @@ else if (/^h[1-6]$/ .test(tgn)) tgn='p';
 var newEl = document.createElement(tgn);
 el.parentNode.insertBefore(newEl, el.nextElementSibling);
 if (followFrag) newEl.appendChild(followFrag);
-if (firstTextNode&&firstTextNode.length==0) firstTextNode.appendData('\u00A0');
+if (firstTextNode&&firstTextNode.length==0) firstTextNode.appendData('\u00A0'); // Chrome: we need to avoid 0-length text nodes, otherwise the text node can no longer be reached with the cursor, and it is incorrectly positionned on the next paragraph
 sel.selectNodeContents(firstTextNode? firstTextNode : newEl);
 sel.collapse(true);
 this.select(sel);
@@ -445,6 +448,7 @@ if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='li') tgn='li'
 else if (parent.parentNode && parent.parentNode.tagName.toLowerCase()=='dd') tgn='dt';
 var newEl = document.createElement(tgn);
 if (followFrag) newEl.appendChild(followFrag);
+newEl.appendText('\u00A0'); // Chrome: IF we don't add this unbreakable space, the cursor is always incorrectly positionned at beginning of next paragraph
 if (parent==this.zone) parent.replaceChild(newEl, el);
 else {
 parent.removeChild(el);
@@ -460,7 +464,7 @@ return false;
 
 function RTZ_enterKeyAtBeginningOfParagraph (sel, el, followFrag) {
 var newEl = document.createElement(el.tagName);
-newEl.appendText('\u00A0'); // stupid firefox ! IF we don't add this unbreakable space, the paragraph is unreachable with the cursor
+newEl.appendText('\u00A0'); // firefox: IF we don't add this unbreakable space, the paragraph is unreachable with the cursor
 var firstTextNode = followFrag&&followFrag.firstChild? followFrag.getFirstTextNode() : null;
 el.parentNode.insertBefore(newEl, el);
 if (followFrag) el.appendChild(followFrag);
@@ -617,6 +621,7 @@ if (this.inlineOnly) return false;
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p', 'li']);
+if (!startNode) return false;
 var endNode = sel.endContainer.findAncestor(['p', 'li']);
 sel.setStartBefore(startNode);
 sel.setEndAfter(endNode);
@@ -929,7 +934,7 @@ this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
 }
 
-function RTZ_cleanHTMLElement (sel, o) {
+function RTZ_cleanHTMLElement (sel, o, inlineContext) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
@@ -942,8 +947,8 @@ ol:['type', 'start'],
 };
 var remove = false, rename=null, surround=null;
 if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return; // Ignored type of element: don't go further
-if (o.nodeType==11) { // document fragment
-// Look for blocks incorrectly present within <p>; this can happen when pasting 
+if (o.nodeType==11 && !inlineContext) { // document fragment
+// Look for blocks incorrectly present within a big <p>; this can happen when pasting 
 var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, figure');
 for (var i=0; i<blocks.length; i++) {
 var block = blocks[i];
@@ -957,7 +962,7 @@ p.parentNode.removeChild(p);
 }}
 // Normalize and clean children
 if (o.normalize) o.normalize();
-if (o.childNodes) for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTMLElement(sel, o.childNodes[i]);
+if (o.childNodes) for (var i=o.childNodes.length -1; i>=0; i--) this.cleanHTMLElement(sel, o.childNodes[i], inlineContext);
 // Clean attributes
 if (o.attributes) for (var i=o.attributes.length -1; i>=0; i--) {
 var removeA=true, attr = o.attributes[i], nodeName = o.nodeName.toLowerCase();
@@ -980,9 +985,9 @@ if (removeA) o.removeAttributeNode(attr);
 }
 switch(o.nodeType) {
 case 3: // textnode
-if (o.nodeValue.trim().length==0) remove=6; // empty or entirely composed of spaces
-if (o.parentNode.nodeType==11) surround='p'; // Text node directly within the fragment or a node which should normally not contain direct text children; probably not correct, should be surrounded by <p>
-if (o.parentNode.nodeType==1 && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
+if (o.nodeValue.trim().length==0) remove=6; // empty or entirely composed of spaces: useless, so remove
+if (o.parentNode.nodeType==11 && !inlineContext) surround='p'; // Text node directly within the fragment or a node which should normally not contain direct text children; probably not correct, should be surrounded by <p> if we are in block context
+if (o.parentNode.nodeType==1 && !inlineContext && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
 break;
 case 1: { // Normal element
 var nodeName = o.nodeName.toLowerCase();
@@ -1065,7 +1070,7 @@ return "RTZ"+JSON.stringify(this);
 
 function RTZ_debug_updateHTMLPreview () {
 var code = this.zone.innerHTML;
-code = code.replace(/>\s*</g, '>\r\n<');
+code = code.replace(/>[ \r\n\t]*</g, '>\r\n<');
 code = code.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('\r\n').join('<br />');
 code = code.replace(/^\s+/m, '').replace(/\s+$/m, '');
 this.htmlCodePreview.innerHTML = code;
