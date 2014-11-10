@@ -25,6 +25,7 @@ InsertBox=Make a box
 IBoxType=Box type
 IBoxPosition=Position
 Link=Link
+NoList=Regular
 OrderedList=Numbered list
 UnorderedList=Bulleted list
 DefinitionList=Definition list

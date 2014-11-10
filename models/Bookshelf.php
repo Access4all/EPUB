@@ -9,6 +9,10 @@ return $db->query('select * from Books')
 ->fetchAll(PDO::FETCH_CLASS, 'Book');
 }
 
+static function getInstance () {
+return new Bookshelf();
+}
+
 function getBookById ($id) {
 global $db;
 $re = $db->query('select * from Books where id = %d', floor($id));
@@ -24,6 +28,11 @@ $db->exec('delete from Books where id = %d', floor($b->id));
 return true;
 }
 else return false;
+}
+
+function updateBook ($b) {
+global $db;
+$db->exec('update Books set title = %s, authors = %s where name = %s', $b->getTitle(), $b->getAuthors(), $b->name);
 }
 
 function addBook ($b) {

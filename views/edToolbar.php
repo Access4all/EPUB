@@ -28,6 +28,7 @@ echo <<<END
 <label for="listsDropDown"><img src="$root/images/24px/list.png" alt=""><span class="hidden">{$t('ListsDropDown')}</span></label>
 <select id="listsDropDown">
 <option value="nothing">{$t('ListsDropDown')}</option>
+<option value="regular">{$t('NoList')}</option>
 <option value="orderedList">{$t('OrderedList')}</option>
 <option value="unorderedList">{$t('UnorderedList')}</option>
 <option value="definitionList">{$t('DefinitionList')}</option>

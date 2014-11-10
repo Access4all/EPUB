@@ -150,6 +150,14 @@ ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else 
 return false;
 }
 
+function FileTree_deleteDialog  (link) {
+var src = link.href.substring(window.rootUrl.length);
+var url = window.rootUrl2 + 'deleteFile' + '/?file=' + encodeURIComponent(src);
+MessageBox(msgs.MBDeleteSpineItemT, msgs.MBDeleteSpineItem.replace('%1', src), [msgs.Yes, msgs.No], function(btnIndex){
+if (btnIndex==0) ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!');});
+});//MessageBox
+}
+
 function FileTree_expandLinkClick () {
 var ul = this.parentNode.querySelector('ul,ol');
 ul.style.display = (ul.style.display=='block'? 'none' : 'block');
@@ -159,7 +167,7 @@ this.firstChild.nodeValue = (ul.style.display=='block'? '-' : '+');
 function FileTree_CtxMenuItemList_file (items, link) {
 items.merge([
 msgs.Rename, FileTree_RenameDialog.bind(null, link),
-msgs.Delete, null,
+msgs.Delete, FileTree_deleteDialog.bind(null,link),
 ]);//
 if (window.tmpMoveName) items.merge([
 msgs.MoveHere.replace('%1', window.tmpMoveName), FileTree_SpineMove.bind(null, link, 'moveFile'),
@@ -188,6 +196,9 @@ msgs.MoveAfter.replace('%1', window.tmpMoveName).replace('%2', link.innerHTML), 
 ]);//
 else items.merge([
 msgs.Move, FileTree_MoveInitiate.bind(null,link),
+]);//
+items.merge([
+msgs.Delete, FileTree_deleteDialog.bind(null,link), 
 ]);//
 //suite
 }

@@ -11,7 +11,7 @@ END;
 if ($p->mediaType=='application/xhtml+xml') {
 echo <<<END
 <p><label for="title">{$t('PageTitle')}: </label>
-<input type="text" id=2title" name="title" value="{$h($p->getTitle())}" /></p>
+<input type="text" id="title" name="title" value="{$h($p->getTitle())}" required="required" aria-required="true" /></p>
 <p><label for="language">{$t('Language')}:</label>
 <input type="text" id="language" name="language" value="{$h($p->getLanguage())}" /></p>
 END;

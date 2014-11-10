@@ -7,7 +7,7 @@ echo <<<END
 <form action="" method="post">
 <h2>{$t('General')}</h2>
 <p><label for="title">{$t('PageTitle')}: </label>
-<input type="text" id=2title" name="title" value="{$h(@$_POST['title'])}" /></p>
+<input type="text" id="title" name="title" value="{$h(@$_POST['title'])}" required="required" aria-required="true" /></p>
 <p><label for="filename">{$t('FileName')}: </label>
 <input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>

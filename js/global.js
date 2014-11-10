@@ -102,7 +102,15 @@ return this.indexOfIgnoreCase(str)==0;
 }
 
 String.prototype.trim = function () {
-return this.replace(/^(?:\s|[\r\n\u00A0])*/,'').replace(/(?:\s|[\r\n\u00A0])*$/,'');
+return this.ltrim().rtrim();
+}
+
+String.prototype.ltrim = function () {
+return this.replace(/^(?:\s|[\r\n\u00A0])*/gm,'');
+}
+
+String.prototype.rtrim = function () {
+return this.replace(/(?:\s|[\r\n\u00A0])*$/mg,'');
 }
 
 String.prototype.splitn = function (sep, lim) {

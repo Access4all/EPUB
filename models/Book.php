@@ -74,6 +74,10 @@ if (is_file($fn)) return @unlink($fn);
 return false;
 }
 
+function isExtracted () {
+return $this->getFileSystem() ->isExtracted();
+}
+
 function extract () {
 $fs = $this->getFileSystem();
 if ($fs->isExtracted()) return;
@@ -87,6 +91,7 @@ $this->getFileSystem();
 
 function export ($format) {
 global $booksdir, $root;
+if ($this->getOption('tocNeedRegen', false)) $this->updateTOC();
 if ($format!='epub3') return null;
 $fs = $this->getFileSystem();
 $fn = "$booksdir/{$this->name}.epub";
@@ -201,15 +206,19 @@ return implode(', ', $this->authors);
 }
 
 function updateBookSettings ($info) {
-if (isset($info['title'])) $this->title = trim($info['title']);
+$needBsUpdate=false;
+if (isset($info['title'])) { $this->title = trim($info['title']); $needBsUpdate=true; }
 if (isset($info['identifier'])) $this->identifier = trim($info['identifier']);
 if (isset($info['language'])) $this->language = trim($info['language']);
 if (isset($info['authors'])) {
+$needBsUpdate=true;
 $this->authors = preg_split("/\r\n|\n|\r|\s*[,;]\s*/", $info['authors'], -1, PREG_SPLIT_NO_EMPTY);
 }
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
+$this->setOption('tocNeedRegen', true);
 $this->metadataModified = true;
+if ($needBsUpdate) Bookshelf::getInstance() ->updateBook($this);
 $this->saveOpf();
 $this->saveBO();
 }
@@ -242,6 +251,7 @@ $dir = dirname($this->getOpfFileName());
 $dirlen = 1+strlen($dir);
 $manifest->removeAllChilds();
 foreach($this->itemIdMap as $p){
+if (!$p) continue;
 $href = substr($p->fileName, $dirlen);
 $attrs = array('id'=>$p->id, 'media-type'=>$p->mediaType, 'href'=>$href);
 if (@$p->props) $attrs['properties'] = implode(' ', $p->props);
@@ -412,6 +422,8 @@ if ($modified) $item->saveCloseDoc();
 else $item->closeDoc();
 }
 $navItem->saveCloseDoc();
+$this->setOption('tocNeedRegen', false);
+$this->saveBO();
 }
 
 function updateCssTemplate ($newContents, $dontFilter=false) {
@@ -497,6 +509,24 @@ $this->implMoveFile($it, $newFileName);
 function renameFile ($it, $newName) {
 $newFileName = dirname($it->fileName) .'/' .$newName;
 $this->implMoveFile($it, $newFileName);
+}
+
+public function deleteFile ($it) {
+$this->getItemByFileName(null);
+$this->getItemById(null);
+$this->getSpine();
+$this->itemFileNameMap[$it->fileName] = null;
+$this->itemIdMap[$it->id] = null;
+$this->getFileSystem() ->deleteName( $it->fileName);
+$spineIndex = array_search($it->id, $this->spine);
+if ($spineIndex>=0) {
+array_splice($this->spine, $spineIndex, 1);
+$this->setOption('tocNeedRegen', true);
+$this->saveBO();
+}
+$this->manifestModified = true;
+$this->spineModified = true;
+$this->saveOpf();
 }
 
 private function implMoveFile ($it, $newFileName) {

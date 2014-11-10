@@ -25,6 +25,11 @@ function moveFile ($oldName, $newName) {
 return @rename($this->dir .$oldName, $this->dir .$newName);
 }
 
+function deleteName ($name) {
+$fn = $this->dir .$name;
+return @unlink($fn);
+}
+
 function isExtracted () { return true; }
 function close () {}
 

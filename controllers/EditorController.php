@@ -15,6 +15,8 @@ $p = $b->getItemByFileName($pageName);
 if (!$p) exit404();
 if (empty($_POST['content'])) exit500();
 $p->updateContents($_POST['content']);
+$b->setOption('tocNeedRegen', true);
+$b->saveBO();
 die('saved');
 }
 
@@ -67,6 +69,16 @@ sleep(2); // Wait a bit so that AJAX save has time to finish
 $b->updateTOC();
 header("Location: $root/book/{$b->name}/view/{$p->fileName}");
 exit();
+}
+
+public function deleteFile ($bookName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+if (empty($_GET['file'])) exit404();
+$item = $b->getItemByFileName( $_GET['file'] );
+if (!$item) exit404();
+$b->deleteFile($item);
+die('OK');
 }
 
 public function moveSpineAfter ($bookName) {
@@ -145,7 +157,7 @@ move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
 $b->addNewResource($_POST, $file, $p);
-header("Location:{$_SERVER['REQUEST_URI']}");
+if (empty($_POST['noredir'])) header("Location:{$_SERVER['REQUEST_URI']}");
 die('uploaded');
 }
 else if (isset($_POST['authors'], $_POST['title'])) {

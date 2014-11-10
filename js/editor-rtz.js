@@ -39,6 +39,7 @@ this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
+this.quickUploadDialog = RTZ_quickUploadDialog;
 this.openPreview = RTZ_openPreview;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
@@ -49,6 +50,7 @@ this.shiftTabKey = RTZ_shiftTabKey;
 this.cleanHTML = RTZ_cleanHTML;
 this.cleanHTMLElement = RTZ_cleanHTMLElement;
 this.init = RTZ_init;
+this.onselchanged = RTZ_onSelChanged;
 this.loadStyles = RTZ_loadStyles;
 this.toString = RTZ_toString;
 this.implKeyDown = RTZ_implKeyDown;
@@ -89,6 +91,7 @@ insertBox: vk.ctrl+vk.shift+vk.a,
 insertIcon: vk.ctrl+vk.shift+vk.i,
 insertIllustration: vk.ctrl+vk.shift+vk.g,
 insertTable: vk.ctrl+vk.shift+vk.t,
+quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
 };
 }
@@ -99,7 +102,7 @@ this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerC
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 if (this.toolbar) {
-setInterval(RTZ_selectionTimer.bind(this), 50);
+setInterval(RTZ_selectionTimer.bind(this), 100);
 this.toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action');
 o.onclick = RTZ_toolbarButtonClick.bind(_this, action); 
@@ -198,6 +201,36 @@ if (e.stopPropagation) e.stopPropagation();
 return re;
 }
 
+function RTZ_onSelChanged (sel) {
+var structCb = document.getElementById('structureDropDown');
+var listCb = document.getElementById('listsDropDown');
+var el = sel.commonAncestorContainer;
+if (!el || !listCb || !structCb) return;
+if (el.nodeType==3) el = el.parentNode;
+var structuralAncestor = el.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre']);
+var listAncestor = el.findAncestor(['ul', 'ol', 'dl']);
+if (structuralAncestor) {
+var tgn = structuralAncestor.tagName.toLowerCase();
+switch(tgn) {
+case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6':
+structCb.value = tgn;
+break;
+case 'pre': structCb.value = 'codeListing'; break;
+default: structCb.value = 'regular'; break;
+}}
+else structCb.value = 'regular';
+if (listAncestor) {
+var tgn = listAncestor.tagName.toLowerCase();
+if (tgn=='ul') listCb.value = 'unorderedList';
+else if (tgn=='dl') listCb.value = 'definitionList';
+else if (tgn=='ol') listCb.value = 'orderedList';
+else listCb.value = 'regular';
+var div = document.getElementById('debug3');
+if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
+}
+else listCb.value = 'regular';
+}
+
 function RTZ_implKeyDown (k, simulated) {
 if (this.onkeydown) {
 var result = this.onkeydown(k,simulated);
@@ -294,6 +327,9 @@ if (this.onsave) this.onsave();
 break;
 case keys.preview:
 this.openPreview();
+break;
+case keys.quickUpload:
+this.quickUploadDialog();
 break;
 case keys.cleanHTML:
 this.cleanHTML();
@@ -490,12 +526,12 @@ if (!nextTr || !nextTr.tagName || nextTr.tagName.toLowerCase()!='tr') nextTr=nul
 if (nextTr) nextCell = nextTr.firstElementChild;
 else {
 nextTr = tr.cloneNode(true);
-nextTr.$('td,th').each(function(o){ o.innerHTML=''; });
+nextTr.$('td,th').each(function(o){ o.innerHTML='\u00A0'; }); // Chrome: if the celle is left completely empty, the cursor isn't positionned into it
 tr.parentNode.insertBefore(nextTr, tr.nextSibling);
 nextCell = nextTr.firstElementChild;
 }}
 sel.selectNodeContents(nextCell);
-sel.collapse(false);
+sel.collapse(true);
 this.select(sel);
 return false;
 }
@@ -512,7 +548,7 @@ if (prevTr) prevCell = prevTr.lastElementChild;
 }
 if (!prevCell) return true;
 sel.selectNodeContents(prevCell);
-sel.collapse(false);
+sel.collapse(true);
 this.select(sel);
 return false;
 }
@@ -549,6 +585,7 @@ try {
 sel.surroundContents(node);
 } catch(e) { alert('Inline formatting failed'); return; }
 if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  var ex = sel.extractContents();  o.parentNode.replaceChild(ex, o);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection; this can happen for example when requesting <b> for a selection like a[b<b>c</b>d<b>e</b>f]g
+if (!node.hasChildNodes()) node.appendText('\u00A0'); // Chrome: if the node is empty, the cursor is incorrectly placed after the node instead of inside it.
 sel.selectNodeContents(node);
 this.select(sel);
 }
@@ -824,6 +861,7 @@ var type = 'td';
 if (i==0 && (thScheme=='top' || thScheme=='both')) type='th';
 if (j==0 && (thScheme=='left' || thScheme=='both')) type = 'th';
 var cell = tr.appendElement(type);
+cell.appendText('\u00A0'); // Chrome: if the celle is empty, it's no longer possible to reach it with the cursor
 if (!firstCell) firstCell=cell;
 }}
 table.appendElement('caption').appendText(captionText);
@@ -831,7 +869,7 @@ var sel = this.getSelection();
 var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
 ancestor.parentNode.insertBefore(table, ancestor.nextSibling);
 sel.selectNodeContents(firstCell);
-sel.collapse(false);
+sel.collapse(true);
 this.select(sel);
 }
 
@@ -847,11 +885,12 @@ _this.zone.focus();
 });//DialogBox
 }
 
-function RTZ_insertIconDialog () {
+function RTZ_insertIconDialog (imgUrl) {
+imgUrl = imgUrl || '';
 var sel = this.getSelection();
 var _this = this;
 DialogBox(msgs.InsertIcon, [
-{label:msgs.IconURL, name:'url'},
+{label:msgs.IconURL, name:'url', value:imgUrl},
 {label:msgs.IconAlt, name:'alt'},
 ], function(){ 
 _this.select(sel);
@@ -860,12 +899,13 @@ _this.zone.focus();
 });//DialogBox
 }
 
-function RTZ_insertIllustrationDialog () {
+function RTZ_insertIllustrationDialog (imgUrl) {
 if (this.inlineOnly) return false;
+imgUrl = imgUrl || '';
 var sel = this.getSelection();
 var _this = this;
 DialogBox(msgs.InsertIllu, [
-{label:msgs.IlluURL, name:'url'},
+{label:msgs.IlluURL, name:'url', value:imgUrl},
 {label:msgs.IlluAlt, name:'alt'},
 {label:msgs.IlluStyle, name:'istyle', type:'select', values:this.positionalStyles},
 ], function(){ 
@@ -908,6 +948,14 @@ _this.zone.focus();
 });//Dialog box
 }
 
+function RTZ_quickUploadDialog () {
+DialogBox(msgs.AddFiles, [
+{name:'upload', label:msgs.Upload, type:'file'}
+], function(){
+RTZ_uploadFiles(this.elements.upload.files);
+});//DialogBox
+}
+
 function RTZ_openPreview () {
 var previewBtn = document.getElementById('previewBtn');
 if (!previewBtn || !previewBtn.hasAttribute('data-href')) return;
@@ -936,6 +984,7 @@ this.select(cursel);
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.split(' ');
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
 var allowedAttrs = {
@@ -988,6 +1037,8 @@ case 3: // textnode
 if (o.nodeValue.trim().length==0) remove=6; // empty or entirely composed of spaces: useless, so remove
 if (o.parentNode.nodeType==11 && !inlineContext) surround='p'; // Text node directly within the fragment or a node which should normally not contain direct text children; probably not correct, should be surrounded by <p> if we are in block context
 if (o.parentNode.nodeType==1 && !inlineContext && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
+if (o.parentNode.nodeType==1 && trimableElements.indexOf(o.parentNode.tagName.toLowerCase())>=0 && !o.previousSibling) o.data = o.data.ltrim();
+if (o.parentNode.nodeType==1 && trimableElements.indexOf(o.parentNode.tagName.toLowerCase())>=0 && !o.nextSibling) o.data = o.data.rtrim();
 break;
 case 1: { // Normal element
 var nodeName = o.nodeName.toLowerCase();
@@ -1064,6 +1115,22 @@ div.innerHTML = e;
 }, function(){alert('Save failed');});
 };
 
+function RTZ_uploadFiles (files) {
+if (!files || files.length<=0) return; // empty or upload not supported
+var url = window.location.href;
+var data = new FormData();
+data.append('addfiles', '1');
+data.append('noredir', '1');
+data.append('fileName', '');
+data.append('id', '');
+for (var i=0; i<files.length; i++) data.append('upload', files[i], files[i].name);
+ajax('POST', url, data, function(e){
+var div = document.getElementById('debug3');
+if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
+div.innerHTML = e;
+}, function(){alert('Upload failed');});
+}
+
 function RTZ_toString () {
 return "RTZ"+JSON.stringify(this);
 }
@@ -1071,7 +1138,7 @@ return "RTZ"+JSON.stringify(this);
 function RTZ_debug_updateHTMLPreview () {
 var code = this.zone.innerHTML;
 code = code.replace(/>[ \r\n\t]*</g, '>\r\n<');
-code = code.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('\r\n').join('<br />');
+code = code.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('\r\n|\n|\r').join('<br />');
 code = code.replace(/^\s+/m, '').replace(/\s+$/m, '');
 this.htmlCodePreview.innerHTML = code;
 }

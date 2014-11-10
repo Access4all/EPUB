@@ -36,6 +36,7 @@ if (!$fileName) $fileName =  $b->getFirstPageFileName();
 header("Location:$fileName");
 exit();
 }
+if ($b->isExtracted() && $b->getOption('tocNeedRegen', false)) $b->updateTOC();
 $item = $b->getItemByFileName($fileName);
 if (!$item) exit404();
 $ct = $item->mediaType;
