@@ -46,7 +46,7 @@ this.openPreview = RTZ_openPreview;
 this.undo = RTZ_undo;
 this.redo = RTZ_redo;
 this.pushUndoState = RTZ_undo_pushState;
-this.pushUndoState2 = RTZ_undo_pushMutationUndoState;
+this.pushUndoState2 = RTZ_undo_pushState2;
 this.enterKey = RTZ_enterKey;
 this.enterKeyOnEmptyParagraph = RTZ_enterKeyOnEmptyParagraph;
 this.enterKeyOnNonEmptyParagraph = RTZ_enterKeyOnNonEmptyParagraph;
@@ -109,12 +109,6 @@ var _this = this;
 this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerCase())<0;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
-if (window.MutationObserver) {
-this.ignoreMutations = true;
-this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
-this.mutationObserver.observe(this.zone, {childList:true, attributes:true, attributeOldValue:true, characterData:true, characterDataOldValue:true, subtree:true});
-this.mutationList = [];
-}
 if (this.toolbar) {
 //setInterval(RTZ_selectionTimer.bind(this), 100);
 this.toolbar.$('button').each(function(o){ 
@@ -154,7 +148,6 @@ this.debug = function(str){ div2.insertAdjacentHTML('beforeEnd', str+'<br />'); 
 }
 else this.debug = function(str) {};
 this.cleanHTML();
-setTimeout(function(){this.ignoreMutations = false;}.bind(this), 1);
 if (window.onRTZCreate) window.onRTZCreate(this);
 }
 
@@ -246,39 +239,62 @@ if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'
 else listCb.value = 'regular';
 }
 
-function RTZ_domchanged (records) {
-if (this.ignoreMutations) return;
-for (var i=0; i<records.length; i++)this.mutationList.push(records[i]);
-}
-
-function RTZ_undo_pushState (fUndo, fRedo) {
-var newState = {undo:fUndo, redo:fRedo};
+function RTZ_undo_pushState (fUndo, fRedo, u1, u2) {
+var newState = {undo:fUndo, redo:fRedo, undoParam:u1, redoParam:u2};
 if (undoPos<undoStack.length) undoStack.splice(undoPos, undoStack.length -undoPos, newState);
 else undoStack.push(newState);
 if (undoStack.length>10) undoStack.shift();
 undoPos = undoStack.length;
 }
 
-function RTZ_undo_pushMutationUndoState (mutationList) {
-var fUndo = RTZ_undoMutationList.bind(this, mutationList);
-var fRedo = RTZ_redoMutationList.bind(this, mutationList);
-this.pushUndoState(fUndo, fRedo);
-this.mutationList = [];
+function RTZ_undo_pushState2 (el, sel, afterSel) {
+if (el.nodeType==3) el = el.parentNode;
+var clone = el.cloneNode(true);
+var startOf = sel.startOffset, endOf = sel.endOffset,
+startNode = RTZ_findClonedNode(sel.startContainer, el, clone), endNode = RTZ_findClonedNode(sel.endContainer, el, clone);
+var fUndo = function(elt){
+if (elt==this.zone) 
+RTZ_exchangeChildNodes(elt, clone);
+else {
+elt.parentNode.insertBefore(clone, elt);
+elt.parentNode.removeChild(elt);
+for (var i=0; i< undoPos; i++) if (undoStack[i].undoParam==elt) undoStack[i].undoParam=clone;
+}
+var sel = document.createRange();
+sel.setStart(startNode, startOf);
+sel.setEnd(endNode, endOf);
+this.select(sel);
+sel.detach();
+} .bind(this);
+var fRedo = function (clne){
+if (el==this.zone) 
+RTZ_exchangeChildNodes(el, clne);
+else {
+clne.parentNode.insertBefore(el, clne);
+clne.parentNode.removeChild(clne);
+for (var i=undoStack.length -1; i>=undoPos; i--) if (undoStack[i].redoParam==clne) undoStack[i].redoParam=el;
+}
+var sel = document.createRange();
+sel.setStart(afterSel.startContainer, afterSel.startOffset);
+sel.setEnd(afterSel.endContainer, afterSel.endOffset);
+this.select(sel);
+sel.detach();
+} .bind(this);
+this.pushUndoState(fUndo, fRedo, el, clone);
 }
 
 function RTZ_undo () {
-if (this.mutationList && this.mutationList.length>0) this.pushUndoState2(this.mutationList);
 if (undoPos<=0) alert('No more undo');
 if (undoPos<=0) return; // no more undo states
 var state = undoStack[--undoPos];
-state.undo();
+state.undo(state.undoParam);
 }
 
 function RTZ_redo () {
 if (undoPos>=undoStack.length) alert('No more redo');
 if (undoPos>=undoStack.length) return; // no more states to redo
 var state = undoStack[undoPos++];
-state.redo();
+state.redo(state.redoParam);
 }
 
 function RTZ_implKeyDown (k, simulated) {
@@ -626,9 +642,12 @@ sel.setEndAfter(same);
 sel.collapse(false);
 this.select(sel);
 } else { // In other case, assume that we want to remove the bold/italic/etc attribute completely
+var aSel = {};
+this.pushUndoState2(same.parentNode, sel, aSel);
 sel.selectNodeContents(same);
 var extracted = sel.extractContents	();
 same.parentNode.replaceChild(extracted, same);
+RTZ_copySelectionRange(sel,aSel);
 };
 return;
 }
@@ -637,6 +656,7 @@ return;
 if (justCheck) return true;
 var aSel = {};
 node = document.createElement2(tagName, attrs);
+this.	pushUndoState2(sel.commonAncestorContainer, sel, aSel);
 try {
 sel.surroundContents(node);
 } catch(e) { alert('Inline formatting failed'); return; }
@@ -701,6 +721,7 @@ if (!node) return;
 if (!node.isInside(this.zone)) return;
 var aSel = {};
 var newNode = document.createElement2(tagName, attrs);
+this.pushUndoState2(node.parentNode, sel, aSel);
 sel.selectNodeContents(node);
 var extracted = sel.extractContents();
 newNode.appendChild(extracted);
@@ -1189,19 +1210,6 @@ div.innerHTML = e;
 }, function(){alert('Upload failed');});
 }
 
-function RTZ_undoMutationList (ml) {
-this.ignoreMutations = true;
-for (var i=0; i<ml.length; i++) {
-var rec = ml[i];
-alert(rec.type + ', ' + rec.target);
-}
-setTimeout(function(){this.ignoreMutations = false;}.bind(this), 50);
-}
-
-function RTZ_redoMutationList (ml) {
-alert('redo');
-}
-
 function RTZ_toString () {
 return "RTZ"+JSON.stringify(this);
 }
@@ -1274,6 +1282,17 @@ var idx = path.pop();
 node = node.childNodes[idx];
 }
 return node;
+}
+
+function RTZ_exchangeChildNodes (a, b) {
+var sel = document.createRange();
+sel.selectNodeContents(a);
+var a1 = sel.extractContents();
+sel.selectNodeContents(b);
+var b1 = sel.extractContents();
+sel.detach();
+a.appendChild(b1);
+b.appendChild(a1);
 }
 
 if (!window.onloads) window.onloads = [];

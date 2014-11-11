@@ -226,6 +226,11 @@ args.shift();
 args.shift();
 }}
 
+Node.prototype.indexOf = function (subnode) {
+for (var i=0; i<this.childNodes.length; i++) if (this.childNodes[i]==subnode) return i;
+return -1;
+}
+
 if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector;
 
 window.onload = function () {
