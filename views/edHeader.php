@@ -5,6 +5,10 @@ $t = 'getTranslation';
 $pn = (isset($p)&&is_object($p)? $p->fileName : '');
 $rnd = rand(1,1000000);
 
+foreach(array('sv', 'tv', 'fv', 'zv') as $vt) {
+${$vt.'Active'} = ($leftView==$vt? ' class="active"' : '');
+}
+
 echo <<<END
 <!DOCTYPE HTML>
 <html><head>
@@ -26,10 +30,10 @@ echo <<<END
 <div id="leftRightWrapper">
 <div id="leftPanel">
 <ul class="menul">
-<li><a href="$root/editor/{$b->name}/tv_{$rightView}/$pn">{$t('TocView')}</a></li>
-<li><a href="$root/editor/{$b->name}/sv_{$rightView}/$pn">{$t('SpineView')}</a></li>
-<li><a href="$root/editor/{$b->name}/fv_{$rightView}/$pn">{$t('FileView')}</a></li>
-<li><a href="$root/editor/{$b->name}/zv_{$rightView}/$pn">{$t('TemplateEditorView')}</a></li>
+<li$tvActive><a href="$root/editor/{$b->name}/tv_{$rightView}/$pn">{$t('TocView')}</a></li>
+<li$svActive><a href="$root/editor/{$b->name}/sv_{$rightView}/$pn">{$t('SpineView')}</a></li>
+<li$fvActive><a href="$root/editor/{$b->name}/fv_{$rightView}/$pn">{$t('FileView')}</a></li>
+<li$zvActive><a href="$root/editor/{$b->name}/zv_{$rightView}/$pn">{$t('TemplateEditorView')}</a></li>
 </ul><!-- upper left buttons -->
 <div id="leftPanelTab">
 END;

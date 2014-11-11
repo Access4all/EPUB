@@ -1,6 +1,6 @@
 <?php
 
-function listFiles ($base, $dir, $b, $leftView, $rightView, $first=false) {
+function listFiles ($base, $dir, $b, $p, $leftView, $rightView, $first=false) {
 global $root;
 $a=array();
 $dd = opendir("$base/$dir");
@@ -15,11 +15,12 @@ else echo '<ul>';
 foreach ($a as $fn) {
 if (is_dir("$base/$dir$fn")) {
 echo "<li>$fn";
-listFiles($base, "$dir$fn/", $b, $leftView, $rightView);
+listFiles($base, "$dir$fn/", $b, $p, $leftView, $rightView);
 echo '</li>';
 } else {
 $url = "$root/editor/{$b->name}/{$leftView}_{$rightView}/$dir$fn";
-echo "<li><a href=\"$url\">$fn</a></li>";
+$active = ($p->fileName=="$dir$fn"? ' class="active"': '');
+echo "<li$active><a href=\"$url\">$fn</a></li>";
 }}
 echo '</ul>';
 }
@@ -28,5 +29,5 @@ echo '<h2>', getTranslation('FileView'), '</h2>';
 
 global $booksdir;
 $base = "$booksdir/{$b->name}";
-listFiles($base, '', $b, $leftView, $rightView, true);
+listFiles($base, '', $b, $p, $leftView, $rightView, true);
 ?>

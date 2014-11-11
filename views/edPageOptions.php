@@ -3,6 +3,7 @@ $t = 'getTranslation';
 $filename = basename($p->fileName);
 $h = 'htmlspecialchars';
 $pageTitle = "{$t('PageOptions')} {$filename}";
+$edpPageOptions = true;
 require('edRightHeader.php');
 echo <<<END
 <form action="" method="post">

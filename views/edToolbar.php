@@ -7,6 +7,8 @@ echo <<<END
 <span class="buttonGroup">
 <button id="previewBtn" type="button" data-action="preview" data-href="$root/editor/{$b->name}/preview/$pn"><img src="$root/images/24px/preview.png" alt="{$t('Preview')}" title="{$t('Preview')}"></button>
 <button type="button" data-action="save"><img src="$root/images/24px/save.png" alt="{$t('Save')}" title="{$t('Save')}"></button>
+<button type="button" data-action="undo"><img src="$root/images/24px/undo.png" alt="{$t('Undo')}" title="{$t('Undo')}"></button>
+<button type="button" data-action="redo"><img src="$root/images/24px/redo.png" alt="{$t('Redo')}" title="{$t('Redo')}"></button>
 <button type="button" data-action="copy"><img src="$root/images/24px/copy.png" alt="{$t('Copy')}" title="{$t('Copy')}"></button>
 <button type="button" data-action="cut"><img src="$root/images/24px/cut.png" alt="{$t('Cut')}" title="{$t('Cut')}"></button>
 <button type="button" data-action="paste"><img src="$root/images/24px/paste.png" alt="{$t('Paste')}" title="{$t('Paste')}"></button>
