@@ -156,9 +156,12 @@ $name = 'data/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
-$b->addNewResource($_POST, $file, $p);
+$res = $b->addNewResource($_POST, $file, $p);
+$retFn = '';
+if ($res&&$p) $retFn = pathRelativize($p->fileName, $res->fileName);
+else if ($res) $retFn = $res->fileName;
 if (empty($_POST['noredir'])) header("Location:{$_SERVER['REQUEST_URI']}");
-die('uploaded');
+die("Uploaded: $retFn");
 }
 else if (isset($_POST['authors'], $_POST['title'])) {
 $b->updateBookSettings($_POST);

@@ -1,13 +1,18 @@
+DEBUG = true;
+
+function debug (text, clear) {
+if (!DEBUG) return;
+var div = document.getElementById('debug3');
+if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
+if (clear)  div.innerHTML = text + '<br />\r\n';
+else  div.insertAdjacentHTML('beforeEnd', text + '<br />\r\n');
+}
+
 function include (url) {
 var s = document.createElement('script');
 s.setAttribute('type', 'text/javascript');
 s.setAttribute('src', url);
 document.getElementsByTagName('head')[0].appendChild(s);
-}
-
-function log (str) {
-if (window.console && console.log) console.log(str);
-alert(str);
 }
 
 function ajax (method, url, data, success, failure) {
@@ -27,45 +32,6 @@ xhr.open(method, url, true);
 if (data && typeof(data)!='object') xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xhr.send(data);
 return xhr;
-}
-
-function domAddClass (o, name) {
-var t = o.className.toString().split(' ');
-if (t.indexOf(name)>=0) return;
-t.push(name);
-var s = t.join(' ');
-o.className = s;
-}
-
-function domRemoveClass (o, name) {
-var t = o.className.toString().split(' ');
-var i = t.indexOf(name);
-if (i<0) return;
-t.splice(i,1);
-var s = t.join(' ');
-o.className = s;
-}
-
-function domRemove (elem) {
-elem.parentNode.removeChild(elem);
-}
-
-function domHide (elem) {
-elem.style.display='none';
-}
-
-function domShow (elem) {
-elem.style.display='block';
-}
-
-function domIsVisible (elem) {
-if (!elem) return true;
-else if (!elem.style || !elem.style.display || elem.style.display=='') return domIsVisible(elem.parentNode);
-else return elem.style.display!='none';
-}
-
-function domGenerateId () {
-return 'rndid'+(new Date() .getTime()) +Math.floor(Math.random()*1000000);
 }
 
 if (!Array.prototype.indexOf) Array.prototype.indexOf = function (o, start) {
@@ -144,6 +110,43 @@ f.apply(null, args);
 args.shift();
 args.shift();
 }}
+
+HTMLElement.prototype.addClass = function(name) {
+var t = this.className.toString().split(' ');
+if (t.indexOf(name)>=0) return;
+t.push(name);
+var s = t.join(' ');
+this.className = s;
+}
+
+HTMLElement.prototype.removeClass = function(name) {
+var t = this.className.toString().split(' ');
+var i = t.indexOf(name);
+if (i<0) return;
+t.splice(i,1);
+var s = t.join(' ');
+this.className = s;
+}
+
+HTMLElement.prototype.hide = function() {
+this.style.display='none';
+}
+
+HTMLElement.prototype.show = function() {
+this.style.display='block';
+}
+
+HTMLElement.prototype.isVisible = function() {
+if (!this.style || !this.style.display || this.style.display=='') {
+if (this.parentNode) return this.parentNode.isVisible();
+else return true;
+}
+else return this.style.display!='none';
+}
+
+function domGenerateId () {
+return 'rndid'+(new Date() .getTime()) +Math.floor(Math.random()*1000000);
+}
 
 HTMLElement.prototype.querySelectorLast = function (selector) {
 var tab = this.querySelectorAll(selector);

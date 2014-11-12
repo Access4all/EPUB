@@ -57,6 +57,9 @@ this.cleanHTML = RTZ_cleanHTML;
 this.cleanHTMLElement = RTZ_cleanHTMLElement;
 this.init = RTZ_init;
 this.onselchanged = RTZ_onSelChanged;
+this.startRecordDOMChanges = RTZ_startRecordDOMChanges;
+this.stopRecordDOMChanges = RTZ_stopRecordDOMChanges;
+this.createObservedElement = RTZ_createObservedElement;
 this.loadStyles = RTZ_loadStyles;
 this.toString = RTZ_toString;
 this.implKeyDown = RTZ_implKeyDown;
@@ -105,36 +108,42 @@ cleanHTML: vk.f9,
 }
 
 function RTZ_init () {
-var _this = this;
 this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerCase())<0;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
-if (window.MutationObserver) {
-this.ignoreMutations = true;
-this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
-this.mutationObserver.observe(this.zone, {childList:true, attributes:true, attributeOldValue:true, characterData:true, characterDataOldValue:true, subtree:true});
+this.zone.oncut = RTZ_cut.bind(this);
+this.zone.ondragover = RTZ_onDragOver;
+this.zone.ondrop = RTZ_onDrop.bind(this);
+if (window.MutationObserver || window.WebKitMutationObserver) {
+if (!window.MutationObserver) window.MutationObserver = window.WebKitMutationObserver;
 this.mutationList = [];
+this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
 }
 if (this.toolbar) {
 //setInterval(RTZ_selectionTimer.bind(this), 100);
 this.toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action');
-o.onclick = RTZ_toolbarButtonClick.bind(_this, action); 
+o.onclick = RTZ_toolbarButtonClick.bind(this, action); 
 var img = o.querySelector('img'), alt = img.getAttribute('alt');
 if (keys[action] && keys[action]<vk.impossible) alt += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
 o.setAttribute('title', alt);
 o.setAttribute('aria-label', alt);
 img.setAttribute('title', alt);
 img.setAttribute('alt', alt);
-});
+}.bind(this));
 this.toolbar.$('select').each(function(o){ 
-o.onchange = RTZ_toolbarStyleSelect.bind(_this, o); 
+o.onchange = RTZ_toolbarStyleSelect.bind(this, o); 
 o.$('option').each(function (opt){
 var action = opt.getAttribute('value');
 var text = opt.firstChild;
 if (keys[action] && keys[action]<vk.impossible) text.appendData('\t(' + RTZ_keyCodeToString(keys[action]) + ')');
 });
-});
+}.bind(this));
+if (this.mutationObserver) this.toolbar.$('*[data-action=undo], *[data-action=redo]').each(function(o){
+o.removeAttribute('aria-disabled');
+o.removeClass('disabled');
+}.bind(this));
+//additional toolbar actions
 }
 this.loadStyles();
 if (this.debug){
@@ -154,7 +163,7 @@ this.debug = function(str){ div2.insertAdjacentHTML('beforeEnd', str+'<br />'); 
 }
 else this.debug = function(str) {};
 this.cleanHTML();
-setTimeout(function(){this.ignoreMutations = false;}.bind(this), 1);
+this.startRecordDOMChanges();
 if (window.onRTZCreate) window.onRTZCreate(this);
 }
 
@@ -240,15 +249,15 @@ if (tgn=='ul') listCb.value = 'unorderedList';
 else if (tgn=='dl') listCb.value = 'definitionList';
 else if (tgn=='ol') listCb.value = 'orderedList';
 else listCb.value = 'regular';
-var div = document.getElementById('debug3');
-if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
 }
 else listCb.value = 'regular';
 }
 
 function RTZ_domchanged (records) {
-if (this.ignoreMutations) return;
-for (var i=0; i<records.length; i++)this.mutationList.push(records[i]);
+//if (this.ignoreMutations) return;
+for (var i=0; i<records.length; i++) {
+this.mutationList.push(records[i]);
+}
 }
 
 function RTZ_undo_pushState (fUndo, fRedo) {
@@ -259,15 +268,17 @@ if (undoStack.length>10) undoStack.shift();
 undoPos = undoStack.length;
 }
 
-function RTZ_undo_pushMutationUndoState (mutationList) {
-var fUndo = RTZ_undoMutationList.bind(this, mutationList);
-var fRedo = RTZ_redoMutationList.bind(this, mutationList);
+function RTZ_undo_pushMutationUndoState () {
+if (!this.mutationList || this.mutationList.length<=0) return; // Don't add empty undo states
+var fUndo = RTZ_undoMutationList.bind(this, this.mutationList);
+var fRedo = RTZ_redoMutationList.bind(this, this.mutationList);
 this.pushUndoState(fUndo, fRedo);
 this.mutationList = [];
 }
 
 function RTZ_undo () {
-if (this.mutationList && this.mutationList.length>0) this.pushUndoState2(this.mutationList);
+if (!this.mutationObserver) { MessageBox(msgs.FeatureNotAvailT, msgs.FeatureNotAvail,[msgs.OK]); return; }
+if (this.mutationList && this.mutationList.length>0) this.pushUndoState2();
 if (undoPos<=0) alert('No more undo');
 if (undoPos<=0) return; // no more undo states
 var state = undoStack[--undoPos];
@@ -275,6 +286,8 @@ state.undo();
 }
 
 function RTZ_redo () {
+if (!this.mutationObserver) { MessageBox(msgs.FeatureNotAvailT, msgs.FeatureNotAvail,[msgs.OK]); return; }
+if (this.mutationList && this.mutationList.length>0) { alert('No longer allowed to redo'); return; }
 if (undoPos>=undoStack.length) alert('No more redo');
 if (undoPos>=undoStack.length) return; // no more states to redo
 var state = undoStack[undoPos++];
@@ -425,6 +438,7 @@ var re = this.onenter();
 if (re===true || re===false) return re;
 }
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var followFrag=null, sel = this.getSelection();
 var el = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'li', 'dt', 'dd', 'th', 'td', 'caption']);
 if (!el) {
@@ -574,6 +588,7 @@ if (result===false || result===true) return result;
 var sel = this.getSelection();
 var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
 if (!cell || !cell.isInside(this.zone)) return true;
+this.pushUndoState2();
 var nextCell = cell.nextElementSibling;
 if (!nextCell) {
 var tr = cell.parentNode;
@@ -596,6 +611,7 @@ function RTZ_shiftTabKey () {
 var sel = this.getSelection();
 var cell = sel.commonAncestorContainer.findAncestor(['th', 'td']);
 if (!cell || !cell.isInside(this.zone)) return true;
+this.pushUndoState2();
 var prevCell = cell.previousElementSibling;
 if (!prevCell) {
 var tr = cell.parentNode;
@@ -626,16 +642,18 @@ sel.setEndAfter(same);
 sel.collapse(false);
 this.select(sel);
 } else { // In other case, assume that we want to remove the bold/italic/etc attribute completely
+this.pushUndoState2();
 sel.selectNodeContents(same);
 var extracted = sel.extractContents	();
 same.parentNode.replaceChild(extracted, same);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 };
 return;
 }
 
 // Common case: surround the selection if possible
 if (justCheck) return true;
-var aSel = {};
+this.pushUndoState2();
 node = document.createElement2(tagName, attrs);
 try {
 sel.surroundContents(node);
@@ -644,7 +662,7 @@ if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  va
 if (!node.hasChildNodes()) node.appendText('\u00A0'); // Chrome: if the node is empty, the cursor is incorrectly placed after the node instead of inside it.
 sel.selectNodeContents(node);
 this.select(sel);
-RTZ_copySelectionRange(sel, aSel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_formatAsLink () {
@@ -664,6 +682,7 @@ _this.zone.focus();
 
 function RTZ_formatAsCodeListing () {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p']);
@@ -673,7 +692,7 @@ sel.setStartBefore(startNode);
 sel.setEndAfter(endNode);
 if (startNode.tagName!=endNode.tagName) return;
 var extracted = sel.extractContents();
-var pre = document.createElement2('pre');
+var pre = this.createObservedElement('pre');
 var code = pre.appendElement('code');
 var sel2 = document.createRange();
 for (var i=0; i<extracted.childNodes.length; i++) {
@@ -684,23 +703,24 @@ p = sel2.extractContents();
 code.appendChild(p);
 }
 sel.insertNode(pre);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_simpleBlockFormat (tagName, attrs) {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var sel = this.getSelection();
 var collapsed = sel.collapsed;
 var node = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 if (!node && sel.commonAncestorContainer && sel.commonAncestorContainer.parentNode==this.zone) {
-node = document.createElement('p');
+node = this.createObservedElement('p');
 sel.selectNodeContents(sel.commonAncestorContainer);
 sel.surroundContents(node);
 sel.selectNodeContents(node);
 }
 if (!node) return;
 if (!node.isInside(this.zone)) return;
-var aSel = {};
-var newNode = document.createElement2(tagName, attrs);
+var newNode = this.createObservedElement(tagName, attrs);
 sel.selectNodeContents(node);
 var extracted = sel.extractContents();
 newNode.appendChild(extracted);
@@ -708,11 +728,12 @@ node.parentNode.replaceChild(newNode, node);
 sel.selectNodeContents(newNode);
 if (collapsed) sel.collapse(false);
 this.select(sel);
-RTZ_copySelectionRange(sel,aSel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_formatAsList (listType, oddItemType, evenItemType) {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var startNode = sel.startContainer.findAncestor(['p', 'li']);
@@ -722,7 +743,7 @@ sel.setStartBefore(startNode);
 sel.setEndAfter(endNode);
 if (startNode.tagName!=endNode.tagName) return;
 if (startNode.tagName.toLowerCase()=='li') {
-var node = document.createElement(listType);
+var node = this.createObservedElement(listType);
 var li = document.createElement(evenItemType);
 sel.surroundContents(node);
 sel.selectNode(node);
@@ -735,6 +756,7 @@ sel.selectNodeContents(last);
 sel.collapse(false);
 }
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 return;
 }
 else if (startNode.tagName.toLowerCase()=='p') {
@@ -746,13 +768,13 @@ cur = next;
 next = cur.nextElementSibling;
 sel.selectNodeContents(cur);
 var extracted = sel.extractContents();
-li = document.createElement(++count%2? evenItemType : oddItemType);
+li = this.createObservedElement(++count%2? evenItemType : oddItemType);
 li.appendChild(extracted);
 cur.parentNode.replaceChild(li, cur);
 newNodes.push(li);
 first=false;
 }
-var node = document.createElement(listType);
+var node = this.createObservedElement(listType);
 startNode = newNodes[0];
 endNode = newNodes[newNodes.length -1];
 sel.setStartBefore(startNode);
@@ -761,10 +783,12 @@ sel.surroundContents(node);
 if (wasCollapsed) { sel.selectNodeContents(li); sel.collapse(false); }
 else sel.selectNode(node);
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }}
 
 function RTZ_superBlockFormat (tagName, attrs) {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var sel = this.getSelection();
 var wasCollapsed = sel.collapsed;
 var realStartNode = sel.startContainer, realEndNode = sel.endContainer, realStartOffset = sel.startOffset, realEndOffset = sel.endOffset;
@@ -772,8 +796,7 @@ var startNode = sel.startContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h
 var endNode = sel.endContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'ul', 'ol', 'dl']);
 sel.setStartBefore(startNode);
 sel.setEndAfter(endNode);
-var node = document.createElement(tagName);
-if (attrs) for (var i in attrs) node.setAttribute(i, attrs[i]);
+var node = this.createObservedElement(tagName, attrs);
 try {
 sel.surroundContents(node);
 } catch(e) { alert('Superblock formatting failed'); return; }
@@ -784,10 +807,12 @@ sel.setEnd(realEndNode, realEndOffset);
 sel.collapse(false);
 }
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_removeFormatting () {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var sel = this.getSelection();
 var startNode = sel.startContainer.findAncestor(['p', 'li', 'dd', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre']);
 var endNode = sel.endContainer.findAncestor(['p', 'li', 'dd', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre']);
@@ -804,11 +829,11 @@ if (grandParentTag!='li') frag.eachChild(function(li){
 if (!li.tagName || ['li', 'dd', 'dt'].indexOf(li.tagName.toLowerCase())<0) return;
 sel.selectNodeContents(li);
 var frag2 = sel.extractContents();
-var p = document.createElement('p');
+var p = this.createObservedElement('p');
 p.appendChild(frag2);
 li.parentNode.insertBefore(p,li);
 li.parentNode.removeChild(li);
-});//each fragment child
+}.bind(this));//each fragment child
 else { parent=grandParent; grandParent = grandParent.parentNode; }
 var fs = frag.firstChild, ls = frag.lastChild;
 grandParent.insertBefore(frag, parent);
@@ -826,11 +851,11 @@ if (grandParentTag!='li') frag.eachChild(function(li){
 if (!li.tagName || ['li', 'dd', 'dt'].indexOf(li.tagName.toLowerCase())<0) return;
 sel.selectNodeContents(li);
 var frag2 = sel.extractContents();
-var p = document.createElement('p');
+var p = this.createObservedElement('p');
 p.appendChild(frag2);
 li.parentNode.insertBefore(p,li);
 li.parentNode.removeChild(li);
-});//each fragment child
+}.bind(this));//each fragment child
 else { parent=grandParent; grandParent = grandParent.parentNode; }
 var fs = frag.firstChild, ls = frag.lastChild;
 grandParent.insertBefore(frag, parent.nextElementSibling);
@@ -851,7 +876,8 @@ this.removeFormatting(); // This will fall in one of the two above cases
 else if (startTag=='pre') { // Code block: make it simple, assume we want to remove the entire block
 var node = startNode;
 if (startNode.firstElementChild && startNode.firstElementChild.tagName.toLowerCase()=='code') node = startNode.firstElementChild;
-var frag = document.createDocumentFragment(), p = frag.appendElement('p');
+var frag = this.createObservedElement('#fragment');
+var p = frag.appendElement('p');
 node.eachChild(true, function(el){
 if (el.tagName && el.tagName.toLowerCase()=='br') p = frag.insertElementBefore('p', frag.firstChild); 
 else p.insertBefore(el, p.firstChild);
@@ -864,19 +890,23 @@ sel.setEndAfter(ls);
 this.select(sel);
 }
 // other cases
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_insertElement (tagName, attrs) {
+this.pushUndoState2();
 var sel = this.getSelection();
 var node = document.createElement2(tagName, attrs);
 sel.insertNode(node);
 sel.setStartAfter(node);
 sel.setEndAfter(node);
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 return false;
 }
 
 function RTZ_insertIcon (url, alt) {
+this.pushUndoState2();
 var img = document.createElement2('img', {'alt':alt, 'src':url});
 var sel = this.getSelection();
 sel.insertNode(img);
@@ -884,11 +914,13 @@ sel.setStartAfter(img);
 sel.setEndAfter(img);
 sel.collapse(false);
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_insertIllustration (url, alt, style) {
 if (this.inlineOnly) return false;
-var figure = document.createElement2('figure', {'class':style});
+this.pushUndoState2();
+var figure = this.createObservedElement('figure', {'class':style});
 var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'99%'});
 var capt = figure.appendElement('figcaption');
 var captP = capt.appendElement('p').appendText(alt);
@@ -898,10 +930,12 @@ ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
 sel.selectNodeContents(captP);
 sel.collapse(false);
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_insertBox (type, position) {
 if (this.inlineOnly) return false;
+this.pushUndoState2();
 var t = type.split('.');
 var tagName = t[0];
 var classNames = t[1] + ' ' + position;
@@ -910,7 +944,8 @@ this.superBlockFormat(tagName, {'class':classNames});
 
 function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
 if (this.inlineOnly) return false;
-var table = document.createElement2('table', {'class':style, 'data-th':thScheme});
+this.pushUndoState2();
+var table = this.createObservedElement('table', {'class':style, 'data-th':thScheme});
 var firstCell = null;
 for (var i=0; i<nRows; i++) {
 var tr = table.appendElement('tr');
@@ -929,6 +964,7 @@ ancestor.parentNode.insertBefore(table, ancestor.nextSibling);
 sel.selectNodeContents(firstCell);
 sel.collapse(true);
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_insertAbbrDialog () {
@@ -1007,6 +1043,7 @@ _this.zone.focus();
 }
 
 function RTZ_quickUploadDialog () {
+if (!window.FormData) { MessageBox(msgs.FeatureNotAvailT, msgs.FeatureNotAvail,[msgs.OK]); return; }
 DialogBox(msgs.AddFiles, [
 {name:'upload', label:msgs.Upload, type:'file'}
 ], function(){
@@ -1150,6 +1187,11 @@ sel.setEndAfter(endNode);
 sel.surroundContents(document.createElement('p'));
 }
 
+function RTZ_cut () {
+this.pushUndoState2();
+return true;
+}
+
 function RTZ_paste () {
 var count=0, lengthBefore = this.zone.innerHTML.length;
 var f = (function(){
@@ -1158,8 +1200,10 @@ if (++count<2000) setTimeout(f,1);
 else alert('Paste failed');
 }
 this.cleanHTML();
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }) .bind(this);
 setTimeout(f,1);
+this.pushUndoState2();
 return true;
 }
 
@@ -1167,13 +1211,26 @@ function RTZ_defaultSave (code) {
 var data = code || this.zone.innerHTML;
 var url = window.actionUrl.replace('@@', 'save');
 ajax('POST', url, 'content='+encodeURIComponent(data), function(e){
-var div = document.getElementById('debug3');
-if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
-div.innerHTML = e;
+debug(e, true);
 }, function(){alert('Save failed');});
 };
 
-function RTZ_uploadFiles (files) {
+function RTZ_onDragOver (e) {
+if (e&&e.preventDefault) e.preventDefault();
+}
+
+function RTZ_onDrop (e) {
+debug('Drop event');
+if (!e.dataTransfer) return;
+if (e.preventDefault) e.preventDefault();
+debug(e.dataTransfer.files);
+if (e.dataTransfer.files && e.dataTransfer.files.length>0) RTZ_uploadFiles(e.dataTransfer.files, function(path){
+this.insertIllustrationDialog(path);
+}.bind(this));
+//suite
+}
+
+function RTZ_uploadFiles (files, okFunc) {
 if (!files || files.length<=0) return; // empty or upload not supported
 var url = window.location.href;
 var data = new FormData();
@@ -1182,24 +1239,80 @@ data.append('noredir', '1');
 data.append('fileName', '');
 data.append('id', '');
 for (var i=0; i<files.length; i++) data.append('upload', files[i], files[i].name);
-ajax('POST', url, data, function(e){
-var div = document.getElementById('debug3');
-if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
-div.innerHTML = e;
+ajax('POST', url, data, function(re){
+debug(re);
+if (okFunc && re.startsWith('Uploaded: ')) okFunc(re.substring(10).trim());
 }, function(){alert('Upload failed');});
 }
 
 function RTZ_undoMutationList (ml) {
-this.ignoreMutations = true;
-for (var i=0; i<ml.length; i++) {
-var rec = ml[i];
-alert(rec.type + ', ' + rec.target);
-}
-setTimeout(function(){this.ignoreMutations = false;}.bind(this), 50);
+this.stopRecordDOMChanges();
+for (var ii=ml.length -1; ii>=0; ii--) {
+var rec = ml[ii], tmp;
+debug(rec.type + ', ' + rec.addedNodes.length + ', ' + rec.removedNodes.length);
+if (rec.addedNodes.length>0) debug('add: ' + rec.addedNodes[0] + ', ' + rec.target);
+if (rec.removedNodes.length>0) debug('rem: ' + rec.removedNodes[0] + ', ' + rec.target);
+switch(rec.type){
+case 'characterData':
+tmp = rec.target.data;
+rec.target.data = rec.oldValue;
+rec.oldValue2 = tmp; // rec.oldValue seem to be read only so we need another property
+break;
+case 'attribute':
+tmp = rec.target.getAttribute(rec.attributeName);
+rec.target.setAttribute(rec.attributeName, rec.oldValue);
+rec.oldValue2 = tmp; // idem as above
+break;
+case 'childList':
+if (rec.removedNodes) for (var i=0; i<rec.removedNodes.length; i++) rec.target.insertBefore(rec.removedNodes[i], rec.nextSibling);
+if (rec.addedNodes) for (var i=0; i<rec.addedNodes.length; i++) rec.target.removeChild(rec.addedNodes[i]);
+break;
+}}
+this.startRecordDOMChanges();
 }
 
 function RTZ_redoMutationList (ml) {
-alert('redo');
+this.stopRecordDOMChanges();
+for (var ii=0; ii<ml.length; ii++) {
+var rec = ml[ii], tmp;
+debug(rec.type + ', ' + rec.addedNodes.length + ', ' + rec.removedNodes.length);
+if (rec.addedNodes.length>0) debug('add: ' + rec.addedNodes[0] + ', ' + rec.target);
+if (rec.removedNodes.length>0) debug('rem: ' + rec.removedNodes[0] + ', ' + rec.target);
+switch(rec.type){
+case 'characterData':
+tmp = rec.target.data;
+rec.target.data = rec.oldValue2;
+rec.oldValue2 = tmp;
+break;
+case 'attribute':
+tmp = rec.target.getAttribute(rec.attributeName);
+rec.target.setAttribute(rec.attributeName, rec.oldValue2);
+rec.oldValue2 = tmp;
+break;
+case 'childList':
+if (rec.addedNodes) for (var i=0; i<rec.addedNodes.length; i++) rec.target.insertBefore(rec.addedNodes[i], rec.nextSibling);
+if (rec.removedNodes) for (var i=0; i<rec.removedNodes.length; i++) rec.target.removeChild(rec.removedNodes[i]);
+break;
+}}
+this.startRecordDOMChanges();
+}
+
+	function RTZ_createObservedElement (tagName, attrs) {
+var node;
+if (tagName=='#fragment') node = document.createDocumentFragment();
+else node = document.createElement2(tagName, attrs);
+if (this.mutationObserver) this.mutationObserver.observe(node, {childList:true, attributes:true, attributeOldValue:true, characterData:true, characterDataOldValue:true, subtree:true});
+return node;
+}
+
+function RTZ_startRecordDOMChanges () {
+if (!this.mutationObserver) return;
+this.mutationObserver.observe(this.zone, {childList:true, attributes:true, attributeOldValue:true, characterData:true, characterDataOldValue:true, subtree:true});
+}
+
+function RTZ_stopRecordDOMChanges () {
+if (!this.mutationObserver) return;
+this.mutationObserver.disconnect();
 }
 
 function RTZ_toString () {
@@ -1283,10 +1396,10 @@ var toolbarId = e.getAttribute('data-toolbar');
 var toolbar = toolbarId? document.getElementById(toolbarId) : null;
 e.setAttribute('tabindex',0);
 var rtz = new RTZ( e, toolbar);
-rtz.debug = e.tagName.toLowerCase()=='div';
+rtz.debug = DEBUG && e.tagName.toLowerCase()=='div';
 rtz.init();
 if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
 });
 
-alert('RTZ13 loaded');
+//alert('RTZ13 loaded');
