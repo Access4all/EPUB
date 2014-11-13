@@ -27,6 +27,7 @@ $contents
 <li>Ctrl+U: bulleted/unordered list</li>
 <li>Ctrl+V: paste</li>
 <li>Ctrl+X: cut</li>
+<li>Ctrl+Z: undo</li>
 <li>Ctrl+Shift+A: aside box</li>
 <li>Ctrl+Shift+B: abbreviation</li>
 <li>Ctrl+Shift+D: definition list</li>
@@ -35,6 +36,7 @@ $contents
 <li>Ctrl+Shift+K: strikethrough</li>
 <li>Ctrl+Shift+P: code block</li>
 <li>Ctrl+Shift+T: insert table</li>
+<li>Ctrl+Shift+Z: redo</li>
 </ul>
 <script type="text/javascript" src="$root/js/editor-rtz.js?rnd=$rnd"></script>
 END;

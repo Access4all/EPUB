@@ -19,8 +19,9 @@ listFiles($base, "$dir$fn/", $b, $p, $leftView, $rightView);
 echo '</li>';
 } else {
 $url = "$root/editor/{$b->name}/{$leftView}_{$rightView}/$dir$fn";
-$active = ($p->fileName=="$dir$fn"? ' class="active"': '');
-echo "<li$active><a href=\"$url\">$fn</a></li>";
+$active = ($p&&$p->fileName=="$dir$fn"? ' class="active"': '');
+$relativeUrl = $p? pathrelativize($p->fileName, "$dir$fn") : '';
+echo "<li$active><a href=\"$url\" data-relative-url=\"$relativeUrl\">$fn</a></li>";
 }}
 echo '</ul>';
 }

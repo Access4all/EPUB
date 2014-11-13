@@ -164,15 +164,15 @@ if (this.offsetParent) return this.offsetParent.getAbsoluteScreenPosition(cx,cy)
 else return {x:cx, y:cy};
 }
 
-Document.prototype.createElement2 = function (tagName, attrs) {
+Document.prototype.createElement2 = function (tagName, attrs, text) {
 var e = this.createElement(tagName);
 if (attrs) for (var i in attrs) e.setAttribute(i, attrs[i]);
+if (text) e.appendText(text);
 return e;
 }
 
-Node.prototype.appendElement = function (tagName, attrs) {
-var o = this.ownerDocument.createElement(tagName);
-if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
+Node.prototype.appendElement = function (tagName, attrs, text) {
+var o = this.ownerDocument.createElement2(tagName, attrs, text);
 this.appendChild(o);
 return o;
 }
@@ -182,9 +182,8 @@ this.appendChild(this.ownerDocument.createTextNode(str));
 return this;
 }
 
-Node.prototype.insertElementBefore = function (tagName, ref, attrs) {
-var o = this.ownerDocument.createElement(tagName);
-if (attrs) for (var i in attrs) o.setAttribute(i, attrs[i]);
+Node.prototype.insertElementBefore = function (tagName, ref, attrs, text) {
+var o = this.ownerDocument.createElement2(tagName, attrs, text);
 this.insertBefore(o,ref);
 return o;
 }

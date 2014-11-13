@@ -76,7 +76,7 @@ tr.appendChild(td);
 answerText.focus();
 }
 
-function TFQ_removeColumn () {
+function TFQ_removeColumn (e) {
 var quiz = document.getElementById('quiz');
 if (quiz.querySelector('tr').querySelectorAll('th,td').length<=3) return; // Don't allow removing a column if there are only 2 answers or less
 quiz.$('tr').each(function(tr){

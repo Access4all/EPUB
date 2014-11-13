@@ -65,7 +65,7 @@ $listType = $f1(0);
 $jsonListHeading2 = strip_tags($jsonListHeading);
 $html.=<<<END
 <section  class="matchingActivity_{$side}List" aria-label="$jsonListHeading2">
-<h3 role="heading" aria-lavel="3" data-notoc="true">$jsonListHeading</h3>
+<h3 role="heading" aria-level="3" data-notoc="true">$jsonListHeading</h3>
 <ol class="matchingActivity_{$side}List" type="$listType" start="1">
 END;
 for ($j=0; $j<count($oList); $j++) if ($oList[$j]) $oItemCount++;

@@ -20,6 +20,7 @@ if (this.childNodes) for (var i=this.childNodes.length -1; i>=0; i--) this.child
 }
 
 function RTZ (zone, toolbar) {
+window.lastRTZ = this;
 this.zone = zone;
 this.toolbar = toolbar;
 this.select = RTZ_select;
@@ -114,13 +115,15 @@ this.zone.onpaste = RTZ_paste.bind(this);
 this.zone.oncut = RTZ_cut.bind(this);
 this.zone.ondragover = RTZ_onDragOver;
 this.zone.ondrop = RTZ_onDrop.bind(this);
+this.zone.onfocus = RTZ_onfocus.bind(this);
+this.zone.onblur = RTZ_onblur.bind(this);
 if (window.MutationObserver || window.WebKitMutationObserver) {
 if (!window.MutationObserver) window.MutationObserver = window.WebKitMutationObserver;
 this.mutationList = [];
 this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
 }
 if (this.toolbar) {
-//setInterval(RTZ_selectionTimer.bind(this), 100);
+this.zone.onmousedown = function(){ setInterval(RTZ_selectionTimer.bind(this), 100); this.zone.onmousedown=null; } .bind(this); // we start the automatic style list updater, but only if we ahve a mouse user. It can cause focus troubles for a keyboard-only or screen reader user.
 this.toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action');
 o.onclick = RTZ_toolbarButtonClick.bind(this, action); 
@@ -282,7 +285,7 @@ if (this.mutationList && this.mutationList.length>0) this.pushUndoState2();
 if (undoPos<=0) alert('No more undo');
 if (undoPos<=0) return; // no more undo states
 var state = undoStack[--undoPos];
-state.undo();
+state.undo(state);
 }
 
 function RTZ_redo () {
@@ -291,7 +294,7 @@ if (this.mutationList && this.mutationList.length>0) { alert('No longer allowed 
 if (undoPos>=undoStack.length) alert('No more redo');
 if (undoPos>=undoStack.length) return; // no more states to redo
 var state = undoStack[undoPos++];
-state.redo();
+state.redo(state);
 }
 
 function RTZ_implKeyDown (k, simulated) {
@@ -374,15 +377,27 @@ this.insertTableDialog();
 break;
 case keys.copy:
 if (!simulated) return true;
-document.execCommand('copy', false, null);
+try {
+if (!document.execCommand('copy', false, null)) throw new Error('failed');
+}catch(ex){
+MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
+}
 break;
 case keys.cut:
 if (!simulated) return true;
-document.execCommand('cut', false, null);
+try {
+if (!document.execCommand('cut', false, null)) throw new Error('failed');
+}catch(ex){
+MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
+}
 break;
 case keys.paste: 
 if (!simulated) return true;
-document.execCommand('paste', false, null);
+try {
+if (!document.execCommand('paste', false, null)) throw new Error('failed');
+}catch(ex){
+MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
+}
 break;
 case keys.save :
 this.cleanHTML();
@@ -893,10 +908,10 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
-function RTZ_insertElement (tagName, attrs) {
+function RTZ_insertElement (tagName, attrs, text) {
 this.pushUndoState2();
 var sel = this.getSelection();
-var node = document.createElement2(tagName, attrs);
+var node = document.createElement2(tagName, attrs, text);
 sel.insertNode(node);
 sel.setStartAfter(node);
 sel.setEndAfter(node);
@@ -1192,7 +1207,21 @@ this.pushUndoState2();
 return true;
 }
 
-function RTZ_paste () {
+function RTZ_paste (e) {
+this.pushUndoState2();
+if (e && e.clipboardData && e.clipboardData.files && e.clipboardData.files.length>0) { // Paste some files
+RTZ_uploadFiles(e.clipboardData.files, RTZ_dropFinishedWithFiles.bind(this));
+if (e.preventDefault) e.preventDefault();
+return false;
+}
+else if (e && e.clipboardData && e.clipboardData.getData) {
+var result=false, text = null;
+try { text = e.clipboardData.getData('Text'); } catch(ex){}
+if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this, text.trim() );
+else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() );
+if (result) { if (e.preventDefault) e.preventDefault(); return false; }
+}
+// Paste default behavior
 var count=0, lengthBefore = this.zone.innerHTML.length;
 var f = (function(){
 if (this.zone.innerHTML.length==lengthBefore) {
@@ -1203,7 +1232,6 @@ this.cleanHTML();
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }) .bind(this);
 setTimeout(f,1);
-this.pushUndoState2();
 return true;
 }
 
@@ -1215,19 +1243,45 @@ debug(e, true);
 }, function(){alert('Save failed');});
 };
 
+function RTZ_onfocus () {
+this.pushUndoState2();
+}
+
+function RTZ_onblur () {
+this.pushUndoState2();
+}
+
 function RTZ_onDragOver (e) {
 if (e&&e.preventDefault) e.preventDefault();
 }
 
 function RTZ_onDrop (e) {
-debug('Drop event');
 if (!e.dataTransfer) return;
 if (e.preventDefault) e.preventDefault();
-debug(e.dataTransfer.files);
-if (e.dataTransfer.files && e.dataTransfer.files.length>0) RTZ_uploadFiles(e.dataTransfer.files, function(path){
-this.insertIllustrationDialog(path);
-}.bind(this));
-//suite
+if (e.dataTransfer.files && e.dataTransfer.files.length>0) RTZ_uploadFiles(e.dataTransfer.files, RTZ_dropFinishedWithFiles.bind(this));
+else if (e.dataTransfer.getData) {
+var text = null;
+try { text = e.dataTransfer.getData('Text'); } catch(ex){}
+if (!text) return;
+if (/^https?:/ .test(text)) RTZ_dropFinishedWithFiles.call(this, text.trim() );
+else if (text.startsWith("\u007F")) RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() );
+else this.insertElement(null, null, text);
+}}
+
+function RTZ_dropFinishedWithFiles (url) {
+this.pushUndoState2();
+var result = false;
+if (url && /\.(?:png|gif|jpg|jpeg|svg|avi|mp3|mp4|ogg|ogv)$/i .test(url)) { // Probably an image or another multimedia file
+if (this.inlineOnly) this.insertIconDialog(url);
+else this.insertIllustrationDialog(url);
+result = true;
+}
+else if (url) { // URL but of unknown type, let's make a link by default
+this.insertElement('a', {href:url}, url);
+result = true;
+}
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+return result;
 }
 
 function RTZ_uploadFiles (files, okFunc) {
@@ -1249,9 +1303,6 @@ function RTZ_undoMutationList (ml) {
 this.stopRecordDOMChanges();
 for (var ii=ml.length -1; ii>=0; ii--) {
 var rec = ml[ii], tmp;
-debug(rec.type + ', ' + rec.addedNodes.length + ', ' + rec.removedNodes.length);
-if (rec.addedNodes.length>0) debug('add: ' + rec.addedNodes[0] + ', ' + rec.target);
-if (rec.removedNodes.length>0) debug('rem: ' + rec.removedNodes[0] + ', ' + rec.target);
 switch(rec.type){
 case 'characterData':
 tmp = rec.target.data;
@@ -1275,9 +1326,6 @@ function RTZ_redoMutationList (ml) {
 this.stopRecordDOMChanges();
 for (var ii=0; ii<ml.length; ii++) {
 var rec = ml[ii], tmp;
-debug(rec.type + ', ' + rec.addedNodes.length + ', ' + rec.removedNodes.length);
-if (rec.addedNodes.length>0) debug('add: ' + rec.addedNodes[0] + ', ' + rec.target);
-if (rec.removedNodes.length>0) debug('rem: ' + rec.removedNodes[0] + ', ' + rec.target);
 switch(rec.type){
 case 'characterData':
 tmp = rec.target.data;
