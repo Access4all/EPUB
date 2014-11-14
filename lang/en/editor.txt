@@ -1,3 +1,4 @@
+ErrFileAccess=Couldn't access <em>%1</em>; please check authorizations and access rights.
 BackToBookshelf=Back to bookshelf
 BookOptions=Book settings
 PageOptions=Page settings

@@ -154,9 +154,9 @@ if (e&&e.preventDefault) e.preventDefault();
 
 function FileTree_link_drop (ctxType) {
 var actionName = 'undefinedAction';
-if (ctxType=='spine') actionName = 'moveSpineBefore';
+if (ctxType=='spine') actionName = 'moveSpineAfter';
 else if (ctxType=='file') actionName = 'moveFile';
-else if (ctxType=='toc') actionName = 'moveTocBefore';
+else if (ctxType=='toc') actionName = 'moveTocAfter';
 return function(e){
 e = e || window.event;
 if (!e||!e.dataTransfer) return;

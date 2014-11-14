@@ -1098,7 +1098,7 @@ var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.spli
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
 var allowedAttrs = {
-'#':[ 'id', 'class', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
+'#':[ 'id', 'class', 'epub:type', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 img:['src', 'width', 'height', 'alt'],

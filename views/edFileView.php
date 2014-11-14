@@ -1,9 +1,14 @@
 <?php
+if (!$b->ensureExtracted()) exit500();
 
 function listFiles ($base, $dir, $b, $p, $leftView, $rightView, $first=false) {
 global $root;
 $a=array();
-$dd = opendir("$base/$dir");
+$dd = @opendir("$base/$dir");
+if (!$dd) {
+echo '<strong>', str_replace('%1', "$base/$dir", getTranslation('ErrFileAccess')), '</strong>';
+return;
+}
 while($fn = readdir($dd)) {
 if ($fn=='.' || $fn=='..' || $fn=='META-INF' || $fn=='mimetype') continue;
 $a[]=$fn;

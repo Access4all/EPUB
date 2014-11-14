@@ -10,7 +10,7 @@ $this->editorMain('sv', 'editor', $bookName, $pageName);
 
 public function save ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
-if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 $p = $b->getItemByFileName($pageName);
 if (!$p) exit404();
 if (empty($_POST['content'])) exit500();
@@ -22,7 +22,7 @@ die('saved');
 
 public function saveTemplate ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
-if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 if (empty($_POST['content'])) exit500();
 $b->updateCssTemplate($_POST['content']);
 die('saved');
@@ -45,7 +45,7 @@ exit();
 public function importTemplate ($bookName) {
 global $root;
 $b = Book::getWorkingBook($bookName);
-if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 $file = null;
 if (isset($_FILES['upload'])) {
 $f = &$_FILES['upload'];
@@ -119,7 +119,7 @@ die('OK');
 
 private function moveOperation ($bookName, $actionName) {
 $b = Book::getWorkingBook($bookName);
-if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 if (empty($_GET['src']) || empty($_GET['ref'])) exit404();
 $moveItem = $b->getItemByFileName( $_GET['src'] );
 $refItem = $b->getItemByFileName( $_GET['ref'] );
@@ -147,6 +147,7 @@ header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$p->fileName
 exit();
 }}
 else if (isset($_POST['addfiles'], $_POST['fileName'], $_POST['id'])) {
+if (!$b->ensureExtracted()) exit500();
 $file = null;
 if (isset($_FILES['upload'])) {
 $f = &$_FILES['upload'];
@@ -164,11 +165,13 @@ if (empty($_POST['noredir'])) header("Location:{$_SERVER['REQUEST_URI']}");
 die("Uploaded: $retFn");
 }
 else if (isset($_POST['authors'], $_POST['title'])) {
+if (!$b->ensureExtracted()) exit500();
 $b->updateBookSettings($_POST);
 header("Location:{$_SERVER['REQUEST_URI']}");
 exit();
 }
 else if (isset($_POST['id'], $_POST['fileName'])) {
+if (!$b->ensureExtracted()) exit500();
 $p->updatePageSettings($_POST);
 header("Location:{$_SERVER['REQUEST_URI']}");
 }

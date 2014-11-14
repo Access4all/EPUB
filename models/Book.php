@@ -74,19 +74,24 @@ if (is_file($fn)) return @unlink($fn);
 return false;
 }
 
+function ensureExtracted () {
+return $this->isExtracted() || $this->extract();
+}
+
 function isExtracted () {
 return $this->getFileSystem() ->isExtracted();
 }
 
 function extract () {
 $fs = $this->getFileSystem();
-if ($fs->isExtracted()) return;
+if ($fs->isExtracted()) return true;
 global $booksdir;
 $dn = "$booksdir/{$this->name}/";
 $fs->extractTo($dn);
 $this->close();
 $this->getFileSystem();
 @unlink("$booksdir/{$this->name}.epub");
+return true;
 }
 
 function export ($format) {
@@ -369,6 +374,7 @@ return $spine0->fileName;
 
 function updateTOC () {
 if ($this->getOption('tocNoGen', false)) return;
+if (!$this->isExtracted()) return;
 $maxDepth = $this->getOption('tocMaxDepth', 4);
 $navItem = $this->getNavItem();
 $navdoc = $navItem->getDoc();
