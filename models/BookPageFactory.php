@@ -28,7 +28,7 @@ return <<<END
 <head>
 <title>{$info['title']}</title>
 </head><body>
-<p></p>
+<p>&nbsp;</p>
 </body></html>
 END;
 }

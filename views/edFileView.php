@@ -3,7 +3,8 @@ if (!$b->ensureExtracted()) exit500();
 
 function listFiles ($base, $dir, $b, $p, $leftView, $rightView, $first=false) {
 global $root;
-$a=array();
+$files  = array();
+$dirs = array();
 $dd = @opendir("$base/$dir");
 if (!$dd) {
 echo '<strong>', str_replace('%1', "$base/$dir", getTranslation('ErrFileAccess')), '</strong>';
@@ -11,15 +12,18 @@ return;
 }
 while($fn = readdir($dd)) {
 if ($fn=='.' || $fn=='..' || $fn=='META-INF' || $fn=='mimetype') continue;
-$a[]=$fn;
+if (is_dir("$base/$dir$fn"))  $dirs[] = $fn;
+else $files[] = $fn;
 }
 closedir($dd);
-sort($a);
+sort($dirs);
+sort($files);
+$a = array_merge($dirs,$files);
 if ($first) echo '<ul class="fileTree" data-ctxtype="file">';
 else echo '<ul>';
 foreach ($a as $fn) {
 if (is_dir("$base/$dir$fn")) {
-echo "<li>$fn";
+echo "<li><span class=\"directory\">$fn</span>";
 listFiles($base, "$dir$fn/", $b, $p, $leftView, $rightView);
 echo '</li>';
 } else {

@@ -235,6 +235,8 @@ if (@$this->metadataModified) {
 $this->metadataModified = false;
 $metadata = $opf->getFirstElementByTagName('metadata');
 $metadata->getFirstElementByTagNameNs(NS_DC, 'title') ->nodeValue = $this->title;
+$metadata->getFirstElementByTagNameNs(NS_DC, 'identifier') ->nodeValue = $this->identifier;
+$metadata->getFirstElementByTagNameNs(NS_DC, 'language') ->nodeValue = $this->language;
 $metadata->removeAllChilds('dc:creator');
 if (@$this->authors) foreach($this->authors as $a) $metadata->appendElementNs(NS_DC, 'dc:creator') ->appendText(trim($a));
 }
@@ -445,6 +447,11 @@ $contents = preg_replace('/^\s*\.editor.*?\{.*?\}/ms', '', $contents);
 $contents = trim($contents ."\r\n\r\n" .$newContents);
 }
 $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
+$this->updateCSS($contents);
+}
+
+function updateCSS ($contents = null) {
+if (!$contents) $contents = $this->getFromName('META-INF/template.css');
 $contents = str_replace('.editor {', 'body {', $contents);
 $contents = str_replace('.editor ', '', $contents);
 $this->getFileSystem() ->addFromString('EPUB/css/epub3.css', $contents);
@@ -513,8 +520,9 @@ $this->implMoveFile($it, $newFileName);
 }
 
 function renameFile ($it, $newName) {
-$newFileName = dirname($it->fileName) .'/' .$newName;
-$this->implMoveFile($it, $newFileName);
+$newFileName = pathResolve($it->fileName, $newName);
+if (strpos($newFileName, '../')!==false) return false;
+return $this->implMoveFile($it, $newFileName);
 }
 
 public function deleteFile ($it) {
@@ -537,12 +545,15 @@ $this->saveOpf();
 
 private function implMoveFile ($it, $newFileName) {
 $this->getItemByFileName(null);
-$this->getFileSystem() ->moveFile( $it->fileName, $newFileName);
+if (!$this->getFileSystem() ->moveFile( $it->fileName, $newFileName)) return false;
+$this->getFileSystem()->removeDirectoryIfEmpty(dirname($it->fileName));
 $this->itemFileNameMap[$it->fileName] = null;
 $this->itemFileNameMap[$newFileName] = $it;
+$this->manifestModified=true;
 $it->fileName = $newFileName;
 $this->saveOpf();
 //todo: update all files where the file is referenced
+return true;
 }
 
 

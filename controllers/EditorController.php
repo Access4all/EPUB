@@ -108,12 +108,12 @@ $this->moveOperation($bookName, __FUNCTION__);
 public function renameFile ($bookName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
-if (empty($_GET['src']) || empty($_GET['ref'])) exit404();
+if (empty($_GET['src']) || empty($_GET['ref'])) die('die empty params');
 $moveItem = $b->getItemByFileName( $_GET['src'] );
 $newName = $_GET['ref'];
-if (!preg_match('/^[-a-zA-Z_0-9]+\.[-a-zA-Z_0-9]+$/', $newName)) exit500();
-if (!$moveItem || !$newName) exit404();
-$b->renameFile($moveItem, $newName);
+if (!preg_match('@^(?:\.\./)*(?:[-a-zA-Z_0-9]+/)*[-a-z_0-9]+\.[a-zA-Z0-9]{1,5}$@', $newName)) die('error filename '.$newName);
+if (!$moveItem || !$newName) die('error item not found, nn='.$newName);
+if (!$b->renameFile($moveItem, $newName)) die('Rename failed');
 die('OK');
 }
 

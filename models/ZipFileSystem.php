@@ -15,5 +15,6 @@ while(!feof($stream)) echo fread($stream, 4096);
 }
 
 
+function removeDirectoryIfEmpty ($dn) {} // There couldn't be empty directories in zip files
 }
 ?>

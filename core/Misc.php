@@ -14,6 +14,17 @@ closedir($dd);
 return @rmdir($dir);
 }
 
+function isDirEmpty ($dir) {
+$d = @opendir($dir);
+if (!$d) return false;
+$result = true;
+while($result && ($f = readdir($d))) {
+if ($f!='.' && $f!='..') $result=false;
+}
+closedir($d);
+return $result;
+}
+
 static function generateId ($prefix = 'autoid') {
 static $count = 0;
 list($t1, $t2) = explode('.', microtime(true));

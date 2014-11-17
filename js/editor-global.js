@@ -131,11 +131,16 @@ o.draggable=true;
 });
 e.$('ul,ol').each(function(o){
 var li = o.parentNode;
-var a = li.appendElement('a', {'href':'#'});
-a.appendText('+');
+var a = document.createElement2('a', {'href':'#'}, '+');
 a.onclick = FileTree_expandLinkClick;
+a.ondragenter = FileTree_folderLink_dragEnter;
+a.ondragleave = FileTree_folderLink_dragLeave;
 li.insertBefore(a, li.firstChild);
 o.style.display='none';
+});
+e.$('.directory').each(function(o){
+o.ondragenter = FileTree_folderLink_dragEnter;
+o.ondragleave = FileTree_folderLink_dragLeave;
 });
 //suite
 }
@@ -169,7 +174,7 @@ var src = data.substring(data.indexOf("\u007F\u007F")+2).trim();
 var ref = this.href.substring(window.rootUrl.length);
 var url = window.rootUrl2 + actionName + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
 debug(url);
-ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(xhr){alert('Failed!'+xhr.status+xhr.responseText);});
+ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!2');});
 }
 //other types of transfers
 };}
@@ -186,7 +191,7 @@ src = src.substring(window.rootUrl.length);
 ref = ref.substring(window.rootUrl.length);
 window.tmpMoveName = window.tmpMoveHref = null;
 var url = window.rootUrl2 + actionName + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
-ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!');});
+ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!5');});
 return false;
 }
 
@@ -194,8 +199,17 @@ function FileTree_deleteDialog  (link) {
 var src = link.href.substring(window.rootUrl.length);
 var url = window.rootUrl2 + 'deleteFile' + '/?file=' + encodeURIComponent(src);
 MessageBox(msgs.MBDeleteSpineItemT, msgs.MBDeleteSpineItem.replace('%1', src), [msgs.Yes, msgs.No], function(btnIndex){
-if (btnIndex==0) ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!');});
+if (btnIndex==0) ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!3');});
 });//MessageBox
+}
+
+function FileTree_folderLink_dragEnter () {
+window.folderLinkTimer = setTimeout(FileTree_expandLinkClick.bind(this), 1000);
+}
+
+function FileTree_folderLink_dragLeave () {
+if (window.folderLinkTimer) clearTimeout(window.folderLinkTimer);
+window.folderLinkTimer=null;
 }
 
 function FileTree_expandLinkClick () {
@@ -245,10 +259,9 @@ msgs.Delete, FileTree_deleteDialog.bind(null,link),
 
 function FileTree_linkContextMenu (itemListFunc, ul) {
 return function(){
-var items = [
-msgs.Edit, this.href,
-msgs.PageOptions, this.href.replace('_editor', '_options'),
-];//
+var items = [];
+if (/\.(?:xhtml|xml|txt|js|css)$/i .test(this.href)) items.merge([msgs.Edit, this.href]);
+if (/\.xhtml$/i .test(this.href)) items.merge([msgs.PageOptions, this.href.replace('_editor', '_options')]);
 if (this.hasAttribute('data-relative-url')) {
 var rel = this.getAttribute('data-relative-url');
 if (rel && rel!='') items.merge([msgs.CopyRelUrl, FileTree_linkCopyRelUrl.bind(this)]);
@@ -270,7 +283,7 @@ DialogBox(msgs.RenameFile, [
 ], function(){var src  = link.href.substring(window.rootUrl.length);
 var ref = this.elements.newName.value;
 var url = window.rootUrl2 + 'renameFile' + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
-ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!');});
+ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(st,tx){alert('Failed!4!'+st+tx+tx.responseText);});
 });//DialogBox
 }
 

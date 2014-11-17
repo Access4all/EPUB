@@ -3,7 +3,7 @@ var defstylesheet = null;
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
-try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against firefox security error
+try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Firefox: we might iterate over an external stylesheet coming from an extension, in which case any access raise a security error
 if (!rules) continue;
 if (!defstylesheet) defstylesheet=stylesheet;
 for (var i=0; i<rules.length; i++) {
@@ -74,7 +74,7 @@ var ss = this.form.elements.styleSelect;
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
-try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against firefox security error
+try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Firefox: we might iterate over an external stylesheet coming from an extension, in which case any access raise a security error
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
@@ -145,7 +145,7 @@ var collected = '';
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
-try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against firefox security error
+try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Firefox: we might iterate over an external stylesheet coming from an extension, in which case any access raise a security error
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];

@@ -22,12 +22,23 @@ if (@mkdir(dirname($fn), 0777, true))
 }}
 
 function moveFile ($oldName, $newName) {
-return @rename($this->dir .$oldName, $this->dir .$newName);
+if (@rename($this->dir .$oldName, $this->dir .$newName)) return true;
+$dir = dirname($this->dir .$newName);
+return @mkdir($dir, 0777, true) && @rename($this->dir .$oldName, $this->dir .$newName);
 }
 
 function deleteName ($name) {
 $fn = $this->dir .$name;
-return @unlink($fn);
+if (!@unlink($fn)) return false;
+$dir = dirname($fn);
+$this->removeDirectoryIfEmpty($dir);
+return true;
+}
+
+function removeDirectoryIfEmpty ($dirname) {
+$dir = $this->dir .$dirname;
+if (Misc::isDirEmpty($dir)) return @rmdir($dir);
+else return false;
 }
 
 function isExtracted () { return true; }

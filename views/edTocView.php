@@ -1,4 +1,6 @@
 <?php
+if ($b->getOption('tocNeedRegen', false)) $b->updateTOC();
+
 $doc = @DOM::loadHTMLString( $b->getContentsByFileName( $b->getNavFileName() ));
 $toc = $doc->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
 $toc = $toc->getFirstElementByTagName('ol');
