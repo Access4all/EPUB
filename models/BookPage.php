@@ -58,6 +58,7 @@ function getEditorType () { return 'HTML'; }
 
 function updateContents ($contents) {
 if ($this->mediaType!='application/xhtml+xml') return parent::updateContents($contents);
+$contents = preg_replace('@epub:\w+=@', 'xmlns:epub="'.NS_EPUB.'" $0', $contents); // Empyrically solve the appendXML/HTML DOM function when having attributes from other namespaces
 $doc = $this->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $body->removeAllChilds();

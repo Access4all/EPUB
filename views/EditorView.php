@@ -13,6 +13,7 @@ require('edLeftFooter.php');
 require('edBookOptions.php');
 require('edFooter.php');
 }
+//$view->bookOptions($leftViewMethod, $rightViewMethod, $b);
 
 private function leftView ($leftView, $rightView, $b, $p) {
 global $root, $lang, $pageTitle;
@@ -51,6 +52,9 @@ break;
 case 'addfiles' :
 loadTranslation('editor-pageOptions');
 require('edAddFiles.php');
+break;
+case 'bookoptions' :
+require('edBookOptions.php');
 break;
 }
 require('edFooter.php');

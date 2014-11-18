@@ -16,11 +16,11 @@ margin: 1em;
 
 #topPanel {
 border-bottom: solid 4px #ccc;
-
 }
 
 #leftRightWrapper {
 display: table;
+table-layout: fixed;
 border-top: solid 2px #aaa;
 }
 
@@ -30,6 +30,7 @@ width: 24.5%;
 border-right: solid 4px #ccc;
 /*padding: 0em 1em;*/
 }
+
 #leftPanelTab {
 border: solid 3px #86B918;
 margin: 0 1em 0 0;
@@ -57,6 +58,8 @@ top: 0px;
 width: auto;
 height: auto;
 border: 3px solid #86B918;
+margin: 1em 2em;
+min-height: 200px;
 }
 
 .menul {
@@ -73,10 +76,29 @@ background-color: #86B918;
 border: 3px solid #86B918;
 }
 
-.editor {
-margin: 1em 2em;
-min-height: 200px;
+button[data-action] { 
+width: 26px;
+height: 26px;
+background-size: contain;
+background-repeat: no-repeat;
+text-indent: -99999px; 
 }
+button[data-action=preview] { background-image: URL('../images/24px/preview.png'); }
+button[data-action=copy] { background-image: URL('../images/24px/copy.png'); }
+button[data-action=cut] { background-image: URL('../images/24px/cut.png'); }
+button[data-action=paste] { background-image: URL('../images/24px/paste.png'); }
+button[data-action=save] { background-image: URL('../images/24px/save.png'); }
+button[data-action=undo] { background-image: URL('../images/24px/undo.png'); }
+button[data-action=redo] { background-image: URL('../images/24px/redo.png'); }
+button[data-action=bold] { background-image: URL('../images/24px/bold.png'); }
+button[data-action=italic] { background-image: URL('../images/24px/italic.png'); }
+button[data-action=strikethrough] { background-image: URL('../images/24px/strikethrough.png'); }
+button[data-action=abbreviation] { background-image: URL('../images/24px/abbreviation.png'); }
+button[data-action=link] { background-image: URL('../images/24px/link.png'); }
+button[data-action=icon] { background-image: URL('../images/24px/icon.png'); }
+button[data-action=illustration] { background-image: URL('../images/24px/illustration.png'); }
+button[data-action=table] { background-image: URL('../images/24px/table.png'); }
+button[data-action=box] { background-image: URL('../images/24px/box.png'); }
 
 .dialogBox {
    position:fixed;
@@ -206,7 +228,7 @@ margin: 2em 1em 0 0;
 
 .hidden {
   position: absolute;
-  top: -9999em;
+  top: -2px;
   left: auto;
   width: 1px;
   height: 1px;
@@ -218,3 +240,4 @@ clear: right;
 text-align: right;
 font-size: 100%;
 }
+

@@ -44,6 +44,7 @@ this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
 this.quickUploadDialog = RTZ_quickUploadDialog;
 this.openPreview = RTZ_openPreview;
+this.save = RTZ_save;
 this.undo = RTZ_undo;
 this.redo = RTZ_redo;
 this.pushUndoState = RTZ_undo_pushState;
@@ -79,7 +80,7 @@ preview: vk.impossible +1,
 link: vk.ctrl+vk.k,
 bold: vk.ctrl+vk.b,
 italic: vk.ctrl+vk.i,
-strikeout: vk.ctrl+vk.shift+vk.k,
+strikethrough: vk.ctrl+vk.shift+vk.k,
 abbreviation: vk.ctrl+vk.shift+vk.b,
 regular: vk.ctrl+vk.n0,
 h1: vk.ctrl+vk.n1,
@@ -99,10 +100,10 @@ unorderedList: vk.ctrl+vk.u,
 definitionList: vk.ctrl+vk.shift+vk.d,
 codeListing: vk.ctrl+vk.shift+vk.p,
 blockquote: vk.ctrl+vk.q,
-insertBox: vk.ctrl+vk.shift+vk.a,
-insertIcon: vk.ctrl+vk.shift+vk.i,
-insertIllustration: vk.ctrl+vk.shift+vk.g,
-insertTable: vk.ctrl+vk.shift+vk.t,
+box: vk.ctrl+vk.shift+vk.a,
+icon: vk.ctrl+vk.shift+vk.i,
+illustration: vk.ctrl+vk.shift+vk.g,
+table: vk.ctrl+vk.shift+vk.t,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
 };
@@ -125,14 +126,11 @@ this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
 if (this.toolbar) {
 this.zone.onmousedown = function(){ setInterval(RTZ_selectionTimer.bind(this), 100); this.zone.onmousedown=null; } .bind(this); // we start the automatic style list updater, but only if we ahve a mouse user. It can cause focus troubles for a keyboard-only or screen reader user.
 this.toolbar.$('button').each(function(o){ 
-var action = o.getAttribute('data-action');
+var action = o.getAttribute('data-action'), text = o.textContent;
 o.onclick = RTZ_toolbarButtonClick.bind(this, action); 
-var img = o.querySelector('img'), alt = img.getAttribute('alt');
-if (keys[action] && keys[action]<vk.impossible) alt += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
-o.setAttribute('title', alt);
-o.setAttribute('aria-label', alt);
-img.setAttribute('title', alt);
-img.setAttribute('alt', alt);
+if (keys[action] && keys[action]<vk.impossible) text += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
+o.textContent = text;
+o.setAttribute('title', text);
 }.bind(this));
 this.toolbar.$('select').each(function(o){ 
 o.onchange = RTZ_toolbarStyleSelect.bind(this, o); 
@@ -175,6 +173,7 @@ if (this.inlineOnly) return;
 this.styles = {};
 this.positionalStyles = {};
 this.boxTypes = {};
+this.epubTypesClassMapping = {};
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
@@ -182,6 +181,13 @@ try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against f
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
+if (rule.selectorText=='#epubTypesClassMapping' && rule.style.content) {
+var str = rule.style.content;
+str = str.trim().substring(1, str.length -1)
+.replace(/\\(['"])/g, '$1').trim();
+this.epubTypesClassMapping = JSON.parse(str);
+continue;
+}
 if (!/^\.editor /.test(rule.selectorText)) continue;
 var m, selector = rule.selectorText.substring(8).trim();
 if (/^\.\w+$/.test(selector)) {
@@ -302,6 +308,11 @@ if (this.onkeydown) {
 var result = this.onkeydown(k,simulated);
 if (result===true || result===false) return result;
 }
+if (this.saveBtn && ((k>=vk.n0&&k<=vk.n9)||k>=vk.a) ) {
+this.saveBtn.removeClass('disabled');
+this.saveBtn.removeAttribute('aria-disabled');
+this.saveBtn=null;
+}
 switch(k){
 case vk.enter:
 //try {
@@ -342,7 +353,7 @@ break;
 case keys.italic:
 this.inlineFormat('em', false);
 break;
-case keys.strikeout:
+case keys.strikethrough:
 this.inlineFormat('s', false);
 break;
 case keys.abbreviation:
@@ -363,16 +374,16 @@ break;
 case keys.blockquote:
 this.superBlockFormat('blockquote');
 break;
-case keys.insertBox:
+case keys.box:
 this.insertBoxDialog();
 break;
-case keys.insertIcon:
+case keys.icon:
 this.insertIconDialog();
 break;
-case keys.insertIllustration :
+case keys.illustration :
 this.insertIllustrationDialog();
 break;
-case keys.insertTable :
+case keys.table :
 this.insertTableDialog();
 break;
 case keys.copy:
@@ -400,8 +411,7 @@ MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
 }
 break;
 case keys.save :
-this.cleanHTML();
-if (this.onsave) this.onsave();
+this.save();
 break;
 case keys.preview:
 this.openPreview();
@@ -954,7 +964,9 @@ this.pushUndoState2();
 var t = type.split('.');
 var tagName = t[0];
 var classNames = t[1] + ' ' + position;
-this.superBlockFormat(tagName, {'class':classNames});
+var attrs = {'class':classNames};
+if (this.epubTypesClassMapping[t[1]]) attrs['epub:type'] = this.epubTypesClassMapping[t[1]];
+this.superBlockFormat(tagName, attrs);
 }
 
 function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
@@ -1098,7 +1110,7 @@ var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.spli
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
 var allowedAttrs = {
-'#':[ 'id', 'class', 'epub:type', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
+'#':[ 'id', 'class', 'epub:type', 'xmlns:epub', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 img:['src', 'width', 'height', 'alt'],
@@ -1233,6 +1245,15 @@ setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that Mut
 }) .bind(this);
 setTimeout(f,1);
 return true;
+}
+
+function RTZ_save () {
+this.cleanHTML();
+if (this.onsave) this.onsave();
+var saveBtn = document.querySelector('button[data-action=save]');
+saveBtn.addClass('disabled');
+saveBtn.setAttribute('aria-disabled', true);
+this.saveBtn = saveBtn;
 }
 
 function RTZ_defaultSave (code) {

@@ -52,6 +52,7 @@ this.populateStyleSelect = STE_populateStyleSelect;
 
 function STE_init () {
 var _this = this;
+this.epubTypesClassMapping = {};
 this.form.elements.saveTplBtn.onclick = STE_saveTemplate.bind(this);
 this.form.elements.exportStyleBtn.onclick = STE_exportTemplate.bind(this);
 this.form.elements.importStyleBtn.onclick = STE_importTemplate.bind(this);
@@ -67,7 +68,13 @@ this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundC
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
 this.populateStyleSelect();
-}
+var rule = $css('#epubTypesClassMapping');
+if (rule && rule.style.content) {
+var str = rule.style.content;
+str = str.trim().substring(1, str.length -1)
+.replace(/\\(['"])/g, '$1').trim();
+this.epubTypesClassMapping = JSON.parse(str);
+}}
 
 function STE_populateStyleSelect () {
 var ss = this.form.elements.styleSelect; 
@@ -141,7 +148,9 @@ _this.createNewStyle(this.elements.tag.value, this.elements.name.value);
 }
 
 function STE_saveTemplate () {
-var collected = '';
+var collected = "/*[[[Do not modify, auto generated code*/\r\n#epubTypesClassMapping {\r\nContent: '" 
++ JSON.stringify(this.epubTypesClassMapping).replace(/"/g, '\\"')
++ "';\r\n}\r\n/*]]]*/\r\n\r\n";
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
@@ -151,11 +160,10 @@ for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
 if (/^\.editor/ .test(rule.selectorText)) collected += rule.cssText + ' ';
 }}
+debug("CSS="+collected.replace(/\r\n|\n/g, '<br />'));
 var url = window.actionUrl.replace('@@', 'saveTemplate');
 ajax('POST', url, 'content='+encodeURIComponent(collected), function(e){
-var div = document.getElementById('debug3');
-if (!div) { div=document.querySelector('body').appendElement('div', {id:'debug3'}); }
-div.innerHTML = e;
+debug(e);
 }, 
 function(){alert('failed');});
 }

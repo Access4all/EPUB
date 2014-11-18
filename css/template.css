@@ -1,0 +1,124 @@
+/*[[[Do not modify, auto generated code*/
+ #epubTypesClassMapping {
+ Content: '{"warn":"notice", "info":"notice", "help":"help"}';
+ }
+ /*]]]*/
+
+.editor {
+background-color: #eeeeee;
+color: #000000;
+font-size: 1em;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+.editor h1 {
+font-size: 2em;
+color: #000080;
+}
+
+.editor h2 {
+font-size: 1.4em;
+color: #000050;
+}
+
+.editor h3 {
+font-size: 1.25em;
+color: #000030;
+}
+
+.editor h4 {
+font-size: 1.2em;
+color: #000020;
+}
+
+.editor h5 {
+font-size: 1.15em;
+color: #000010;
+}
+
+.editor h6 {
+font-size: 1.1em;
+color: #000010;
+}
+
+.editor blockquote {
+margin-left: 8em;
+}
+
+.editor pre {
+margin-left: 8em;
+}
+
+.editor ol {
+margin-left: 8em;
+}
+
+.editor ul {
+margin-left: 8em;
+list-style-type: disc;
+}
+
+.editor aside.info {
+background-color: #ccddff;
+border. solid 3px #88ccff;
+}
+
+.editor aside.warn {
+background-color: #ffdddd;
+border. solid 3px #ff8888;
+}
+
+.editor aside.help {
+background-color: #ddffdd;
+border. solid 3px #99ff66;
+}
+
+.editor .left50 {
+float: left;
+width: 50%;
+}
+
+.editor .right50 {
+float: right;
+width: 50%;
+}
+
+.editor .left33 {
+float: left;
+width: 33.3%;
+}
+
+.editor .right33 {
+float: right;
+width: 33.3%;
+}
+
+.editor .left25 {
+float: left;
+width: 25%;
+}
+
+.editor .right25 {
+float: right;
+width: 25%;
+}
+
+.editor .wide {
+float: none;
+width: 100%;
+}
+
+.editor h1, .editor h2, .editor h3, .editor h4, .editor h5, .editor h6, .editor hr {
+clear: both;
+page-break-after: avoid;
+}
+
+.editor figure, .editor aside {
+page-break-inside: avoid;
+}
+
+.editor a, .editor a:link { color: blue; }
+.editor a:visited { color: purple; }
+.editor a:focus, .editor a:hover, .editor a:active { background-color: #cccccc; }
+
+

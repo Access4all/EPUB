@@ -374,6 +374,28 @@ $spine0 = $this->getItemById($spine[0]);
 return $spine0->fileName;
 }
 
+function getFirstNonTOCPageFileName () {
+$spine = $this->getSpine();
+if (count($spine)<=0) return null;
+for ($i=0; $i<count($spine); $i++) {
+$item = $this->getItemById($spine[$i]);
+if (@is_array($item->props) && in_array('nav', $item->props)) continue;
+return $item->fileName;
+}
+return null;
+}
+
+function setLastOpenedFileName ($lf) {
+if (is_object($lf)) $lf = $lf->fileName;
+@$this->getFileSystem()->addFromString('META-INF/last', $lf);
+}
+
+function getLastOpenedFileName () {
+$lf = @$this->getFileSystem()->getFromName('META-INF/last');
+if ($lf) return $lf;
+else return $this->getFirstNonTOCPageFileName();
+}
+
 function updateTOC () {
 if ($this->getOption('tocNoGen', false)) return;
 if (!$this->isExtracted()) return;
@@ -438,13 +460,17 @@ function updateCssTemplate ($newContents, $dontFilter=false) {
 $contents = null;
 if ($dontFilter) $contents = $newContents;
 else {
-$newContents = trim(str_replace(
-array( "\r", "\n", '{', '}', ';' ),
-array( ' ', ' ', "{\r\n", "}\r\n\r\n", ";\r\n" ),
-trim($newContents)));
+$newContents = preg_replace(
+array( "/\r\n|\n|\r/", '/(?<!\')\{/', '/\}(?!\')/', '/;/', '@\*/@', '/ {2,}/', "/(?:\r\n|\n|\r){3,}/"),
+array(' ', "{\r\n", "}\r\n\r\n", ";\r\n", "*/\r\n", ' ', "\r\n\r\n"),
+$newContents);
 $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
-$contents = preg_replace('/^\s*\.editor.*?\{.*?\}/ms', '', $contents);
+$contents = preg_replace(
+array( '/^\s*\.editor.*?\{.*?\}/ms', '@/\*\[\[\[.*?\]\]\]\*/@ms'),
+array('', ''), 
+$contents);
 $contents = trim($contents ."\r\n\r\n" .$newContents);
+$contents = preg_replace("/(?:\r\n|\n|\r){3,}/", "\r\n\r\n", $contents);
 }
 $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
 $this->updateCSS($contents);
@@ -454,6 +480,8 @@ function updateCSS ($contents = null) {
 if (!$contents) $contents = $this->getFromName('META-INF/template.css');
 $contents = str_replace('.editor {', 'body {', $contents);
 $contents = str_replace('.editor ', '', $contents);
+$contents = trim(preg_replace( '@/\*\[\[\[.*?\]\]\]\*/@ms', '', $contents));
+$contents = preg_replace('@ {2,}@', ' ', $contents);
 $this->getFileSystem() ->addFromString('EPUB/css/epub3.css', $contents);
 $item = $this->getItemByFileName('EPUB/css/epub3.css');
 if (!$item) {

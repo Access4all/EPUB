@@ -180,8 +180,13 @@ $b->directEchoFile($p->fileName);
 exit();
 }
 $view = new EditorView();
-if (!$p && $rightViewMethod!='newpage' && $rightViewMethod!='addfiles') $view->bookOptions($leftViewMethod, $rightViewMethod, $b);
-else $view->editorMain($leftViewMethod, $rightViewMethod, $b, $p);
+if (!$p && $rightViewMethod!='newpage' && $rightViewMethod!='addfiles' && $rightViewMethod!='bookoptions') {
+$lf = $b->getLastOpenedFileName();
+header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$lf}");
+exit();
+}
+$view->editorMain($leftViewMethod, $rightViewMethod, $b, $p);
+$b->setLastOpenedFileName($p->fileName);
 }
 
 }
