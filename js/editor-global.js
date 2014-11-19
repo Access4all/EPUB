@@ -1,5 +1,6 @@
-function Menu_show (originator, items) {
-var ul = document.createElement('ul');
+function Menu_show (items, originator, x, y) {
+originator = originator || document.activeElement;
+var ul = document.createElement2('ul', {'class':'contextmenu'});
 var firstA = null;
 for (var i=0; i<items.length; i+=2) {
 var label = items[i], action = items[i+1];
@@ -9,19 +10,27 @@ if (typeof(action)=='function') a.onclick = Menu_click(action, originator, ul);
 else if (!action) a.onclick = Menu_close.bind(ul, originator);
 if (!firstA) firstA=a;
 }
-originator.parentNode.insertBefore(ul, originator.nextSibling);
+var body = document.querySelector('body');
+body.appendChild(ul);
+if (x&&y) {
+ul.style.position='absolute';
+ul.style.left=x+'px';
+ul.style.top=y+'px';
+}
 firstA.focus();
+document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 }
 
 function Menu_click (action, originator, ul) {
 return function(e){ 
-action.call(this,e); 
 Menu_close.call(ul,originator); 
+action.call(this,e); 
 return false;
 }}
 
 function Menu_close (originator) {
 this.parentNode.removeChild(this);
+document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (originator) originator.focus();
 return false;
 }
@@ -78,9 +87,9 @@ return false;
 var body = document.querySelector('body');
 body.appendChild(overlay);
 body.appendChild(form);
-document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (first.select) first.select();
 if (first.focus) first.focus();
+document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (readyFunc) readyFunc.call(form);
 }
 
@@ -166,7 +175,7 @@ return function(e){
 e = e || window.event;
 if (!e||!e.dataTransfer) return;
 if (e.preventDefault) e.preventDefault();
-if (e.dataTransfer.files && window.RTZ_uploadFiles) RTZ_uploadFiles(e.dataTransfer.files, function(_){ alert('Upload complete !'); window.location.reload(); });
+if (e.dataTransfer.files && window.RTZ_uploadFiles) RTZ_uploadFiles(e.dataTransfer.files, function(_){ window.location.reload(); }, true);
 var data = null;
 try { data = e.dataTransfer.getData('Text'); }catch(ex){}
 if (data && data.startsWith("\u007F")) {
@@ -258,7 +267,10 @@ msgs.Delete, FileTree_deleteDialog.bind(null,link),
 }
 
 function FileTree_linkContextMenu (itemListFunc, ul) {
-return function(){
+return function(e){
+e = e || window.event;
+var x = e.pageX || e.clientX;
+var y = e.pageY || e.clientY;
 var items = [];
 if (/\.(?:xhtml|xml|txt|js|css)$/i .test(this.href)) items.merge([msgs.Edit, this.href]);
 if (/\.xhtml$/i .test(this.href)) items.merge([msgs.PageOptions, this.href.replace('_editor', '_options')]);
@@ -272,7 +284,7 @@ msgs.CreateNewPage, this.href.replace('_editor', '_newpage'),
 msgs.AddFiles, this.href.replace('_editor', '_addfiles'),
 msgs.Cancel, null
 ]);
-Menu_show(this, items);
+Menu_show(items, this, x+7, y+7);
 return false;
 }}
 
@@ -300,11 +312,57 @@ if (window.prompt) window.prompt(msgs.CopyRelUrl, data);
 else alert('No copy method');
 }
 
+function FormTrackChanges_init (f) {
+f.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
+b.disabled=true;
+b.addClass('disabled');
+b.setAttribute('aria-disabled', true);
+});//each command button
+f.$('input, textarea, select').each(function(input){
+input.onchange = FormTrackChanges_changed;
+input.onkeydown = FormTrackChanges_keydown;
+});//each input
+f.virtualSubmit = FormTrackChanges_virtualSubmit;
+}
+
+function FormTrackChanges_virtualSubmit () {
+if (this.onsubmit && !this.onsubmit()) return;
+var params = ['ajax=1'];
+this.$('input, textarea, select').each(function(input){
+params.push(input.name + '=' + encodeURIComponent(input.value) );
+});//each input
+params = params.join('&');
+var url = this.actionn || window.location.href;
+if (this.method.toUpperCase()=='GET') { url += '?' + params; params=null; }
+var form = this;
+ajax(this.method, url, params, function(re){if(re=='OK') FormTrackChanges_init(form); else alert('Return! '+re);}, function(){alert('Failed!6');});
+}
+
+function FormTrackChanges_changed () {
+this.onchange=null;
+this.form.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
+b.disabled=false;
+b.removeClass('disabled');
+b.removeAttribute('aria-disabled');
+});//each command button
+}
+
+function FormTrackChanges_keydown (e) {
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (k==vk.backspace || k==vk.enter || (k>=vk.n0&&k<=vk.n9) || k>=vk.a) { if (this.onchange) this.onchange(); }
+if (e.ctrlKey && k==vk.s) {
+this.form.virtualSubmit();
+if (e.preventDefault) e.preventDefault();
+return false;
+}
+return true;
+}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
-if (!window.XMLHttpRequest && !window.ActiveXObject) return; // No AJAX
-if (!document.querySelector || !document.querySelectorAll || !document.getElementById || !document.getElementsByTagName || !document.createElement || !document.createTextNode || !document.createDocumentFragment) return; // Missing one or more mandatory DOM functions
 $('.fileTree').each(FileTree_init);
+$('form[data-track-changes]').each(FormTrackChanges_init);
 });
 
 //alert('editor loaded');

@@ -53,7 +53,8 @@ $this->saveCloseDataDoc();
 }
 
 function addJsResource ($name, $body) {
-$jsfile = pathRelativize($this->fileName, "EPUB/js/$name.js");
+$path = $this->book->getOption('defaultDirByType:javascript', 'EPUB/js');
+$jsfile = pathRelativize($this->fileName, "$path/$name.js");
 $jsid = "privateBookResource_js_$name";
 $body->appendElement('script', array('type'=>'text/javascript', 'src'=>$jsfile))->appendText('/* */');
 $info = array('id'=>$jsid, 'mediaType'=>'application/x-javascript', 'fileName'=>"EPUB/js/$name.js");

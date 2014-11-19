@@ -7,16 +7,28 @@ $b->getOption('dummy');
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('BookOptions')}</h1>
-<form action="" method="post">
+<form action="" method="post" data-track-changes>
 <h2>{$t('General')}</h2>
 <p><label for="title">{$t('BookTitle')}: </label>
-<input type="text" id="title" name="title" value="{$h($b->getTitle())}" /></p>
+<input type="text" id="title" name="title" value="{$h($b->getTitle())}" required aria-required="true" /></p>
 <p><label for="authors">{$t('Authors')}: </label>
-<textarea id="authors" name="authors" rows="4" cols="60">$authors</textarea></p>
+<textarea id="authors" name="authors" rows="4" cols="60" requried aria-required="true">$authors</textarea></p>
 <p><label for="identifier">{$t('BookIdentifier')}: </label>
 <input type="text" id="identifier" name="identifier" value="{$h($b->identifier)}" /></p>
 <p><label for="language">{$t('BookLanguage')}: </label>
-<input type="text" id="language" name="language" value="{$h($b->language)}" /></p>
+<input type="text" id="language" name="language" value="{$h($b->language)}" required aria-required="true" /></p>
+<h2>{$t('BookOrganisation')}</h2>
+<fieldset><legend>{$t('DefaultDirs')}</legend>
+<p>{$t('DDBTTipp')}</p>
+END;
+foreach(array('text', 'image', 'javascript') as $x) {
+echo <<<END
+<p><label for="defaultDirByType_$x">{$t("DDBT_$x")}:</label>
+<input type="text" id="defaultDirByType_$x" name="defaultDirByType[$x]" value="{$h($b->getOption("defaultDirByType:$x"))}" /></p>
+END;
+}
+echo <<<END
+</fieldset>
 <h2>{$t('TOCOptions')}</h2>
 <p>
 <input type="checkbox" id="tocNoGen" name="tocNoGen" {$checked($b->getOption('tocNoGen',false))} />

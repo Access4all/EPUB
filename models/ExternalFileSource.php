@@ -14,6 +14,21 @@ $ext = strtolower(substr($fn, $pos+1));
 return $ext;
 }
 
+function getGenericType () {
+$mt = $this->getMediaType();
+switch($mt){
+case 'application/xhtml+xml': 
+return 'text';
+case 'application/x-javascript':
+case 'text/javascript':
+return 'javascript';
+case 'text/css': 
+return 'css';
+}
+$mt = explode('/', $mt);
+return strtolower(trim($mt[0]));
+}
+
 function getMediaType () {
 $ext = $this->getFileNameExtension();
 if (isset(ExternalFileSource::$MIMETYPES[$ext])) return ExternalFileSource::$MIMETYPES[$ext];

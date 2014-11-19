@@ -118,6 +118,7 @@ this.zone.ondragover = RTZ_onDragOver;
 this.zone.ondrop = RTZ_onDrop.bind(this);
 this.zone.onfocus = RTZ_onfocus.bind(this);
 this.zone.onblur = RTZ_onblur.bind(this);
+this.zone.oncontextmenu = RTZ_contextmenu.bind(this);
 if (window.MutationObserver || window.WebKitMutationObserver) {
 if (!window.MutationObserver) window.MutationObserver = window.WebKitMutationObserver;
 this.mutationList = [];
@@ -173,7 +174,7 @@ if (this.inlineOnly) return;
 this.styles = {};
 this.positionalStyles = {};
 this.boxTypes = {};
-this.epubTypesClassMapping = {};
+this.styleData = {};
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
@@ -181,11 +182,11 @@ try { rules = stylesheet.cssRules || stylesheet.rules; } catch(e){} // Against f
 if (!rules) continue;
 for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
-if (rule.selectorText=='#epubTypesClassMapping' && rule.style.content) {
+if (rule.selectorText=='#StyleData' && rule.style.content) {
 var str = rule.style.content;
 str = str.trim().substring(1, str.length -1)
 .replace(/\\(['"])/g, '$1').trim();
-this.epubTypesClassMapping = JSON.parse(str);
+this.styleData = JSON.parse(str);
 continue;
 }
 if (!/^\.editor /.test(rule.selectorText)) continue;
@@ -811,6 +812,11 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }}
 
+function RTZ_setListNumbering (type) {
+this.type=type;
+this.setAttribute('type', type);
+}
+
 function RTZ_superBlockFormat (tagName, attrs) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
@@ -942,13 +948,13 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
-function RTZ_insertIllustration (url, alt, style) {
+function RTZ_insertIllustration (url, alt, caption, style) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
 var figure = this.createObservedElement('figure', {'class':style});
-var img = figure.appendElement('img', {'alt':'', 'src':url, 'width':'99%'});
+var img = figure.appendElement('img', {'alt':alt, 'src':url, 'width':'auto'});
 var capt = figure.appendElement('figcaption');
-var captP = capt.appendElement('p').appendText(alt);
+var captP = capt.appendElement('p').appendText(caption);
 var sel = this.getSelection();
 var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
 ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
@@ -965,7 +971,7 @@ var t = type.split('.');
 var tagName = t[0];
 var classNames = t[1] + ' ' + position;
 var attrs = {'class':classNames};
-if (this.epubTypesClassMapping[t[1]]) attrs['epub:type'] = this.epubTypesClassMapping[t[1]];
+if (this.styleData && this.styleData.htmlClassesToEpubTypes && this.styleData.htmlClassesToEpubTypes[t[1]]) attrs['epub:type'] = this.styleData.htmlClassesToEpubTypes[t[1]];
 this.superBlockFormat(tagName, attrs);
 }
 
@@ -1020,6 +1026,21 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_modifyIconDialog (img) {
+var src = img.getAttribute('src');
+var alt = img.getAttribute('alt') || '';
+var _this = this;
+DialogBox(msgs.Icon, [
+{label:msgs.IconURL, name:'url', value:src},
+{label:msgs.IconAlt, name:'alt', value:alt},
+], function(){ 
+img.setAttribute('alt', this.elements.alt.value);
+img.setAttribute('src', this.elements.url.value);
+_this.zone.focus();
+});//DialogBox
+}
+
+
 function RTZ_insertIllustrationDialog (imgUrl) {
 if (this.inlineOnly) return false;
 imgUrl = imgUrl || '';
@@ -1028,10 +1049,37 @@ var _this = this;
 DialogBox(msgs.InsertIllu, [
 {label:msgs.IlluURL, name:'url', value:imgUrl},
 {label:msgs.IlluAlt, name:'alt'},
+{label:msgs.IlluCapt, name:'caption'},
 {label:msgs.IlluStyle, name:'istyle', type:'select', values:this.positionalStyles},
 ], function(){ 
 _this.select(sel);
-_this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.istyle.value);
+_this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.caption.value, this.elements.istyle.value);
+_this.zone.focus();
+});//DialogBox
+}
+
+function RTZ_modifyIllustrationDialog (figure) {
+var img = figure.querySelector('img');
+var caption = figure.querySelector('figcaption');
+var captionText = (caption? caption.textContent : '');
+var altText = img.getAttribute('alt') || '';
+var src = img.getAttribute('src') || '';
+var curclass = figure.getAttribute('class') || '';
+var _this = this;
+DialogBox(msgs.Illustration, [
+{label:msgs.IlluURL, name:'url', value:src},
+{label:msgs.IlluAlt, name:'alt', value:altText},
+{label:msgs.IlluCapt, name:'caption', value:captionText},
+{label:msgs.IlluStyle, name:'istyle', type:'select', value:curclass, values:this.positionalStyles},
+], function(){
+var newCaptionText = this.elements.caption.value; 
+img.setAttribute('src', this.elements.url.value);
+img.setAttribute('alt', this.elements.alt.value);
+figure.setAttribute('class', this.elements.istyle.value);
+if (newCaptionText!=captionText){
+caption.innerHTML = '';
+caption.appendElement('p').appendText(newCaptionText);
+}
 _this.zone.focus();
 });//DialogBox
 }
@@ -1264,6 +1312,33 @@ debug(e, true);
 }, function(){alert('Save failed');});
 };
 
+function RTZ_contextmenu (e) {
+e = e || window.event;
+if (e.ctrlKey || e.shiftKey) return true;
+var x = e.pageX || e.clientX;
+var y = e.pageY || e.clientY;
+var items = [];
+var sel = this.getSelection(), ca = sel.commonAncestorContainer;
+var ol = ca.findAncestor(['ol']);
+var figure = ca.findAncestor(['figure']);
+var img = ca.parentNode.querySelector('img');
+if (ol && ol.isInside(this.zone)){
+items.merge([
+msgs.NumberingArabic, RTZ_setListNumbering.bind(ol,'1'),
+msgs.NumberingLowerAlpha, RTZ_setListNumbering.bind(ol,'a'),
+msgs.NumberingUpperAlpha, RTZ_setListNumbering.bind(ol,'A'),
+msgs.NumberingLowerRoman, RTZ_setListNumbering.bind(ol,'i'),
+msgs.NumberingUpperRoman, RTZ_setListNumbering.bind(ol,'I'),
+]);//
+}
+if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
+else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
+items.merge([msgs.Cancel,null]);
+Menu_show(items, this.zone, x, y);
+if (e.preventDefault) e.preventDefault();
+return false;
+}
+
 function RTZ_onfocus () {
 this.pushUndoState2();
 }
@@ -1305,14 +1380,15 @@ setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that Mut
 return result;
 }
 
-function RTZ_uploadFiles (files, okFunc) {
+function RTZ_uploadFiles (files, okFunc, forcedir) {
 if (!files || files.length<=0) return; // empty or upload not supported
 var url = window.location.href;
 var data = new FormData();
 data.append('addfiles', '1');
 data.append('noredir', '1');
-data.append('fileName', '');
+if (forcedir) data.append('forcedir', '1');
 data.append('id', '');
+data.append('fileName', '');
 for (var i=0; i<files.length; i++) data.append('upload', files[i], files[i].name);
 ajax('POST', url, data, function(re){
 debug(re);
@@ -1433,13 +1509,6 @@ function RTZ_select (sel) {
 var w = window.getSelection();
 w.removeAllRanges();
 w.addRange(sel);
-}
-
-function RTZ_copySelectionRange (sel, nsel) {
-nsel = nsel || {};
-var t = ['startContainer', 'endContainer', 'startOffset', 'endOffset', 'commonAncestorContainer'];
-for (var i=0; i<t.length; i++) nsel[t[i]] = sel[t[i]];
-return nsel;
 }
 
 function RTZ_findClonedNode (node, oldRoot, newRoot) {

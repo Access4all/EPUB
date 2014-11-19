@@ -1,6 +1,6 @@
-/*[[[Do not modify, auto generated code*/
- #epubTypesClassMapping {
- Content: '{"warn":"notice", "info":"notice", "help":"help"}';
+/*[[[*/
+#StyleData {
+ Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help"}}';
  }
  /*]]]*/
 
@@ -47,6 +47,11 @@ margin-left: 8em;
 
 .editor pre {
 margin-left: 8em;
+}
+
+.editor table {
+table-layout: fixed;
+caption-side: bottom;
 }
 
 .editor ol {

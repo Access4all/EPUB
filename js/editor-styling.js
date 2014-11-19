@@ -52,7 +52,7 @@ this.populateStyleSelect = STE_populateStyleSelect;
 
 function STE_init () {
 var _this = this;
-this.epubTypesClassMapping = {};
+this.styleData = {};
 this.form.elements.saveTplBtn.onclick = STE_saveTemplate.bind(this);
 this.form.elements.exportStyleBtn.onclick = STE_exportTemplate.bind(this);
 this.form.elements.importStyleBtn.onclick = STE_importTemplate.bind(this);
@@ -68,12 +68,12 @@ this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundC
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
 this.populateStyleSelect();
-var rule = $css('#epubTypesClassMapping');
+var rule = $css('#StyleData');
 if (rule && rule.style.content) {
 var str = rule.style.content;
 str = str.trim().substring(1, str.length -1)
 .replace(/\\(['"])/g, '$1').trim();
-this.epubTypesClassMapping = JSON.parse(str);
+this.styleData = JSON.parse(str);
 }}
 
 function STE_populateStyleSelect () {
@@ -116,14 +116,14 @@ if (!this.curStyle) return;
 var style = this.curStyle;
 var cs = this.parseCssText(style.cssText);
 this.form.elements.font.value = style.fontFamily || cs.fontFamily || 'default';
-this.form.elements.fontsize.value = Math.round(100 * parseFloat(style.fontSize || cs.fontSize)) || 100;
+this.form.elements.fontsize.value = Math.round(100 * parseFloat(style.fontSize || cs.fontSize)) || 100; // Supposed to be in rem or em
 this.form.elements.fontcolor.value = style.color || cs.color || 'default';
 this.form.elements.fontweight.checked = style.fontWeight=='bold' || cs.fontWeight=='bold';
 this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cs.fontStyle=='italic';
 this.form.elements.textalign.value = style.textAlign || cs.textAlign || 'initial';
 this.form.elements.bgcolor.value = style.backgroundColor || cs.backgroundColor || 'transparent';
 this.form.elements.cssFloat.value = style.cssFloat || cs.cssFloat || 'none';
-this.form.elements.width.value = parseInt(style.width || cs.width) || 'auto';
+this.form.elements.width.value = parseInt(style.width || cs.width) || 'auto'; // Supposed to be in %
 }
 
 function STE_createNewStyle (tag, name) {
@@ -148,8 +148,8 @@ _this.createNewStyle(this.elements.tag.value, this.elements.name.value);
 }
 
 function STE_saveTemplate () {
-var collected = "/*[[[Do not modify, auto generated code*/\r\n#epubTypesClassMapping {\r\nContent: '" 
-+ JSON.stringify(this.epubTypesClassMapping).replace(/"/g, '\\"')
+var collected = "/*[[[*/\r\n#StyleData {\r\nContent: '" 
++ JSON.stringify(this.styleData).replace(/"/g, '\\"')
 + "';\r\n}\r\n/*]]]*/\r\n\r\n";
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];

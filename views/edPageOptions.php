@@ -6,15 +6,15 @@ $pageTitle = "{$t('PageOptions')} {$filename}";
 $edpPageOptions = true;
 require('edRightHeader.php');
 echo <<<END
-<form action="" method="post">
+<form action="" method="post" data-track-changes>
 <h2>{$t('General')}</h2>
 END;
 if ($p->mediaType=='application/xhtml+xml') {
 echo <<<END
 <p><label for="title">{$t('PageTitle')}: </label>
-<input type="text" id="title" name="title" value="{$h($p->getTitle())}" required="required" aria-required="true" /></p>
+<input type="text" id="title" name="title" value="{$h($p->getTitle())}" required aria-required="true" /></p>
 <p><label for="language">{$t('Language')}:</label>
-<input type="text" id="language" name="language" value="{$h($p->getLanguage())}" /></p>
+<input type="text" id="language" name="language" value="{$h($p->getLanguage())}" required aria-required="true" /></p>
 END;
 }
 echo <<<END

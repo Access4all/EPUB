@@ -167,12 +167,14 @@ die("Uploaded: $retFn");
 else if (isset($_POST['authors'], $_POST['title'])) {
 if (!$b->ensureExtracted()) exit500();
 $b->updateBookSettings($_POST);
+if (isset($_POST['ajax'])) die('OK');
 header("Location:{$_SERVER['REQUEST_URI']}");
 exit();
 }
 else if (isset($_POST['id'], $_POST['fileName'])) {
 if (!$b->ensureExtracted()) exit500();
 $p->updatePageSettings($_POST);
+if (isset($_POST['ajax'])) die('OK');
 header("Location:{$_SERVER['REQUEST_URI']}");
 }
 if ($p && !preg_match('/\.(?:xhtml|htm|html|xml|opf|txt|css|js)$/i', $pageName)) {
@@ -182,11 +184,12 @@ exit();
 $view = new EditorView();
 if (!$p && $rightViewMethod!='newpage' && $rightViewMethod!='addfiles' && $rightViewMethod!='bookoptions') {
 $lf = $b->getLastOpenedFileName();
+if ($lf==$pageName) $lf = $b->getFirstNonTOCPageFileName();
 header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$lf}");
 exit();
 }
 $view->editorMain($leftViewMethod, $rightViewMethod, $b, $p);
-$b->setLastOpenedFileName($p->fileName);
+if ($p) $b->setLastOpenedFileName($p->fileName);
 }
 
 }

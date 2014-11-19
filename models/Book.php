@@ -189,6 +189,13 @@ if (!@$this->options) $this->readBO();
 $this->options[$name]=$value;
 }
 
+function removeOption ($name) {
+if (!@$this->options) $this->readBO();
+if (!isset($this->options[$name])) return;
+$this->options[$name]=null;
+unset($this->options[$name]);
+}
+
 private function readBO () {
 $this->options = array();
 foreach(@preg_split('/\r\n|\n|\r/', $this->getFileSystem()->getFromName($this->getBOFileName())) as $line) {
@@ -218,6 +225,11 @@ if (isset($info['language'])) $this->language = trim($info['language']);
 if (isset($info['authors'])) {
 $needBsUpdate=true;
 $this->authors = preg_split("/\r\n|\n|\r|\s*[,;]\s*/", $info['authors'], -1, PREG_SPLIT_NO_EMPTY);
+}
+if (isset($info['defaultDirByType'])) foreach($info['defaultDirByType'] as $type=>$value) {
+if (substr($value,-1)=='/') $value = substr($value, 0, -1);
+if (strlen($value)>1) $this->setOption("defaultDirByType:$type", $value);
+else $this->removeOption("defaultDirByType:$type");
 }
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
@@ -288,7 +300,8 @@ $this->getFileSystem()->addFromString($this->getBOFileName(), implode("\r\n", $o
 function addNewEmptyPage (&$info, $pageFrom = null) {
 if (empty($info['title'])) $info['title'] = 'untitled'.time();
 if (empty($info['fileName'])) {
-$path = ($pageFrom? $pageFrom->fileName : $this->getOpfFileName());
+$defdir = $this->getOption('defaultDirByType:text', '');
+$path = ($pageFrom? $pageFrom->fileName : ($defdir? "$defdir/#" : $this->getOpfFileName() ));
 $fn = Misc::toValidName($info['title']).'.xhtml' ;
 $info['fileName'] = pathResolve($path, $fn);
 }
@@ -317,7 +330,9 @@ if (empty($info['fileName'])) {
 $srcBaseName = $srcFile->getFileName();
 $ext = strrchr($srcBaseName, '.');
 $srcBaseName = Misc::toValidName(basename($srcBaseName, $ext));
-$info['fileName'] =  pathResolve( ($pageFrom? $pageFrom->fileName : $this->getOpfFileName()), ($srcBaseName.$ext));
+$defdir = $this->getOption("defaultDirByType:{$srcFile->getGenericType()}", '');
+$dstReference = ($defdir&&!isset($info['forcedir'])? "$defdir/#" : ($pageFrom? $pageFrom->fileName : $this->getOpfFileName() ));
+$info['fileName'] =  pathResolve( $dstReference, ($srcBaseName.$ext));
 }
 if (empty($info['id'])) {
 $srcBaseName = basename($srcFile->getFileName());
@@ -564,6 +579,7 @@ $spineIndex = array_search($it->id, $this->spine);
 if ($spineIndex>=0) {
 array_splice($this->spine, $spineIndex, 1);
 $this->setOption('tocNeedRegen', true);
+$this->removeOption("PageClass:{$it->id}");
 $this->saveBO();
 }
 $this->manifestModified = true;
