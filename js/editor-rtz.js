@@ -110,7 +110,7 @@ cleanHTML: vk.f9,
 }
 
 function RTZ_init () {
-this.inlineOnly = ['div', 'section', 'aside'].indexOf(this.zone.tagName.toLowerCase())<0;
+this.inlineOnly = ['div', 'section', 'aside', 'header', 'footer'].indexOf(this.zone.tagName.toLowerCase())<0;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 this.zone.oncut = RTZ_cut.bind(this);
@@ -142,8 +142,7 @@ if (keys[action] && keys[action]<vk.impossible) text.appendData('\t(' + RTZ_keyC
 });
 }.bind(this));
 if (this.mutationObserver) this.toolbar.$('*[data-action=undo], *[data-action=redo]').each(function(o){
-o.removeAttribute('aria-disabled');
-o.removeClass('disabled');
+o.removeAttribute('disabled');
 }.bind(this));
 //additional toolbar actions
 }
@@ -200,7 +199,7 @@ var ar = this.styles[m[1]];
 if (!ar) { ar = []; this.styles[m[1]]=ar; }
 ar.push(m[2]);
 }}}
-var tags = ['aside', 'section'];
+var tags = ['aside', 'section', 'footer', 'header'];
 for (var j=0; j<tags.length; j++) {
 if (this.styles[tags[j]]) for (var i=0; i<this.styles[tags[j]].length; i++) {
 var name = tags[j]+'.'+this.styles[tags[j]][i];
@@ -812,9 +811,16 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }}
 
-function RTZ_setListNumbering (type) {
-this.type=type;
-this.setAttribute('type', type);
+function RTZ_setListNumbering (ol, type) {
+this.pushUndoState2();
+ol.type=type;
+ol.setAttribute('type', type);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+}
+
+function RTZ_hnSwitchNotoc (hn) {
+if (hn.hasAttribute('data-notoc')) hn.removeAttribute('data-notoc');
+else hn.setAttribute('data-notoc', true);
 }
 
 function RTZ_superBlockFormat (tagName, attrs) {
@@ -1000,6 +1006,33 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
+function RTZ_tableInsertRow (table, curCell) {
+var curRow = curCell.parentNode;
+var firstRow = table.querySelector('tr');
+var secondRow = firstRow.nextElementSibling;
+var newRow = secondRow.cloneNode(true);
+newRow.$('td,th').each(function(cell){ cell.innerHTML=''; });
+curRow.parentNode.insertBefore(newRow, curRow.nextElementSibling);
+var sel = this.getSelection();
+sel.selectNodeContents(newRow.querySelector('th,td')); // Select the first new cell
+this.select(sel);
+}
+
+function RTZ_tableInsertColumn (table, curCell) {
+alert('To be done');
+}
+
+function RTZ_tableDeleteRow (table, curCell) {
+var curRow = curCell.parentNode;
+var firstRow = table.querySelector('tr');
+if (firstRow==curRow) return; // The first row can contain headers, we certainly don't want to delete it
+curRow.parentNode.removeChild(curRow);
+}
+
+function RTZ_tableDeleteColumn (table, curCell) {
+alert('To be done');
+}
+
 function RTZ_insertAbbrDialog () {
 var sel = this.getSelection();
 var _this = this;
@@ -1008,6 +1041,17 @@ DialogBox(msgs.InsertAbbr, [
 ], function(){ 
 _this.select(sel);
 _this.inlineFormat('abbr', false, {title:this.elements.abbrtitle.value});
+_this.zone.focus();
+});//DialogBox
+}
+
+function RTZ_modifyAbbrDialog (abbr) {
+var abbrTitle = abbr.getAttribute('title');
+var _this = this;
+DialogBox(msgs.Abbreviation, [
+{label:msgs.AbbrTitle, name:'abbrtitle', value:abbrTitle},
+], function(){ 
+abbr.setAttribute('title', this.elements.abbrtitle.value);
 _this.zone.focus();
 });//DialogBox
 }
@@ -1034,8 +1078,10 @@ DialogBox(msgs.Icon, [
 {label:msgs.IconURL, name:'url', value:src},
 {label:msgs.IconAlt, name:'alt', value:alt},
 ], function(){ 
+_this.pushUndoState2();
 img.setAttribute('alt', this.elements.alt.value);
 img.setAttribute('src', this.elements.url.value);
+setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 _this.zone.focus();
 });//DialogBox
 }
@@ -1072,6 +1118,7 @@ DialogBox(msgs.Illustration, [
 {label:msgs.IlluCapt, name:'caption', value:captionText},
 {label:msgs.IlluStyle, name:'istyle', type:'select', value:curclass, values:this.positionalStyles},
 ], function(){
+_this.pushUndoState2();
 var newCaptionText = this.elements.caption.value; 
 img.setAttribute('src', this.elements.url.value);
 img.setAttribute('alt', this.elements.alt.value);
@@ -1080,6 +1127,7 @@ if (newCaptionText!=captionText){
 caption.innerHTML = '';
 caption.appendElement('p').appendText(newCaptionText);
 }
+setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 _this.zone.focus();
 });//DialogBox
 }
@@ -1103,6 +1151,27 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_modifyTableDialog (table) {
+var tablePosition = table.className || '';
+var caption = table.querySelector('caption');
+var captionText = caption? caption.textContent : '';
+var _this = this;
+DialogBox(msgs.Table, [
+{name:'captionText', label:msgs.TableCaption, value:captionText},
+{type:'select', name:'tstyle', label:msgs.TableStyle, value:tablePosition, values:this.positionalStyles},
+], function(){
+_this.pushUndoState2();
+var newCaptionText = this.elements.captionText.value;
+table.setAttribute('class', this.elements.tstyle.value);
+if (newCaptionText!=captionText) {
+caption.innerHTML = '';
+caption.appendText(newCaptionText);
+}
+setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+_this.zone.focus();
+});//DialogBox
+}
+
 function RTZ_insertBoxDialog () {
 if (this.inlineOnly) return false;
 var _this = this;
@@ -1114,6 +1183,32 @@ DialogBox(msgs.InsertBox, [
 _this.select(sel);
 _this.insertBox(this.elements.type.value, this.elements.position.value);
 _this.zone.focus();
+});//Dialog box
+}
+
+function RTZ_modifyBoxDialog (box) {
+if (this.inlineOnly) return false;
+var _this = this;
+var classes = box.className.split(' ');
+var boxClass = classes.length>0? classes[0] : '';
+var boxPosition = classes.length>1? classes[1] : '';
+var boxType = box.tagName.toLowerCase() + '.' + boxClass;
+DialogBox(msgs.Box, [
+{label:msgs.IBoxType, name:'type', type:'select', value:boxType, values:this.boxTypes},
+{label:msgs.IBoxPosition, name:'position', type:'select', value:boxPosition, values:this.positionalStyles},
+], function(){
+try {
+var sel = _this.getSelection();
+sel.selectNodeContents(box);
+var frag = sel.extractContents(), first=frag.firstChild, last=frag.lastChild;
+box.parentNode.insertBefore(frag, box);
+box.parentNode.removeChild(box);
+sel.setStartBefore(first.getFirstTextNode());
+sel.setEndAfter(last.getLastTextNode());
+_this.select(sel);
+_this.insertBox(this.elements.type.value, this.elements.position.value);
+_this.zone.focus();
+} catch(e){ }
 });//Dialog box
 }
 
@@ -1143,7 +1238,7 @@ sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
 this.cleanHTMLElement(sel, frag);
 cleanHTML2(sel, frag);
-frag.querySelectorAll('div, aside, section, figure').each(cleanHTML2.bind(this, sel));
+frag.querySelectorAll('div, aside, section, header, footer, figure').each(cleanHTML2.bind(this, sel));
 this.zone.appendChild(frag);
 try {
 cursel.setStart(startNode, startOf);
@@ -1168,7 +1263,7 @@ var remove = false, rename=null, surround=null;
 if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return; // Ignored type of element: don't go further
 if (o.nodeType==11 && !inlineContext) { // document fragment
 // Look for blocks incorrectly present within a big <p>; this can happen when pasting 
-var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, figure');
+var blocks = o.querySelectorAll('ul, ol, dl, div, pre, p, h1, h2, h3, h4, h5, h6, aside, section, header, footer, figure');
 for (var i=0; i<blocks.length; i++) {
 var block = blocks[i];
 var p = block.findAncestor(['p']);
@@ -1206,7 +1301,7 @@ switch(o.nodeType) {
 case 3: // textnode
 if (o.nodeValue.trim().length==0) remove=6; // empty or entirely composed of spaces: useless, so remove
 if (o.parentNode.nodeType==11 && !inlineContext) surround='p'; // Text node directly within the fragment or a node which should normally not contain direct text children; probably not correct, should be surrounded by <p> if we are in block context
-if (o.parentNode.nodeType==1 && !inlineContext && ['div', 'aside', 'section', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
+if (o.parentNode.nodeType==1 && !inlineContext && ['div', 'aside', 'section', 'header', 'footer', 'figure', 'figcaption'].indexOf(o.parentNode.nodeName.toLowerCase())>=0) surround='p'; // idem
 if (o.parentNode.nodeType==1 && trimableElements.indexOf(o.parentNode.tagName.toLowerCase())>=0 && !o.previousSibling) o.data = o.data.ltrim();
 if (o.parentNode.nodeType==1 && trimableElements.indexOf(o.parentNode.tagName.toLowerCase())>=0 && !o.nextSibling) o.data = o.data.rtrim();
 break;
@@ -1321,20 +1416,38 @@ var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
 var ol = ca.findAncestor(['ol']);
 var figure = ca.findAncestor(['figure']);
+var box = ca.findAncestor(['aside', 'section', 'footer', 'header', 'div']);
 var img = ca.parentNode.querySelector('img');
+var hn = ca.findAncestor(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+var table = ca.findAncestor(['table']);
+var td = ca.findAncestor(['td', 'th']);
+var abbr = ca.findAncestor(['abbr']);
+if (abbr) items.merge([msgs.AbbrModify, RTZ_modifyAbbrDialog.bind(this,abbr)]);
 if (ol && ol.isInside(this.zone)){
-items.merge([
-msgs.NumberingArabic, RTZ_setListNumbering.bind(ol,'1'),
-msgs.NumberingLowerAlpha, RTZ_setListNumbering.bind(ol,'a'),
-msgs.NumberingUpperAlpha, RTZ_setListNumbering.bind(ol,'A'),
-msgs.NumberingLowerRoman, RTZ_setListNumbering.bind(ol,'i'),
-msgs.NumberingUpperRoman, RTZ_setListNumbering.bind(ol,'I'),
-]);//
+var types = {NumberingArabic:'1', NumberingLowerAlpha:'a', NumberingUpperAlpha:'A', NumberingLowerRoman:'i', NumberingUpperRoman:'I'};
+var curtype = ol.getAttribute('type') || '1';
+for (var t in types) {
+items.merge([{text:msgs[t], type:'menuitemcheckbox', checked:curtype==types[t]}, RTZ_setListNumbering.bind(this, ol, types[t]) ]);
+}}
+else if (hn && hn.isInside(this.zone)) {
+var level = parseInt(hn.nodeName.substring(1));
+for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemcheckbox', checked:level==i}, RTZ_simpleBlockFormat.bind(this, 'h'+i, {role:'heading', 'aria-level':i})]);
+items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAttribute('data-notoc')}, RTZ_hnSwitchNotoc.bind(this,hn)]);
+}
+if (td && table && td.isInside(this.zone)) {
+var nCols = td.parentNode.$('th,td').length;
+var nRows = table.$('tr').length;
+items.merge([msgs.TableInsertRow, RTZ_tableInsertRow.bind(this,table,td)]);
+if (nRows>2) items.merge([msgs.TableDeleteRow, RTZ_tableDeleteRow.bind(this,table,td)]);
+items.merge([msgs.TableInsertCol, RTZ_tableInsertColumn.bind(this,table,td)]);
+if (nCols>2) items.merge([msgs.TableDeleteCol, RTZ_tableDeleteColumn.bind(this,table,td)]);
 }
 if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
 else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
+if (table && table.isInside(this.zone)) items.merge([msgs.TableModify, RTZ_modifyTableDialog.bind(this,table)]);
+if (box && box.isInside(this.zone)) items.merge([msgs.BoxModify, RTZ_modifyBoxDialog.bind(this,box)]);
 items.merge([msgs.Cancel,null]);
-Menu_show(items, this.zone, x, y);
+Menu_show(items, this.zone, x+7, y+7);
 if (e.preventDefault) e.preventDefault();
 return false;
 }

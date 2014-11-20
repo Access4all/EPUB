@@ -19,9 +19,9 @@ END;
 }
 echo <<<END
 <p><label for="filename">{$t('FileName')}: </label>
-<input type="text" id="filename" name="fileName" readonly="readonly" value="{$p->fileName}" /></p>
+<input type="text" id="filename" name="fileName" readonly value="{$p->fileName}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
-<input type="text" id="id" name="id" readonly="readonly" value="{$h($p->id)}" /></p>
+<input type="text" id="id" name="id" readonly value="{$h($p->id)}" /></p>
 END;
 $apo = $p->getAdditionalPageOptions();
 if ($apo) { require("ed{$apo}PageOptions.php"); }

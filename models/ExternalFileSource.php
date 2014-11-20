@@ -24,6 +24,9 @@ case 'text/javascript':
 return 'javascript';
 case 'text/css': 
 return 'css';
+case 'application/font-woff':
+case 'application/font-sfnt':
+return 'font';
 }
 $mt = explode('/', $mt);
 return strtolower(trim($mt[0]));
@@ -54,6 +57,9 @@ static $MIMETYPES = array(
 'odt' => 'application/vnd.oasis.opendocument.text',
 'ods' => 'application/vnd.oasis.opendocument.presentation',
 'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+'wof' => 'application/font-woff',
+'ttf' => 'application/font-sfnt',
+'otf' => 'application/font-sfnt',
 'png' => 'image/png',
 'gif' => 'image/gif',
 'jpg' => 'image/jpeg',

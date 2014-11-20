@@ -1,13 +1,19 @@
 function Menu_show (items, originator, x, y) {
 originator = originator || document.activeElement;
-var ul = document.createElement2('ul', {'class':'contextmenu'});
+var ul = document.createElement2('ul', {'class':'contextmenu', role:'menu'});
 var firstA = null;
 for (var i=0; i<items.length; i+=2) {
 var label = items[i], action = items[i+1];
-var a = ul.appendElement('li').appendElement('a').appendText(label);
+if (typeof(label)=='string') label = {text:label, type:'menuitem'};
+var a = ul.appendElement('li').appendElement('a', {role:label.type}).appendText(label.text);
 a.href = (typeof(action)=='string'? action : '#');
+a.onkeydown = Menu_keydown.bind(a, ul, originator);
 if (typeof(action)=='function') a.onclick = Menu_click(action, originator, ul);
 else if (!action) a.onclick = Menu_close.bind(ul, originator);
+if (label.checked || label.type=='menuitemcheckbox' || label.type=='menuitemradio') {
+a.setAttribute('aria-checked', !!label.checked);
+if (label.checked) a.parentNode.insertElementBefore('span', a, {'class':'checkmark', 'aria-hidden':true}, '\u2714');
+}
 if (!firstA) firstA=a;
 }
 var body = document.querySelector('body');
@@ -32,6 +38,32 @@ function Menu_close (originator) {
 this.parentNode.removeChild(this);
 document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (originator) originator.focus();
+return false;
+}
+
+function Menu_keydown (ul, originator, e) {
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (e.ctrlKey) k |= vk.ctrl;
+if (e.shiftKey) k|=vk.shift;
+if (e.altKey) k|=vk.alt;
+switch(k){
+case vk.up: {
+var prevLi = this.parentNode.previousElementSibling;
+var prevItem = prevLi && prevLi.querySelector('a');
+if (prevItem) prevItem.focus();
+}break;
+case vk.down: {
+var nextLi = this.parentNode.nextElementSibling;
+var nextItem = nextLi && nextLi.querySelector('a');
+if (nextItem) nextItem.focus();
+}break;
+case vk.escape:
+Menu_close.call(ul, originator);
+break;
+default: return true;
+}
+if (e.preventDefault()) e.preventDefault();
 return false;
 }
 
@@ -315,8 +347,6 @@ else alert('No copy method');
 function FormTrackChanges_init (f) {
 f.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=true;
-b.addClass('disabled');
-b.setAttribute('aria-disabled', true);
 });//each command button
 f.$('input, textarea, select').each(function(input){
 input.onchange = FormTrackChanges_changed;
@@ -342,8 +372,6 @@ function FormTrackChanges_changed () {
 this.onchange=null;
 this.form.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=false;
-b.removeClass('disabled');
-b.removeAttribute('aria-disabled');
 });//each command button
 }
 

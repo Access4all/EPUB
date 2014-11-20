@@ -123,6 +123,20 @@ background-color: black;
 opacity: 0.7;
 } 
 
+.contextmenu {
+   width: auto;
+   height: auto;
+min-width: 150px;
+   background-color:#fff;
+   padding: 1em;
+   border: 3px solid #86B918;
+}
+
+.contextmenu .checkmark {
+position: relative;
+left: -0.65em;
+}
+
 a, a:link {
 color: blue;
 text-decoration: underline;

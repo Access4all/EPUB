@@ -21,7 +21,7 @@ echo <<<END
 <fieldset><legend>{$t('DefaultDirs')}</legend>
 <p>{$t('DDBTTipp')}</p>
 END;
-foreach(array('text', 'image', 'javascript') as $x) {
+foreach(array('text', 'image', 'font', 'javascript') as $x) {
 echo <<<END
 <p><label for="defaultDirByType_$x">{$t("DDBT_$x")}:</label>
 <input type="text" id="defaultDirByType_$x" name="defaultDirByType[$x]" value="{$h($b->getOption("defaultDirByType:$x"))}" /></p>

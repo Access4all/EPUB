@@ -7,8 +7,8 @@ echo <<<END
 <span class="buttonGroup">
 <button id="previewBtn" type="button" data-action="preview" data-href="$root/editor/{$b->name}/preview/$pn">{$t('Preview')}</button>
 <button type="button" data-action="save">{$t('Save')}</button>
-<button type="button" data-action="undo" class="disabled" aria-disabled="true">{$t('Undo')}</button>
-<button type="button" data-action="redo" class="disabled" aria-disabled="true">{$t('Redo')}</button>
+<button type="button" data-action="undo" disabled>{$t('Undo')}</button>
+<button type="button" data-action="redo" disabled>{$t('Redo')}</button>
 <button type="button" data-action="copy">{$t('Copy')}</button>
 <button type="button" data-action="cut">{$t('Cut')}</button>
 <button type="button" data-action="paste">{$t('Paste')}</button>
