@@ -58,6 +58,7 @@ static $MIMETYPES = array(
 'ods' => 'application/vnd.oasis.opendocument.presentation',
 'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
 'wof' => 'application/font-woff',
+'woff' => 'application/font-woff',
 'ttf' => 'application/font-sfnt',
 'otf' => 'application/font-sfnt',
 'png' => 'image/png',

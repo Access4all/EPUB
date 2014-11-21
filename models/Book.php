@@ -139,13 +139,11 @@ $manifest = $opf->getFirstElementByTagName('manifest');
 if (!$manifest) return null;
 $idmap = array();
 $fnmap = array();
+$bf = new BookFactory();
 foreach($manifest->getElementsByTagName('item') as $item) {
 $mediaType = $item->getAttribute('media-type');
 $itemid = $item->getAttribute('id');
-$className = $this->getOption("PageClass:$itemid", 'BookPage');
-$o = null;
-if ($mediaType!='application/xhtml+xml') $className = 'BookResource';
-$o = new $className();
+$o = $bf->createBookResourceFromManifestEntry($this, $item);
 $o->book = $this;
 $o->id = $itemid;
 $o->href = $item->getAttribute('href');
@@ -341,6 +339,7 @@ $info['id'] = Misc::toValidName($noext);
 }
 $bf = new BookFactory();
 $resources = $bf->createResourcesFromFile($this, $info, $srcFile);
+if (!$resources) return null;
 foreach($resources as $lst) {
 list($res, $srcFile) = $lst;
 $res->book = $this;
@@ -469,6 +468,21 @@ else $item->closeDoc();
 $navItem->saveCloseDoc();
 $this->setOption('tocNeedRegen', false);
 $this->saveBO();
+}
+
+function getCssJsonData ($contents = null) {
+if (!$contents) $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
+if (!preg_match( '@\[\[\[.*?Content\s*:\s*\'(.*)\';.*\]\]\]@ms', $contents, $m)) return null;
+return json_decode(stripslashes($m[1]));
+}
+
+function setCssJsonData ($json, $contents = null) {
+$upd = !$contents;
+if (!$contents) $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
+$data = addslashes(json_encode($json, JSON_FORCE_OBJECT));
+$contents = preg_replace( '@/\*\[\[\[.*?\]\]\]\*/@ms', "/*[[[*/\r\n#StyleData {\r\nContent: '$str';\r\n}\r\n/*]]]*/", $contents);
+if ($upd) $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
+return $contents;
 }
 
 function updateCssTemplate ($newContents, $dontFilter=false) {

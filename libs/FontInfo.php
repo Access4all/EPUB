@@ -16,8 +16,8 @@ http://stackoverflow.com/questions/5668901/php-how-to-read-title-of-font-from-tt
  * Constructor.
  * @param strFontPath Path to the font file.
  */
- function __construct( $strFontPath ) {
- $this->_arrInfo = $this->getFontInfo( $strFontPath );
+ function __construct( $strFontPath, $bIsData=false  ) {
+ $this->_arrInfo = $this->getFontInfo( $strFontPath, $bIsData );
  }
  
  /**
@@ -25,11 +25,15 @@ http://stackoverflow.com/questions/5668901/php-how-to-read-title-of-font-from-tt
  * @param strFontPath
  * @return
  */
- private function getFontInfo( $strFontPath ) {
+ private function getFontInfo( $strFontPath, $bIsData ) {
  // Open the file and read its contents.
+ $strText = null;
+if ($bIsData)  $strText = $strFontPath;
+else {
  $obintJFile = fopen( $strFontPath, "r" );
  $strText = fread( $obintJFile, filesize( $strFontPath ) );
  fclose( $obintJFile );
+}
  
  // Grab information.
  $intNumberOfTables = hexdec( $this->dec2ord( $strText[4] ) . $this->dec2ord( $strText[5] ) ); 

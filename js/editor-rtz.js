@@ -29,7 +29,6 @@ this.simpleBlockFormat = RTZ_simpleBlockFormat;
 this.inlineFormat = RTZ_inlineFormat;
 this.superBlockFormat = RTZ_superBlockFormat;
 this.formatAsList = RTZ_formatAsList;
-this.formatAsLink = RTZ_formatAsLink;
 this.formatAsCodeListing = RTZ_formatAsCodeListing;
 this.removeFormatting = RTZ_removeFormatting;
 this.insertElement = RTZ_insertElement;
@@ -37,6 +36,7 @@ this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
 this.insertTable = RTZ_insertTable;
 this.insertBox = RTZ_insertBox;
+this.insertLinkDialog = RTZ_insertLinkDialog;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
@@ -345,7 +345,7 @@ k += 1 - keys.h1;
 this.simpleBlockFormat('h'+k, {'role':'heading', 'aria-level':k});
 break;
 case keys.link:
-this.formatAsLink();
+this.insertLinkDialog();
 break;
 case keys.bold:
 this.inlineFormat('strong', false);
@@ -690,7 +690,7 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
-function RTZ_formatAsLink () {
+function RTZ_insertLinkDialog () {
 if (!this.inlineFormat('a', false, null, true)) {
 this.inlineFormat('a', false);
 return;
@@ -701,6 +701,15 @@ DialogBox(msgs.MakeALink, [{label:msgs.LinkURL, name:'url'}], function(){
 var text = this.elements.url.value;
 _this.select(sel);
 _this.inlineFormat('a', false, {'href':text});
+_this.zone.focus();
+}, null); //DialogBox
+}
+
+function RTZ_modifyLinkDialog (link) {
+var url = link.getAttribute('href');
+var _this = this;
+DialogBox(msgs.Link, [{label:msgs.LinkURL, name:'url', value:url}], function(){
+link.setAttribute('href', this.elements.url.value);
 _this.zone.focus();
 }, null); //DialogBox
 }
@@ -1006,34 +1015,65 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
-function RTZ_tableInsertRow (table, curCell) {
+function RTZ_tableInsertRow (table, curCell, clear) {
+this.pushUndoState2();
 var curRow = curCell.parentNode;
 var firstRow = table.querySelector('tr');
 var secondRow = firstRow.nextElementSibling;
 var newRow = secondRow.cloneNode(true);
-newRow.$('td,th').each(function(cell){ cell.innerHTML=''; });
+if (clear) newRow.$('td,th').each(function(cell){ cell.innerHTML='&nbsp;'; });
 curRow.parentNode.insertBefore(newRow, curRow.nextElementSibling);
 var sel = this.getSelection();
 sel.selectNodeContents(newRow.querySelector('th,td')); // Select the first new cell
 this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
-function RTZ_tableInsertColumn (table, curCell) {
-alert('To be done');
+function RTZ_tableInsertColumn (table, curCell, clear) {
+this.pushUndoState2();
+var curRow = curCell.parentNode;
+var colIndex = Array.prototype.indexOf.call(curRow.$('th,td'), curCell);
+var newSelectedCell = null;
+table.$('tr').each(function(tr){
+var cells = tr.$('th,td');
+var secondCell = cells[1], theCell = cells[colIndex], newCell = secondCell.cloneNode(true);
+if (clear) newCell.innerHTML='&nbsp;';
+tr.insertBefore(newCell, theCell.nextElementSibling);
+if (curCell==theCell) newSelectedCell= newCell;
+});//
+var sel = this.getSelection();
+sel.selectNodeContents(newSelectedCell);
+this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_tableDeleteRow (table, curCell) {
+this.pushUndoState2();
 var curRow = curCell.parentNode;
 var firstRow = table.querySelector('tr');
 if (firstRow==curRow) return; // The first row can contain headers, we certainly don't want to delete it
 curRow.parentNode.removeChild(curRow);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_tableDeleteColumn (table, curCell) {
-alert('To be done');
+this.pushUndoState2();
+var curRow = curCell.parentNode;
+var colIndex = Array.prototype.indexOf.call(curRow.$('th,td'), curCell);
+if (colIndex<=0) return; // The first column can contain headers, we certainly don't want to delete it
+table.$('tr').each(function(tr){
+var cells = tr.$('th,td');
+var theCell = cells[colIndex];
+tr.removeChild(theCell);
+});//
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
 function RTZ_insertAbbrDialog () {
+if (!this.inlineFormat('abbr', false, null, true)) {
+this.inlineFormat('abbr', false);
+return;
+}
 var sel = this.getSelection();
 var _this = this;
 DialogBox(msgs.InsertAbbr, [
@@ -1422,6 +1462,8 @@ var hn = ca.findAncestor(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 var table = ca.findAncestor(['table']);
 var td = ca.findAncestor(['td', 'th']);
 var abbr = ca.findAncestor(['abbr']);
+var link = ca.findAncestor(['a']);
+if (link) items.merge([msgs.LinkModify, RTZ_modifyLinkDialog.bind(this,link)]);
 if (abbr) items.merge([msgs.AbbrModify, RTZ_modifyAbbrDialog.bind(this,abbr)]);
 if (ol && ol.isInside(this.zone)){
 var types = {NumberingArabic:'1', NumberingLowerAlpha:'a', NumberingUpperAlpha:'A', NumberingLowerRoman:'i', NumberingUpperRoman:'I'};
@@ -1437,9 +1479,11 @@ items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAt
 if (td && table && td.isInside(this.zone)) {
 var nCols = td.parentNode.$('th,td').length;
 var nRows = table.$('tr').length;
-items.merge([msgs.TableInsertRow, RTZ_tableInsertRow.bind(this,table,td)]);
+items.merge([msgs.TableInsertRow, RTZ_tableInsertRow.bind(this,table,td,true)]);
+items.merge([msgs.TableInsertCol, RTZ_tableInsertColumn.bind(this,table,td,true)]);
+items.merge([msgs.TableDuplRow, RTZ_tableInsertRow.bind(this,table,td,false)]);
+items.merge([msgs.TableDuplCol, RTZ_tableInsertColumn.bind(this,table,td,false)]);
 if (nRows>2) items.merge([msgs.TableDeleteRow, RTZ_tableDeleteRow.bind(this,table,td)]);
-items.merge([msgs.TableInsertCol, RTZ_tableInsertColumn.bind(this,table,td)]);
 if (nCols>2) items.merge([msgs.TableDeleteCol, RTZ_tableDeleteColumn.bind(this,table,td)]);
 }
 if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);

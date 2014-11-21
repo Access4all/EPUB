@@ -10,6 +10,8 @@ static $CLASSMAPPING = array(
 'application/epub+zip' => 'EPUBBookFactory',
 'application/xhtml+xml' => 'XHTMLBookFactory',
 'text/html' => 'HTMLBookFactory',
+'application/font-woff' => 'FontFactory',
+'application/font-sfnt' => 'FontFactory',
 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'PandocFactory',
 'text/markdown' => 'PandocFactory',
 'text/tex' => 'PandocFactory',
@@ -47,13 +49,31 @@ return $book;
 return null; // Not supported
 }
 
+function createBookResourceFromManifestEntry ($b, $item) {
+$itemid = $item->getAttribute('id');
+$mediaType = $item->getAttribute('media-type');
+$factoryClass = null;
+$resource = null;
+if (isset(BookFactory::$CLASSMAPPING[$mediaType])) $factoryClass = BookFactory::$CLASSMAPPING[$mediaType];
+if ($factoryClass && method_exists($factoryClass, 'createBookResourceFromManifestEntry')) {
+$factory = new $factoryClass();
+$resource = $factory->createBookResourceFromManifestEntry($b, $item, $itemid, $mediaType);
 }
+if (!$resource) $resource = new BookResource(); // Default resource class
+return $resource;
+}
+
+} // End BookFactory
 
 class XHTMLBookFactory {
 function createResourcesFromFile ($book, &$info, $file) {
 $className = 'BookPage';
 if (isset($info['className'])) $className = $info['className'];
 return array(array(new $className($info), $file));
+}
+function createBookResourceFromManifestEntry  ($b, $item, $itemid, $mediaType) {
+$className = $b->getOption("PageClass:$itemid", 'BookPage');
+return new $className();
 }}
 
 class HTMLBookFactory {
