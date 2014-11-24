@@ -8,9 +8,9 @@ parent::__construct($a);
 }
 
 private function loadFontInfo () {
-require('../libs/FontInfo.php');
+require('libs/FontInfo.php');
 $fi = new FontInfo($this->getContents(), true);
-$this->family = $fi->getFontFamiliy();
+$this->family = $fi->getFontFamily();
 $this->subfamily = $fi->getFontSubFamily();
 $this->fontname = $fi->getFontName();
 }
@@ -32,13 +32,13 @@ return $this->fontname;
 
 function isBold () {
 $name = $this->getFontName();
-$subfam = $this->getFontSubfamily();
+$subfam = $this->getSubfamily();
 return (stripos($subfam, 'bold')!==false || stripos($name, 'bold')!==false);
 }
 
 function isItalic () {
 $name = $this->getFontName();
-$subfam = $this->getFontSubfamily();
+$subfam = $this->getSubfamily();
 return (stripos($subfam, 'italic')!==false || stripos($name, 'italic')!==false);
 }
 

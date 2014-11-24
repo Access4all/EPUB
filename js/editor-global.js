@@ -17,6 +17,7 @@ if (label.checked) a.parentNode.insertElementBefore('span', a, {'class':'checkma
 if (!firstA) firstA=a;
 }
 var body = document.querySelector('body');
+body.onclick = function(e){ body.onclick=null; Menu_close.call(ul,originator); return true; }; // When the user clicks outside of the context menu, it should be closed
 body.appendChild(ul);
 if (x&&y) {
 ul.style.position='absolute';
@@ -116,11 +117,12 @@ if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 return false; 
 };
+overlay.onclick = DialogBox_overlayClick; // When a dialog box is active, nothing should happen if the user clicks outside of the dialog box
 var body = document.querySelector('body');
 body.appendChild(overlay);
 body.appendChild(form);
-if (first.select) first.select();
 if (first.focus) first.focus();
+if (first.select) first.select();
 document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (readyFunc) readyFunc.call(form);
 }
@@ -151,12 +153,22 @@ btn.setAttribute('aria-label', btns[i].stripHTML() );
 if (!first) first=btn;
 }
 var body = document.querySelector('body');
+overlay.onclick = DialogBox_overlayClick; // When a dialog box is active, nothing should happen if the user clicks outside of the dialog box
 body.appendChild(overlay);
 body.appendChild(form);
 document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (first.select) first.select();
 if (first.focus) first.focus();
 if (readyFunc) readyFunc.call(form);
+}
+
+function DialogBox_overlayClick (e) {
+e = e || window.event;
+if (e.preventDefault) e.preventDefault();
+if (e.stopPropagation) e.stopPropagation();
+if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+e.returnValue = e.ReturnValue = false;
+return false;
 }
 
 function FileTree_init (e) {

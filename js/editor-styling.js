@@ -1,3 +1,5 @@
+var sides = ['Top', 'Right', 'Bottom', 'Left'];
+
 function $css (selector, flags) {
 var defstylesheet = null;
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
@@ -67,6 +69,17 @@ this.form.elements.textalign.onchange = function(){ _this.updateValue('textAlign
 this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundColor', this.value, 'transparent'); };
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
+for (var i=0; i<sides.length; i++) {
+var prop = 'border' + sides[i], type = prop + 'Style', color = prop + 'Color', width = prop + 'Width';
+var corner = (!(i%2)? sides[i]+sides[i+1] : sides[(i+1)%4]+sides[i]), radius = 'border' + corner + 'Radius';
+var margin = 'margin' + sides[i], padding = 'padding'+sides[i];
+this.form.elements[type].onchange = (function(t, _this){ return function(){ _this.updateValue(t, this.value, 'none'); }; })(type, this);
+this.form.elements[color].onchange = (function(c, _this){ return function(){ _this.updateValue(c, this.value, 'transparent'); }; })(color, this);
+this.form.elements[width].onchange = (function(w, _this){ return function(){ _this.updateValue(w, parseInt(this.value)+'px', '0'); }; })(width, this);
+this.form.elements[radius].onchange = (function(r, _this){ return function(){ _this.updateValue(r, parseInt(this.value)+'px', '0'); }; })(radius, this);
+this.form.elements[margin].onchange = (function(w, _this){ return function(){ _this.updateValue(w, (parseFloat(this.value)/10.0)+'em', '0'); }; })(margin, this);
+this.form.elements[padding].onchange = (function(w, _this){ return function(){ _this.updateValue(w, (parseFloat(this.value)/10.0)+'em', '0'); }; })(padding, this);
+}
 this.populateStyleSelect();
 var rule = $css('#StyleData');
 if (rule && rule.style.content) {
@@ -108,22 +121,54 @@ if (value==def) this.curStyle.style.removeProperty(camelCaseNameToDashedName(pro
 else this.curStyle.style[property] = value;
 }
 
+function STE_getComputedStyle (el) {
+if (el.getComputedStyle) return el.getComputedStyle();
+else if (el.style && el.style.getComputedStyle) return el.style.getComputedStyle();
+else if (window.getComputedStyle) return window.getComputedStyle(el);
+else if (el.currentStyle) return el.currentStyle;
+}
+
+function STE_createGhostElement (selector) {
+selector = selector.split(' ')[1].split('.');
+var tagName = selector[0] || 'div';
+var className = selector.length>1? selector[1] : 'noclass';
+var styles = {position:'absolute', width:'1px', height:'1px', overflow:'hidden', top:'-999999px', left:'-999999px'};
+var div = document.createElement2('div', {'class':'editor'});
+var elem = div.appendElement(tagName, {'class':className, 'data-ghost':true});
+document.querySelector('body').appendChild(div);
+for (var i in styles) div.style[i]=styles[i];
+return elem;
+}
+
 function STE_updateUI (selection) {
 var selector = ('.editor '+selection).trim();
 if (selection=='#') this.curStyle=null;
 else this.curStyle = $css(selector, $css.CREATE);
 if (!this.curStyle) return;
-var style = this.curStyle;
-var cs = this.parseCssText(style.cssText);
-this.form.elements.font.value = style.fontFamily || cs.fontFamily || 'default';
-this.form.elements.fontsize.value = Math.round(100 * parseFloat(style.fontSize || cs.fontSize)) || 100; // Supposed to be in rem or em
-this.form.elements.fontcolor.value = style.color || cs.color || 'default';
-this.form.elements.fontweight.checked = style.fontWeight=='bold' || cs.fontWeight=='bold';
-this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cs.fontStyle=='italic';
-this.form.elements.textalign.value = style.textAlign || cs.textAlign || 'initial';
-this.form.elements.bgcolor.value = style.backgroundColor || cs.backgroundColor || 'transparent';
-this.form.elements.cssFloat.value = style.cssFloat || cs.cssFloat || 'none';
-this.form.elements.width.value = parseInt(style.width || cs.width) || 'auto'; // Supposed to be in %
+var style = this.curStyle; 
+var cd = this.parseCssText(style.cssText); //  will reflects the state of the style in the CSS code; more accurate than computed styles, but not always present, i.e. grouped properties like border/margin/padding
+var elem = document.querySelector(selector) || STE_createGhostElement(selector), cs = STE_getComputedStyle(elem); // Reflect the true computed style; is always present but is less accurate (the browser often make unit conversion and such)
+this.form.elements.font.value = style.fontFamily || cd.fontFamily || 'default';
+this.form.elements.fontsize.value = Math.round(100 * parseFloat(style.fontSize || cd.fontSize)) || 100; // Supposed to be in rem or em
+this.form.elements.fontcolor.value = style.color || cd.color || 'default';
+this.form.elements.fontweight.checked = style.fontWeight=='bold' || cd.fontWeight=='bold';
+this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cd.fontStyle=='italic';
+this.form.elements.textalign.value = style.textAlign || cd.textAlign || 'initial';
+this.form.elements.bgcolor.value = style.backgroundColor || cd.backgroundColor || 'transparent';
+this.form.elements.cssFloat.value = style.cssFloat || cd.cssFloat || 'none';
+this.form.elements.width.value = parseInt(style.width || cd.width) || 'auto'; // Supposed to be in %
+for (var i=0; i<sides.length; i++) {
+var prop = 'border' + sides[i], type = prop + 'Style', color = prop + 'Color', width = prop + 'Width';
+var corner = (!(i%2)? sides[i]+sides[i+1] : sides[(i+1)%4]+sides[i]), radius = 'border' + corner + 'Radius';
+var margin = 'margin' + sides[i], padding = 'padding' + sides[i];
+this.form.elements[radius].value = parseInt(style[radius] || cd[radius] || cs[radius]) || '0'; // Supposed to be in px
+this.form.elements[width].value = parseInt(style[width] || cd[width] || cs[width]) || '0'; // Supposed to be in px
+this.form.elements[color].value = style[color] || cd[color] || cs[color] || 'transparent';
+this.form.elements[type].value = style[type] || cd[type] || cs[type] || 'none';
+this.form.elements[margin].value = 10.0 * parseFloat(style[margin] || cd[margin] || cs[margin] || 0); // Supposed to be in em
+this.form.elements[padding].value = 10.0 * parseFloat(style[padding] || cd[padding] || cs[padding] || 0); // Supposed to be in em
+}
+if (elem && elem.hasAttribute('data-ghost')) elem.parentNode.parentNode.removeChild(elem.parentNode);
 }
 
 function STE_createNewStyle (tag, name) {
@@ -148,9 +193,9 @@ _this.createNewStyle(this.elements.tag.value, this.elements.name.value);
 }
 
 function STE_saveTemplate () {
-var collected = "/*[[[*/\r\n#StyleData {\r\nContent: '" 
+var collected = "#StyleData {\r\nContent: '" 
 + JSON.stringify(this.styleData).replace(/"/g, '\\"')
-+ "';\r\n}\r\n/*]]]*/\r\n\r\n";
++ "';\r\n}\r\n\r\n\r\n";
 if (document.styleSheets) for (var j=0; j<document.styleSheets.length; j++) {
 var stylesheet = document.styleSheets[j];
 var rules = null;
@@ -160,10 +205,10 @@ for (var i=0; i<rules.length; i++) {
 var rule = rules[i];
 if (/^\.editor/ .test(rule.selectorText)) collected += rule.cssText + ' ';
 }}
-debug("CSS="+collected.replace(/\r\n|\n/g, '<br />'));
+//debug("CSS="+collected.replace(/\r\n|\n/g, '<br />'));
 var url = window.actionUrl.replace('@@', 'saveTemplate');
 ajax('POST', url, 'content='+encodeURIComponent(collected), function(e){
-debug(e);
+debug(e,true);
 }, 
 function(){alert('failed');});
 }

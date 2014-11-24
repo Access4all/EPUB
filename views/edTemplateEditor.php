@@ -34,7 +34,32 @@ echo <<<END
 </select></p>
 <h3>{$t('BasicFormatting')}</h3>
 <p><label for="font">{$t('Font')}: </label>
-<input type="text" id="font" value="default" /></p>
+<select id="font">
+<option value="default">{$t('Unspecified')}</option>
+<option value="Arial, Helvetica, sans-serif">Arial</option>
+<option value="&quot;Times New Roman&quot;, Times, serif">Times New Roman</option>
+<option value="Georgia, serif">Georgia</option>
+<option value="Impact, Charcoal, sans-serif">Impact</option>
+<option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+<option value="&quot;Trebuchet MS&quot;, Trebuchet, Helvetica, sans-serif">Trebuchet</option>
+<option value="Verdana, Geneva, sans-serif">Verdana</option>
+<option value="&quot;Comic Sans MS&quot;, cursive, sans-serif">Comic Sans MS</option>
+<option value="&quot;Courier New&quot;, Courier, monospace">Courier New</option>
+<option value="&quot;Lucida Console&quot;, Monaco, monospace">Lucida Console</option>
+END;
+{
+$fonts = array();
+foreach ($b->getCustomFonts() as $font) {
+$name = $font->getFamily();
+$value = "&quot;{$name}&quot;, {$font->getGenericFontType()}";
+$fonts[$name]=$value;
+}
+foreach ($fonts as $name=>$value) {
+echo "<option value=\"$value\">$name</option>\r\n";
+}}
+echo <<<END
+</select>
+</p>
 <p><label for="fontsize">{$t('FontSize')}:</label>
 <input id="fontsize" type="range" min="50" max="400" step="1" value="100" /></p>
 <p><label for="color">{$t('FontColor')}:</label>
@@ -56,9 +81,45 @@ echo <<<END
 <p><label for="bgcolor">{$t('BgColor')}:</label>
 <input type="color" id="bgcolor" /></p>
 <h3>{$t('Borders')}</h3>
-<p>To be done</p>
-<h3>{$t('MarginAndPadding')}</h3>
-<p>To be done</p>
+END;
+$sides = array('Top', 'Right', 'Bottom', 'Left');
+for ($i=0; $i<4; $i++) {
+$side = $sides[$i];
+$t1 = getTranslation("{$side}Border");
+$corner = (!($i%2)? $sides[$i].$sides[$i+1] : $sides[($i+1)%4].$sides[$i]);
+echo <<<END
+<p>$t1:
+<select id="border{$side}Style" title="$t1 {$t('BorderStyle')}">
+<option value="none">{$t('None')}</option>
+<option value="solid">{$t('Solid')}</option>
+<option value="dotted">{$t('Dotted')}</option>
+<option value="dashed">{$t('Dashed')}</option>
+</select>
+<input type="color" id="border{$side}Color" title="$t1 {$t('BorderColor')}" />
+<input type="range" min="0" max="20" step="1" id="border{$side}Width" title="$t1 {$t('BorderWidth')}" />
+<input type="range" min="0" max="20" step="1" id="border{$corner}Radius" title="{$t($corner)} {$t('BorderRadius')}" />
+</p>
+END;
+}
+echo <<<END
+<h3>{$t('Margins')}</h3>
+END;
+foreach($sides as $side) {
+echo <<<END
+<p><label for="margin$side">{$t("Margin$side")}</label>
+<input type="range" min="0" max="200" step="1" id="margin$side" /></p>
+END;
+}
+echo <<<END
+<h3>{$t('Padding')}</h3>
+END;
+foreach($sides as $side) {
+echo <<<END
+<p><label for="padding$side">{$t("Padding$side")}</label>
+<input type="range" min="0" max="200" step="1" id="padding$side" /></p>
+END;
+}
+echo <<<END
 <h3>{$t('PositionningAndSize')}</h3>
 <p><label for="cssFloat">{$t('Floating')}:</label>
 <select id="cssFloat">

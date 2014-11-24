@@ -36,6 +36,7 @@ Undo=Undo
 Redo=Redo
 Submit=Submit
 Reset=Reset
+Unspecified=Unspecified
 Ctrl=Ctrl
 Shift=Shift
 Alt=Alt

@@ -359,7 +359,9 @@ $this->getSpine();
 $this->spineModified = true;
 if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
 else $this->spine[] = $info['id'];
-}}
+}
+else if ($res instanceof Font) $this->updateCssTemplate(array());
+}
 $this->saveBO();
 $this->saveOpf();
 return $resources[0][0];
@@ -470,48 +472,61 @@ $this->setOption('tocNeedRegen', false);
 $this->saveBO();
 }
 
-function getCssJsonData ($contents = null) {
-if (!$contents) $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
-if (!preg_match( '@\[\[\[.*?Content\s*:\s*\'(.*)\';.*\]\]\]@ms', $contents, $m)) return null;
-return json_decode(stripslashes($m[1]));
-}
-
-function setCssJsonData ($json, $contents = null) {
-$upd = !$contents;
-if (!$contents) $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
-$data = addslashes(json_encode($json, JSON_FORCE_OBJECT));
-$contents = preg_replace( '@/\*\[\[\[.*?\]\]\]\*/@ms', "/*[[[*/\r\n#StyleData {\r\nContent: '$str';\r\n}\r\n/*]]]*/", $contents);
-if ($upd) $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
-return $contents;
-}
-
-function updateCssTemplate ($newContents, $dontFilter=false) {
-$contents = null;
-if ($dontFilter) $contents = $newContents;
-else {
-$newContents = preg_replace(
-array( "/\r\n|\n|\r/", '/(?<!\')\{/', '/\}(?!\')/', '/;/', '@\*/@', '/ {2,}/', "/(?:\r\n|\n|\r){3,}/"),
-array(' ', "{\r\n", "}\r\n\r\n", ";\r\n", "*/\r\n", ' ', "\r\n\r\n"),
-$newContents);
+function updateCssTemplate ($info) {
 $contents = $this->getFileSystem() ->getFromName('META-INF/template.css');
-$contents = preg_replace(
-array( '/^\s*\.editor.*?\{.*?\}/ms', '@/\*\[\[\[.*?\]\]\]\*/@ms'),
-array('', ''), 
-$contents);
-$contents = trim($contents ."\r\n\r\n" .$newContents);
-$contents = preg_replace("/(?:\r\n|\n|\r){3,}/", "\r\n\r\n", $contents);
+if (!isset($info['fonts'])) {
+$fonts = '';
+foreach($this->getCustomFonts() as $font) {
+$family = $font->getFamily();
+$weight = $font->isBold()? 'bold' : 'normal';
+$style = $font->isItalic()? 'italic' : 'none';
+$path = pathRelativize('getTemplate/template.css', $font->fileName);
+$fonts .= <<<END
+@font-face {
+font-family: "$family";
+font-id: {$font->id};
+src: url($path);
+font-weight: $weight;
+font-style: $style;
 }
+END;
+}
+$info['fonts'] = $fonts;
+}
+foreach($info as $section=>$newContents) {
+$newContents = preg_replace(
+array( "/\r\n|\n|\r/", '/(?<![\':])\{/', '/\}(?![\'};])/', '@;@', '/ {2,}/', "/(?:\r\n|\n|\r){3,}/"),
+array(' ', "{\r\n", "}\r\n\r\n", ";\r\n", ' ', "\r\n\r\n"),
+$newContents);
+$strfrom = "/*<$section>*/\r\n";
+$strto = "\r\n/*</$section>*/";
+$from = strpos($contents, $strfrom);
+$to = strpos($contents, $strto);
+if ($from<0 || $to<0 || $from===false || $to===false) $contents .= "\r\n\r\n/*<$section>*/\r\n\r\n$newContents\r\n\r\n/*</$section>*/\r\n\r\n";
+else $contents = substr_replace($contents, $newContents, $from+strlen($strfrom), $to-($from+strlen($strfrom)) );
+}
+$contents = preg_replace("/(?:\r\n|\n|\r){3,}/", "\r\n\r\n", $contents);
 $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
 $this->updateCSS($contents);
 }
 
 function updateCSS ($contents = null) {
 if (!$contents) $contents = $this->getFromName('META-INF/template.css');
+$finalCssFile = 'EPUB/css/epub3.css';
+$_this = $this; // php 5.3 don't allow $this in closures
 $contents = str_replace('.editor {', 'body {', $contents);
 $contents = str_replace('.editor ', '', $contents);
-$contents = trim(preg_replace( '@/\*\[\[\[.*?\]\]\]\*/@ms', '', $contents));
+$contents = preg_replace_callback('@font-id: ([-a-zA-Z0-9_]+).*?src:.*?;@s', function($m)use ($_this, $finalCssFile) {
+$font = $_this->getItemById($m[1]);
+$url = pathRelativize($finalCssFile, $font->fileName);
+return "src: url($url);";
+}, $contents);
+$contents = preg_replace('@#StyleData.*?\}(?=\r|\n)@msi', '', $contents);
+$contents = preg_replace( '@/\*</?\w+>\*/@ms', '', $contents);
 $contents = preg_replace('@ {2,}@', ' ', $contents);
-$this->getFileSystem() ->addFromString('EPUB/css/epub3.css', $contents);
+$contents = preg_replace('@(?:\r\n){3,}@', "\r\n\r\n", $contents);
+$contents = trim($contents);
+$this->getFileSystem() ->addFromString($finalCssFile, $contents);
 $item = $this->getItemByFileName('EPUB/css/epub3.css');
 if (!$item) {
 $p = new BookResource(array('id'=>'cssEpub3', 'mediaType'=>'text/css', 'fileName'=>'EPUB/css/epub3.css'));
@@ -523,6 +538,16 @@ $this->itemIdMap[$info['id']] = $p;
 $this->itemFileNameMap[$info['fileName']] = $p;
 $this->saveOpf();
 }}
+
+function getCustomFonts () {
+$fonts = array();
+$this->getItemById(null);
+foreach($this->itemIdMap as $item) {
+if ($item instanceof Font) $fonts[]=$item;
+//echo get_class($item), ", {$item->mediaType}, {$item->fileName}<br />";
+}
+return $fonts;
+}
 
 function directEchoFile ($fileName) {
 return $this->getFileSystem() ->directEcho($fileName);

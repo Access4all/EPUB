@@ -1,8 +1,11 @@
-/*[[[*/
+/*<fonts>*/
+
+/*</fonts>*/
+
+/*<main>*/
 #StyleData {
  Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help"}}';
  }
- /*]]]*/
 
 .editor {
 background-color: #eeeeee;
@@ -65,17 +68,17 @@ list-style-type: disc;
 
 .editor aside.info {
 background-color: #ccddff;
-border. solid 3px #88ccff;
+border: solid 3px #88ccff;
 }
 
 .editor aside.warn {
 background-color: #ffdddd;
-border. solid 3px #ff8888;
+border: solid 3px #ff8888;
 }
 
 .editor aside.help {
 background-color: #ddffdd;
-border. solid 3px #99ff66;
+border: solid 3px #99ff66;
 }
 
 .editor .left50 {
@@ -126,4 +129,4 @@ page-break-inside: avoid;
 .editor a:visited { color: purple; }
 .editor a:focus, .editor a:hover, .editor a:active { background-color: #cccccc; }
 
-
+/*</main>*/

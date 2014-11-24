@@ -24,7 +24,7 @@ public function saveTemplate ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 if (empty($_POST['content'])) exit500();
-$b->updateCssTemplate($_POST['content']);
+$b->updateCssTemplate(array('main'=>$_POST['content']));
 die('saved');
 }
 
