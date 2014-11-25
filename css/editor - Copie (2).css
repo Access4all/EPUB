@@ -19,13 +19,14 @@ border-bottom: solid 4px #ccc;
 }
 
 #leftRightWrapper {
+display: table;
+table-layout: fixed;
 border-top: solid 2px #aaa;
 }
 
 #leftPanel {
-float: left;
-width: 22%;
-max-width: 22%;
+display: table-cell;
+width: 24.5%;
 border-right: solid 4px #ccc;
 /*padding: 0em 1em;*/
 }
@@ -39,9 +40,8 @@ min-height: 260px;
 }
 
 #rightPanel {
-float: left;
+display: table-cell;
 width: 75%;
-max-width: 75%;
 padding-left: 1em;
 border-left: 2px solid #aaa;
 }

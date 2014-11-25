@@ -17,14 +17,33 @@ require('edFooter.php');
 
 private function leftView ($leftView, $rightView, $b, $p) {
 global $root, $lang, $pageTitle;
+$pn = (isset($p)&&is_object($p)? $p->fileName : '');
 $t = 'getTranslation';
 if ($rightView!='options') $rightView = 'editor';
-switch($leftView) {
-case 'tv':  require('edTocView.php'); break;
-case 'fv':  require('edFileView.php'); break;
-case 'sv':  require('edSpineView.php'); break;
-case 'zv':  require('edTemplateEditor.php'); break;
-}}
+
+foreach(array('sv', 'tv', 'fv', 'zv') as $vt) {
+${$vt.'Active'} = ($leftView==$vt? ' class="active"' : '');
+${$vt.'Pressed'} = ($leftView==$vt? 'true' : 'false' );
+${$vt.'LinkVN'} = ($leftView==$vt? '00' : $vt );
+}
+
+echo <<<END
+<h2$tvActive><a role="button" aria-expanded="$tvPressed" href="$root/editor/{$b->name}/{$tvLinkVN}_{$rightView}/$pn">{$t('TocView')}</a></h2>
+END;
+if ($leftView=='tv') { require('edTocView.php'); }
+echo <<<END
+<h2$svActive><a role="button" aria-expanded="$svPressed" href="$root/editor/{$b->name}/{$svLinkVN}_{$rightView}/$pn">{$t('SpineView')}</a></h2>
+END;
+if ($leftView=='sv') { require('edSpineView.php'); }
+echo <<<END
+<h2$fvActive><a role="button" aria-expanded="$fvPressed" href="$root/editor/{$b->name}/{$fvLinkVN}_{$rightView}/$pn">{$t('FileView')}</a></h2>
+END;
+if ($leftView=='fv') { require('edFileView.php'); }
+echo <<<END
+<h2$zvActive><a role="button" aria-expanded="$zvPressed" href="$root/editor/{$b->name}/{$zvLinkVN}_{$rightView}/$pn">{$t('TemplateEditorView')}</a></h2>
+END;
+if ($leftView=='zv') { require('edTemplateEditor.php'); }
+}
 
 function editorMain ($leftView, $rightView, $b, $p) {
 global $root, $lang, $pageTitle;

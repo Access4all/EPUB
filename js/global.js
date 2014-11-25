@@ -201,7 +201,7 @@ else return null;
 }
 
 Node.prototype.queryAncestor = function (selector) {
-if (this.matches(selector)) return this;
+if (this.matches && this.matches(selector)) return this;
 else if (this.parentNode) return this.parentNode.queryAncestor(selector);
 else return false;
 }

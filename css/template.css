@@ -4,7 +4,7 @@
 
 /*<main>*/
 #StyleData {
- Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help"}}';
+ Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help", "part":"part", "chapter":"chapter", "volume":"volume", "appendix":"appendix", "abstract":"abstract", "preface":"preface", "foreword":"foreword", "afterword":"afterword", "introduction":"introduction", "questionsAnswers":"qna", "conclusion":"conclusion"}}';
  }
 
 .editor {
@@ -81,6 +81,23 @@ background-color: #ddffdd;
 border: solid 3px #99ff66;
 }
 
+.editor section.chapter { }
+.editor section.part { }
+.editor section.volume { }
+.editor section.introduction { }
+.editor section.preface { }
+.editor section.abstract { }
+.editor section.foreword { }
+.editor section.afterword { }
+.editor section.appendix { }
+.editor section.conclusion { }
+.editor section.questionsAnswers { }
+
+.editor .normal {
+float: none;
+width: 100%;
+}
+
 .editor .left50 {
 float: left;
 width: 50%;
@@ -109,11 +126,6 @@ width: 25%;
 .editor .right25 {
 float: right;
 width: 25%;
-}
-
-.editor .wide {
-float: none;
-width: 100%;
 }
 
 .editor h1, .editor h2, .editor h3, .editor h4, .editor h5, .editor h6, .editor hr {

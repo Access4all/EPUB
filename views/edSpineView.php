@@ -1,5 +1,6 @@
 <?php
-echo '<h2>', getTranslation('SpineView'), '</h2>';
+//echo '<h2>', getTranslation('SpineView'), '</h2>';
+echo '<div class="leftPanelTab">';
 echo '<ol class="fileTree" data-ctxtype="spine">';
 foreach($b->getSpine() as $id) {
 $item = $b->getItemById($id);
@@ -10,4 +11,5 @@ $active = ($p==$item? ' class="active"' :'');
 echo "<li$active><a href=\"$url\" data-relative-url=\"$relativeUrl\">$label</a></li>";
 }
 echo '</ol>';
+echo '</div><!--leftPanelTab-->';
 ?>

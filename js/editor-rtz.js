@@ -36,6 +36,7 @@ this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
 this.insertTable = RTZ_insertTable;
 this.insertBox = RTZ_insertBox;
+this.insertFootnote = RTZ_insertFootnote;
 this.insertLinkDialog = RTZ_insertLinkDialog;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
@@ -104,6 +105,7 @@ box: vk.ctrl+vk.shift+vk.a,
 icon: vk.ctrl+vk.shift+vk.i,
 illustration: vk.ctrl+vk.shift+vk.g,
 table: vk.ctrl+vk.shift+vk.t,
+footnote: vk.ctrl+vk.shift+vk.f,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
 };
@@ -422,6 +424,9 @@ break;
 case keys.redo:
 this.redo();
 break;
+case keys.footnote:
+this.insertFootnote();
+break;
 case keys.quickUpload:
 this.quickUploadDialog();
 break;
@@ -706,7 +711,7 @@ _this.zone.focus();
 }
 
 function RTZ_modifyLinkDialog (link) {
-var url = link.getAttribute('href');
+var url = link.getAttribute('href') || '#';
 var _this = this;
 DialogBox(msgs.Link, [{label:msgs.LinkURL, name:'url', value:url}], function(){
 link.setAttribute('href', this.elements.url.value);
@@ -990,6 +995,41 @@ if (this.styleData && this.styleData.htmlClassesToEpubTypes && this.styleData.ht
 this.superBlockFormat(tagName, attrs);
 }
 
+function RTZ_insertFootnote () {
+if (this.inlineOnly) return;
+var sel = this.getSelection();
+var inFootnotes = sel.commonAncestorContainer.queryAncestor('.footnotes');
+var footnotes = document.querySelector('.footnotes');
+if (!footnotes) footnotes = this.zone.appendElement('aside', {'class':'footnotes'});
+var fnList = footnotes.querySelector('ol');
+if (!fnList) fnList = footnotes.appendElement('ol', {'epub:type':'footnotes'});
+if (inFootnotes) {
+var li = sel.commonAncestorContainer.queryAncestor('li');
+if (!li) return;
+var backlink = li.querySelector('a');
+if (!backlink) return;
+var footnoteLink = this.zone.querySelector(backlink.href.substring(backlink.href.indexOf('#')));
+if (!footnoteLink) return;
+var sub = footnoteLink.queryAncestor('sub, sup');
+if (!sub) return;
+sel.setStartAfter(sub);
+sel.setEndAfter(sub);
+this.select(sel);
+return;
+}
+var noteText = (sel.collapsed? null : sel.extractContents() );
+var fnIndex = 1 + fnList.querySelectorAll('li').length;
+var li = fnList.appendElement('li', {'epub:type':'footnote', 'id':'footnote'+fnIndex});
+var backlink = li.appendElement('a', {href:'#footnoteref'+fnIndex}, '\u2191' );
+if (noteText) li.appendChild(noteText);
+var sub = document.createElement2('sub');
+var link = sub.appendElement('a', {href:'#footnote'+fnIndex, 'id':'footnoteref'+fnIndex, 'epub:type':'noteref'}, fnIndex);
+sel.insertNode(sub);
+sel.setStartAfter(li.lastChild);
+sel.setEndAfter(li.lastChild);
+this.select(sel);
+}
+
 function RTZ_insertTable (nRows, nCols, captionText, thScheme, style) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
@@ -1086,7 +1126,7 @@ _this.zone.focus();
 }
 
 function RTZ_modifyAbbrDialog (abbr) {
-var abbrTitle = abbr.getAttribute('title');
+var abbrTitle = abbr.getAttribute('title') || '';
 var _this = this;
 DialogBox(msgs.Abbreviation, [
 {label:msgs.AbbrTitle, name:'abbrtitle', value:abbrTitle},
@@ -1111,7 +1151,7 @@ _this.zone.focus();
 }
 
 function RTZ_modifyIconDialog (img) {
-var src = img.getAttribute('src');
+var src = img.getAttribute('src') || '#';
 var alt = img.getAttribute('alt') || '';
 var _this = this;
 DialogBox(msgs.Icon, [
@@ -1146,8 +1186,9 @@ _this.zone.focus();
 
 function RTZ_modifyIllustrationDialog (figure) {
 var img = figure.querySelector('img');
-var caption = figure.querySelector('figcaption');
-var captionText = (caption? caption.textContent : '');
+if (!img) return;
+var caption = figure.querySelector('figcaption') || figure.appendElement('figcaption');
+var captionText = caption.textContent;
 var altText = img.getAttribute('alt') || '';
 var src = img.getAttribute('src') || '';
 var curclass = figure.getAttribute('class') || '';
@@ -1204,6 +1245,7 @@ _this.pushUndoState2();
 var newCaptionText = this.elements.captionText.value;
 table.setAttribute('class', this.elements.tstyle.value);
 if (newCaptionText!=captionText) {
+if (!caption) caption = table.appendElement('caption');
 caption.innerHTML = '';
 caption.appendText(newCaptionText);
 }
@@ -1230,8 +1272,8 @@ function RTZ_modifyBoxDialog (box) {
 if (this.inlineOnly) return false;
 var _this = this;
 var classes = box.className.split(' ');
-var boxClass = classes.length>0? classes[0] : '';
-var boxPosition = classes.length>1? classes[1] : '';
+var boxClass = classes.length>0? classes[0] || '' : '';
+var boxPosition = classes.length>1? classes[1] || '' : '';
 var boxType = box.tagName.toLowerCase() + '.' + boxClass;
 DialogBox(msgs.Box, [
 {label:msgs.IBoxType, name:'type', type:'select', value:boxType, values:this.boxTypes},
@@ -1423,7 +1465,15 @@ if (this.zone.innerHTML.length==lengthBefore) {
 if (++count<2000) setTimeout(f,1);
 else alert('Paste failed');
 }
+var sel = this.getSelection();
+var endNode = sel.endContainer, endOffset = sel.endOffset;
 this.cleanHTML();
+try { 
+sel.setStart(endNode, endOffset);
+sel.setEnd(endNode, endOffset);
+sel.collapse(false);
+this.select(sel);
+} catch(e) { debug(e.message); }
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }) .bind(this);
 setTimeout(f,1);
@@ -1450,10 +1500,11 @@ debug(e, true);
 function RTZ_contextmenu (e) {
 e = e || window.event;
 if (e.ctrlKey || e.shiftKey) return true;
-var x = e.pageX || e.clientX;
-var y = e.pageY || e.clientY;
 var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
+var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
+var x = e.pageX || e.clientX || br.left;
+var y = e.pageY || e.clientY || br.top;
 var ol = ca.findAncestor(['ol']);
 var figure = ca.findAncestor(['figure']);
 var box = ca.findAncestor(['aside', 'section', 'footer', 'header', 'div']);
@@ -1476,6 +1527,8 @@ var level = parseInt(hn.nodeName.substring(1));
 for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemcheckbox', checked:level==i}, RTZ_simpleBlockFormat.bind(this, 'h'+i, {role:'heading', 'aria-level':i})]);
 items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAttribute('data-notoc')}, RTZ_hnSwitchNotoc.bind(this,hn)]);
 }
+if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
+else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
 if (td && table && td.isInside(this.zone)) {
 var nCols = td.parentNode.$('th,td').length;
 var nRows = table.$('tr').length;
@@ -1486,8 +1539,6 @@ items.merge([msgs.TableDuplCol, RTZ_tableInsertColumn.bind(this,table,td,false)]
 if (nRows>2) items.merge([msgs.TableDeleteRow, RTZ_tableDeleteRow.bind(this,table,td)]);
 if (nCols>2) items.merge([msgs.TableDeleteCol, RTZ_tableDeleteColumn.bind(this,table,td)]);
 }
-if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
-else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
 if (table && table.isInside(this.zone)) items.merge([msgs.TableModify, RTZ_modifyTableDialog.bind(this,table)]);
 if (box && box.isInside(this.zone)) items.merge([msgs.BoxModify, RTZ_modifyBoxDialog.bind(this,box)]);
 items.merge([msgs.Cancel,null]);

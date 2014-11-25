@@ -55,8 +55,8 @@ $name = 'data/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
-if ($file) die('File received: ' .$file->getFileName() .'. But importation not supported at the moment.');
-else die('No file received');
+if ($file && $b->importCssTemplate($file)) die('Template imported');
+else die('No file received or importation failed');
 }
 
 public function preview ($bookName, $pageName) {

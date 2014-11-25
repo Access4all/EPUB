@@ -35,9 +35,12 @@ echo "<li$active><a href=\"$url\" data-relative-url=\"$relativeUrl\">$fn</a></li
 echo '</ul>';
 }
 
-echo '<h2>', getTranslation('FileView'), '</h2>';
+//echo '<h2>', getTranslation('FileView'), '</h2>';
+echo '<div class="leftPanelTab">';
 
 global $booksdir;
 $base = "$booksdir/{$b->name}";
 listFiles($base, '', $b, $p, $leftView, $rightView, true);
+
+echo '</div><!--leftPanelTab-->';
 ?>

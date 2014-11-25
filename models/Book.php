@@ -510,6 +510,12 @@ $this->getFileSystem() ->addFromString('META-INF/template.css', $contents);
 $this->updateCSS($contents);
 }
 
+function importCssTemplate ($file) {
+$re = $file->copyTo($this->getFileSystem(), 'META-INF/template.css');
+if ($re) $this->updateCssTemplate(array());
+return $re;
+}
+
 function updateCSS ($contents = null) {
 if (!$contents) $contents = $this->getFromName('META-INF/template.css');
 $finalCssFile = 'EPUB/css/epub3.css';

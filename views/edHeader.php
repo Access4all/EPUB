@@ -29,12 +29,5 @@ echo <<<END
 </div>
 <div id="leftRightWrapper">
 <div id="leftPanel">
-<ul class="menul">
-<li$tvActive><a href="$root/editor/{$b->name}/tv_{$rightView}/$pn">{$t('TocView')}</a></li>
-<li$svActive><a href="$root/editor/{$b->name}/sv_{$rightView}/$pn">{$t('SpineView')}</a></li>
-<li$fvActive><a href="$root/editor/{$b->name}/fv_{$rightView}/$pn">{$t('FileView')}</a></li>
-<li$zvActive><a href="$root/editor/{$b->name}/zv_{$rightView}/$pn">{$t('TemplateEditorView')}</a></li>
-</ul><!-- upper left buttons -->
-<div id="leftPanelTab">
 END;
 ?>

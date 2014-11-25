@@ -3,8 +3,9 @@ loadTranslation('editor-styling');
 loadTranslation('editor-rtz');
 $rnd = substr(md5(time()), 0, 12);
 $t = 'getTranslation';
+//echo '<h2>{$t('TemplateEditorView')}</h2>';
 echo <<<END
-<h2>{$t('TemplateEditorView')}</h2>
+<div class="leftPanelTab">
 <form id="styleEditor">
 <p>
 <button id="saveTplBtn" type="button">{$t('Save')}</button>
@@ -55,7 +56,7 @@ $value = "&quot;{$name}&quot;, {$font->getGenericFontType()}";
 $fonts[$name]=$value;
 }
 foreach ($fonts as $name=>$value) {
-echo "<option value=\"$value\">$name</option>\r\n";
+echo "<option value=\"$value\">$name</option>";
 }}
 echo <<<END
 </select>
@@ -130,6 +131,7 @@ echo <<<END
 <p><label for="width">{$t('Width')}:</label>
 <input type="range" id="width" min="0" max="100" step="1" /></p>
 </form>
+</div><!--leftPanelTab-->
 <script type="text/javascript" src="$root/js/editor-styling.js?rnd=$rnd"></script>
 END;
 ?>
