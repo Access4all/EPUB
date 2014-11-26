@@ -399,10 +399,28 @@ return false;
 return true;
 }
 
+function Accordion_init (toggleContainer) {
+var sel = document.createRange();
+var regionId = toggleContainer.getAttribute('data-expands');
+sel.selectNodeContents(toggleContainer);
+var toggle = document.createElement2('a', {href:'#', 'aria-expanded':true, role:'button'});
+sel.surroundContents(toggle);
+toggle.onclick = Accordion_click.bind(toggle, regionId);
+}
+
+function Accordion_click (regionId) {
+var region = document.getElementById(regionId);
+if (!region) return false;
+region.style.display = (region.style.display=='none'? 'block' : 'none');
+this.setAttribute('aria-expanded', region.style.display!='none');
+return false;
+}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
 $('.fileTree').each(FileTree_init);
 $('form[data-track-changes]').each(FormTrackChanges_init);
+$('*[data-expands]').each(Accordion_init);
 });
 
 //alert('editor loaded');

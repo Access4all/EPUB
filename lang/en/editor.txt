@@ -4,6 +4,7 @@ BackToBookshelf=Back to bookshelf
 BookOptions=Book settings
 PageOptions=Page settings
 PageEditor=Edition
+CodeEditor=Source code
 FileView=Files
 TocView=Table of contents
 TableOfContents=Table of contents

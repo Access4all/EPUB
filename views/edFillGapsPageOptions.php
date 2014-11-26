@@ -6,7 +6,8 @@ $d = $p->getDataDoc() ->documentElement;
 $ftgType = $d->getAttribute('type');
 require_once('edGeneralActivityPageOptions.php');
 echo <<<END
-<h2>{$t('FillTheGaps')}</h2>
+<h2 data-expands="partFTG">{$t('FillTheGaps')}</h2>
+<div id="partFTG">
 <fieldset>
 <legend>{$t('FTGType')}</legend>
 END;
@@ -20,5 +21,6 @@ END;
 }
 echo <<<END
 </fieldset>
+</div><!--partFTG-->
 END;
 ?>

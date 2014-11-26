@@ -9,7 +9,8 @@ $submitURL = $submitMode;
 $submitMode = 'url';
 }
 echo <<<END
-<h2>{$t('GeneralActivity')}</h2>
+<h2 data-expands="partGA">{$t('GeneralActivity')}</h2>
+<div id="partGA">
 <fieldset>
 <legend>{$t('SubmitMode')}</legend>
 END;
@@ -25,5 +26,6 @@ echo <<<END
 </fieldset>
 <p><label for="submitURL">{$t('SubmitURL')}:</label>
 <input type="text" id="submitURL" name="submitURL" value="{$h($submitURL)}" /></p>
+</div><!--partGA-->
 END;
 ?>

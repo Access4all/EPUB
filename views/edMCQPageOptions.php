@@ -6,7 +6,8 @@ $d = $p->getDataDoc() ->documentElement;
 $quizType = $d->getAttribute('type');
 require_once('edGeneralActivityPageOptions.php');
 echo <<<END
-<h2>{$t('MCQLong')}</h2>
+<h2 data-expands="partMCQ">{$t('MCQLong')}</h2>
+<div id="partMCQ">
 <fieldset>
 <legend>{$t('QuizType')}</legend>
 END;
@@ -20,5 +21,6 @@ END;
 }
 echo <<<END
 </fieldset>
+</div><!--partMCQ-->
 END;
 ?>

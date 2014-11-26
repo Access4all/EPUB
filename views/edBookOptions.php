@@ -8,7 +8,8 @@ echo <<<END
 <div id="rightPanel">
 <h1>{$t('BookOptions')}</h1>
 <form action="" method="post" data-track-changes>
-<h2>{$t('General')}</h2>
+<h2 data-expands="partGeneral">{$t('General')}</h2>
+<div id="partGeneral">
 <p><label for="title">{$t('BookTitle')}: </label>
 <input type="text" id="title" name="title" value="{$h($b->getTitle())}" required aria-required="true" /></p>
 <p><label for="authors">{$t('Authors')}: </label>
@@ -17,7 +18,9 @@ echo <<<END
 <input type="text" id="identifier" name="identifier" value="{$h($b->identifier)}" /></p>
 <p><label for="language">{$t('BookLanguage')}: </label>
 <input type="text" id="language" name="language" value="{$h($b->language)}" required aria-required="true" /></p>
-<h2>{$t('BookOrganisation')}</h2>
+</div><!--partGeneral-->
+<h2 data-expands="partOrg">{$t('BookOrganisation')}</h2>
+<div id="partOrg">
 <fieldset><legend>{$t('DefaultDirs')}</legend>
 <p>{$t('DDBTTipp')}</p>
 END;
@@ -29,7 +32,9 @@ END;
 }
 echo <<<END
 </fieldset>
-<h2>{$t('TOCOptions')}</h2>
+</div><!--partOrg-->
+<h2 data-expands="partTOC">{$t('TOCOptions')}</h2>
+<div id="partTOC">
 <p>
 <input type="checkbox" id="tocNoGen" name="tocNoGen" {$checked($b->getOption('tocNoGen',false))} />
 <label for="tocNoGen">{$t('TOCNoGen')}</label></p>
@@ -48,6 +53,7 @@ END;
 echo <<<END
 </select>
 </p>
+</div><!--partTOC-->
 <p>
 <button type="submit">{$t('Save')}</button>
 <button type="reset">{$t('Reset')}</button>	

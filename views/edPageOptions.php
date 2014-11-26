@@ -7,7 +7,8 @@ $edpPageOptions = true;
 require('edRightHeader.php');
 echo <<<END
 <form action="" method="post" data-track-changes>
-<h2>{$t('General')}</h2>
+<h2 data-expands="partGeneral">{$t('General')}</h2>
+<div id="partGeneral">
 END;
 if ($p->mediaType=='application/xhtml+xml') {
 echo <<<END
@@ -22,6 +23,7 @@ echo <<<END
 <input type="text" id="filename" name="fileName" readonly value="{$p->fileName}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
 <input type="text" id="id" name="id" readonly value="{$h($p->id)}" /></p>
+</div>
 END;
 $apo = $p->getAdditionalPageOptions();
 if ($apo) { require("ed{$apo}PageOptions.php"); }

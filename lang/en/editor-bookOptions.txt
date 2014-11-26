@@ -13,4 +13,4 @@ DDBTTipp=When you import files into your book, you can decide where they should 
 DDBT_text=Documents
 DDBT_image=Images
 DDBT_javascript=Scripts
-DTBT_font=Fonts
+DDBT_font=Fonts

@@ -19,7 +19,7 @@ private function leftView ($leftView, $rightView, $b, $p) {
 global $root, $lang, $pageTitle;
 $pn = (isset($p)&&is_object($p)? $p->fileName : '');
 $t = 'getTranslation';
-if ($rightView!='options') $rightView = 'editor';
+if ($rightView!='options' && $rightView!='code') $rightView = 'editor';
 
 foreach(array('sv', 'tv', 'fv', 'zv') as $vt) {
 ${$vt.'Active'} = ($leftView==$vt? ' class="active"' : '');
@@ -59,6 +59,10 @@ switch($rightView){
 case 'editor': 
 loadTranslation('editor-rtz');
 require("ed{$p->getEditorType()}Editor.php"); 
+break;
+case 'code' :
+loadTranslation('editor-rtz');
+require('edTextEditor.php');
 break;
 case 'options': 
 loadTranslation('editor-pageOptions');

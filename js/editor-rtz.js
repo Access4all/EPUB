@@ -405,6 +405,16 @@ MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
 }
 break;
 case keys.paste: 
+/*{
+var div = document.createElement2('div', {contenteditable:true, tabindex:0}, '\u00A0');
+document.querySelector('body').appendChild(div);
+div.focus();
+var sel = this.getSelection();
+sel.selectNodeContents(div);
+this.select(sel);
+debug('ready for paste');
+setTimeout(function(){ debug(div.innerHTML.escapeHTML()); div.parentNode.removeChild(div); this.zone.focus(); }.bind(this),1);
+}*/
 if (!simulated) return true;
 try {
 if (!document.execCommand('paste', false, null)) throw new Error('failed');
@@ -655,7 +665,7 @@ this.select(sel);
 return false;
 }
 
-function RTZ_inlineFormat (tagName, allowNest, attrs, justCheck) {
+function RTZ_inlineFormat (tagName, allowNest, attrs, justCheck, recursions) {
 var sel = this.getSelection();
 var node = sel.commonAncestorContainer;
 var same = null;
@@ -687,12 +697,35 @@ this.pushUndoState2();
 node = document.createElement2(tagName, attrs);
 try {
 sel.surroundContents(node);
-} catch(e) { alert('Inline formatting failed'); return; }
+} catch(e) {
+if ((recursions = recursions || 4) <=1) return;
+RTZ_adjustSelectionForInlineFormatting(this, sel, --recursions);
+this.inlineFormat(tagName, allowNest, attrs, justCheck, recursions );
+return;
+}
 if (!allowNest) node.$(tagName).each(function(o){ sel.selectNodeContents(o);  var ex = sel.extractContents();  o.parentNode.replaceChild(ex, o);  }); // If needed, let's clean duplicate tags, i.e. <b><b></b></b>, before forming the final new selection; this can happen for example when requesting <b> for a selection like a[b<b>c</b>d<b>e</b>f]g
 if (!node.hasChildNodes()) node.appendText('\u00A0'); // Chrome: if the node is empty, the cursor is incorrectly placed after the node instead of inside it.
 sel.selectNodeContents(node);
 this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+}
+
+function RTZ_adjustSelectionForInlineFormatting (rtz, sel, recursions) {
+if (sel.endContainer.nodeType==3 && sel.endOffset==0) {
+var prev = sel.endContainer.previousSibling;
+if (prev) prev = prev.getLastTextNode();
+else prev=null;
+if (prev) sel.setEnd(prev, prev.length);
+}
+if (sel.startContainer.nodeType==3 && sel.startOffset>=sel.startContainer.length) {
+var next = sel.startContainer.nextSibling;
+if (next) next = next.getFirstTextNode();
+else next=null;
+if (next) sel.setStart(next, 0);
+}
+if (recursions<3 && sel.startContainer.nodeType==3 && sel.startOffset==0 && !sel.startContainer.previousSibling) sel.setStartBefore(sel.startContainer.parentNode);
+if (recursions<3 && sel.endContainer.nodeType==3 && sel.endOffset>=sel.endContainer.length  && !sel.endContainer.nextSibling) sel.setEndAfter(sel.endContainer.parentNode);
+rtz.select(sel);
 }
 
 function RTZ_insertLinkDialog () {
@@ -1463,15 +1496,17 @@ var count=0, lengthBefore = this.zone.innerHTML.length;
 var f = (function(){
 if (this.zone.innerHTML.length==lengthBefore) {
 if (++count<2000) setTimeout(f,1);
-else alert('Paste failed');
+else debug('Paste failed');
 }
 var sel = this.getSelection();
 var endNode = sel.endContainer, endOffset = sel.endOffset;
 this.cleanHTML();
 try { 
+if (endNode.length && endOffset>=endNode.length) endOffset = endNode.length;
 sel.setStart(endNode, endOffset);
 sel.setEnd(endNode, endOffset);
 sel.collapse(false);
+this.zone.focus();
 this.select(sel);
 } catch(e) { debug(e.message); }
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
