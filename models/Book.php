@@ -115,9 +115,10 @@ else return null;
 function getOpfFileName () {
 if (!isset($this->opfFileName)) {
 $fs = $this->getFileSystem();
-$container = new SimpleXMLElement($fs->getFromName('META-INF/container.xml'));
-$tmp = $container->rootfiles->rootfile->attributes();
-$this->opfFileName = ''.$tmp['full-path'];
+//$sxml = new SimpleXMLElement($fs->getFromName('META-INF/container.xml'));
+$container = DOM::loadXMLString($fs->getFromName('META-INF/container.xml'));
+$rootfile = $container->getFirstElementByTagName('rootfile');
+$this->opfFileName = $rootfile->getAttribute('full-path');
 }
 return $this->opfFileName;
 }
@@ -431,7 +432,7 @@ $curLevel = -1;
 foreach($this->getSpine() as $spineId) {
 $item = $this->getItemById($spineId);
 if ($item==$navItem) continue;
-if ($item->linear===false) continue;
+if (@$item->linear===false) continue;
 $modified = false;
 $doc = $item->getDoc();
 $url = pathRelativize($navItem->fileName, $item->fileName);

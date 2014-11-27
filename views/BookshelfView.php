@@ -52,13 +52,13 @@ echo <<<END
 <form action="$root/bookshelf/upload" method="post" enctype="multipart/form-data">
 <p><label for="upload">{$t('UploadFile')} : </label>
 <input type="file" id="upload" name="upload" />
-<button type="submit">{$t('Send')}</button>
+<button type="submit">{$t('BtnAdd')}</button>
 </form>
 <h2>{$t('CreateNewBook')}</h2>
 <form action="$root/bookshelf/newBook" method="post">
 <p><label for="title">{$t('BookTitle')}: </label>
-<input type="text" name="title" id="title" /></p>
-<p><button type="submit">{$t('Send')}</button></p>
+<input type="text" name="title" id="title" />
+<button type="submit">{$t('BtnCreate')}</button></p>
 </form>
 END;
 require('bsFooter.php');

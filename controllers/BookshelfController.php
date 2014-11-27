@@ -53,14 +53,17 @@ $bs = new Bookshelf();
 $tplFile = './data/template.epub';
 $book = $bs->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
 if ($book) {
+$bs->addBook($book);
 $book->extract();
 $book->updateBookSettings(array('title'=>$title));
-$bs->addBook($book);
 $failed=false;
 }
+if ($failed) {
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
 header("Location:$root/bookshelf/index#alert");
+}
+else header("Location: $root/editor/{$book->name}/index/");
 exit();
 }
 

@@ -5,15 +5,18 @@ echo <<<END
 <div id="rightPanel">
 <h1>{$t('CreateNewPage')}</h1>
 <form action="" method="post">
-<h2>{$t('General')}</h2>
+<h2 data-expands="partGeneral">{$t('General')}</h2>
+<div id="partGeneral">
 <p><label for="title">{$t('PageTitle')}: </label>
 <input type="text" id="title" name="title" value="{$h(@$_POST['title'])}" required="required" aria-required="true" /></p>
 <p><label for="filename">{$t('FileName')}: </label>
 <input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
 <input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" /></p>
+</div><!--paratGEneral-->
 <fieldset>
-<legend><h2>{$t('PageType')}</h2></legend>
+<legend><h2 data-expands="partPageType">{$t('PageType')}</h2></legend>
+<div id="partPageType">
 END;
 $first=true;
 foreach (array('document', /*'freequestions',*/ 'qcm', 'truefalse', 'fillgaps', 'matching', 'ordering') as $type) {
@@ -26,6 +29,7 @@ echo <<<END
 END;
 }
 echo <<<END
+</div><!--partPageType-->
 </fieldset>
 <p>
 <input type="hidden" name="newpage" value="true" />

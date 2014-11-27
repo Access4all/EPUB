@@ -26,7 +26,7 @@ return $doc;
 
 static function loadHTMLString ($data) {
 $doc = DOM::newDocument();
-@$doc->loadHTML($data, DOM_LIBXML_OPTIONS);
+$doc->loadHTML($data, DOM_LIBXML_OPTIONS);
 return $doc;
 }
 
@@ -77,8 +77,6 @@ if ($func($item)) return;
 }
 
 class DOMDocument2 extends DOMDocument {
-function getRootElement () { return $this->documentElement; }
-
 function appendElement ($tagName, $attrs = null) {
 $el = $this->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
@@ -96,8 +94,15 @@ function createHTMLFragment ($html) {
 return $this->createXMLFragment(DOM::HTMLToXML($html));
 }
 
+function getRootElement () {
+if ($this->documentElement) return $this->documentElement;
+else trigger_error("Root not of the XML document couldn't be determined; the document may be malformed or empty.", E_USER_WARNING);
+}
+
 function __call ($name, $args) {
-return call_user_func_array(array($this->documentElement, $name), $args);
+$root = $this->getRootElement();
+if (!$root) return null;
+return call_user_func_array(array($root, $name), $args);
 }
 }
 

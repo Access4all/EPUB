@@ -1,5 +1,6 @@
 ErrFileAccess=Couldn't access <em>%1</em>; please check authorizations and access rights.
 ErrTocNotAvail=The table of contents couldn't be generated or retrived.
+ErrTocEmpty=The table of contents is currently empty.
 BackToBookshelf=Back to bookshelf
 BookOptions=Book settings
 PageOptions=Page settings

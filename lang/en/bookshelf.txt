@@ -17,3 +17,5 @@ btnDelete=Delete
 btnEdit=Edit
 btnView=View
 btnExport=Export
+BtnCreate=Create
+BtnAdd=Add

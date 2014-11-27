@@ -404,17 +404,8 @@ if (!document.execCommand('cut', false, null)) throw new Error('failed');
 MessageBox(msgs.FeatureNotAvailT, msgs.CopyCutPasteFeature, [msgs.OK]);
 }
 break;
-case keys.paste: 
-/*{
-var div = document.createElement2('div', {contenteditable:true, tabindex:0}, '\u00A0');
-document.querySelector('body').appendChild(div);
-div.focus();
-var sel = this.getSelection();
-sel.selectNodeContents(div);
-this.select(sel);
-debug('ready for paste');
-setTimeout(function(){ debug(div.innerHTML.escapeHTML()); div.parentNode.removeChild(div); this.zone.focus(); }.bind(this),1);
-}*/
+case keys.paste:
+RTZ_preparePaste.call(this);
 if (!simulated) return true;
 try {
 if (!document.execCommand('paste', false, null)) throw new Error('failed');
@@ -1344,23 +1335,25 @@ window.open(href);
 if (this.onsave) this.onsave();
 }
 
-function RTZ_cleanHTML () {
-if (this.inlineOnly) return;
-var cursel = this.getSelection() || document.createRange();
+function RTZ_cleanHTML (frag, inlineContext) {
+var fragWasNull = !frag, curSel=null, sel = document.createRange();
+if (fragWasNull) {
+cursel = this.getSelection() || document.createRange();
 var startNode = cursel.startContainer, endNode = cursel.endContainer, startOf = cursel.startOffset, endOf = cursel.endOffset;
-var sel = document.createRange();
 sel.selectNodeContents(this.zone);
 var frag = sel.extractContents();
-this.cleanHTMLElement(sel, frag);
-cleanHTML2(sel, frag);
-frag.querySelectorAll('div, aside, section, header, footer, figure').each(cleanHTML2.bind(this, sel));
+}
+this.cleanHTMLElement(sel, frag, inlineContext);
+if (!inlineContext) cleanHTML2(sel, frag);
+if (!inlineContext) frag.querySelectorAll('div, aside, section, header, footer, figure').each(cleanHTML2.bind(this, sel));
+if (fragWasNull) {
 this.zone.appendChild(frag);
 try {
 cursel.setStart(startNode, startOf);
 cursel.setEnd(endNode, endOf);
 this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
-}
+}}
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
@@ -1477,6 +1470,57 @@ this.pushUndoState2();
 return true;
 }
 
+function RTZ_preparePaste (rtz) {
+var sel = this.getSelection();
+var sc = sel.startContainer, ec = sel.endContainer, so = sel.startOffset, eo = sel.endOffset;
+var bcr = this.zone.getBoundingClientRect();
+var div = document.createElement2('div', {contenteditable:true, tabindex:0, style:"position: absolute; z-index: -100; width: 1px; overflow: hidden; left: "+bcr.left+"px; top: "+bcr.top+"px;"}, '\u00A0');
+document.querySelector('body').appendChild(div);
+div.focus();
+sel.selectNodeContents(div);
+this.select(sel);
+setTimeout(function(){ 
+sel.selectNodeContents(div);
+var frag = sel.extractContents();
+if (frag.childNodes.length<=0 || (frag.firstChild.nodeType==3 && !frag.firstChild.data.trim() )) return; // Nothing has been effectively pasted, abort
+var inlineContext = !frag.querySelector('p, pre, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dd, dt, table, tr, td, th, div, header, footer, section, aside, figure');
+div.parentNode.removeChild(div);
+sel.setStart(sc,so);
+sel.setEnd(ec,eo);
+this.zone.focus();
+this.select(sel);
+this.cleanHTML(frag, inlineContext);
+if (!inlineContext && sel.commonAncestorContainer.nodeType==3 && sel.commonAncestorContainer.parentNode.nodeName.toLowerCase()=='p') { // We are in the middle of a paragraph, we perhaps need to split it
+if (sel.endOffset >= sel.endContainer.length) { // At the end of the paragraph, don't split it it is useless; just place the cursor after it
+var node = sel.commonAncestorContainer.parentNode;
+sel.setStartAfter(node);
+sel.setEndAfter(node);
+sel.collapse(false);
+}
+else { // We need to split the paragraph
+var p = sel.commonAncestorContainer.parentNode;
+var textNode = sel.endContainer.splitText(sel.endOffset);
+var newP = p.cloneNode(false);
+p.parentNode.insertBefore(newP, p.nextSibling);
+newP.appendChild(textNode);
+sel.setStartAfter(p);
+sel.setEndAfter(p);
+sel.collapse(false);
+}}
+else if (!inlineContext) { // We are pasting a block but aren't in the middle of a paragraph; we need to ensure that the cursor is placed at the end of the block before inserting the pasted contents, so that we don't produce completely incoherent HTML such as <p> inside <p>
+var node = sel.commonAncestorContainer.queryAncestor('p, pre, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dd, dt, table, div, header, footer, section, aside, figure');
+sel.setStartAfter(node);
+sel.setEndAfter(node);
+sel.collapse(false);
+if (node.childNodes.length<=0 || (node.childNodes.length==1 && node.firstChild.nodeType==3 && !node.firstChild.data.trim() )) node.parentNode.removeChild(node); // Remove a possible empty paragraph
+}
+var ltn = frag.getLastTextNode();
+sel.insertNode(frag);
+if (ltn) { sel.selectNodeContents(ltn); sel.collapse(false); this.select(sel); }
+setTimeout(function(){this.pushUndoState2();}.bind(this),1);
+}.bind(this),1);
+}
+
 function RTZ_paste (e) {
 this.pushUndoState2();
 if (e && e.clipboardData && e.clipboardData.files && e.clipboardData.files.length>0) { // Paste some files
@@ -1491,27 +1535,7 @@ if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this
 else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() );
 if (result) { if (e.preventDefault) e.preventDefault(); return false; }
 }
-// Paste default behavior
-var count=0, lengthBefore = this.zone.innerHTML.length;
-var f = (function(){
-if (this.zone.innerHTML.length==lengthBefore) {
-if (++count<2000) setTimeout(f,1);
-else debug('Paste failed');
-}
-var sel = this.getSelection();
-var endNode = sel.endContainer, endOffset = sel.endOffset;
-this.cleanHTML();
-try { 
-if (endNode.length && endOffset>=endNode.length) endOffset = endNode.length;
-sel.setStart(endNode, endOffset);
-sel.setEnd(endNode, endOffset);
-sel.collapse(false);
-this.zone.focus();
-this.select(sel);
-} catch(e) { debug(e.message); }
-setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
-}) .bind(this);
-setTimeout(f,1);
+// Default paste behavior
 return true;
 }
 
