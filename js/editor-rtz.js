@@ -1353,7 +1353,8 @@ cursel.setStart(startNode, startOf);
 cursel.setEnd(endNode, endOf);
 this.select(cursel);
 } catch(e) {} // Just in case the previous selection is no longer in the document
-}}
+}
+}
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
@@ -1550,10 +1551,10 @@ this.saveBtn = saveBtn;
 
 function RTZ_defaultSave (code) {
 var data = code || this.zone.innerHTML;
-var url = window.actionUrl.replace('@@', 'save');
+var url = encodeURI( window.actionUrl.replace('@@', 'save') );
 ajax('POST', url, 'content='+encodeURIComponent(data), function(e){
 debug(e, true);
-}, function(){alert('Save failed');});
+}, function(re,xml){debug('Save failed'+re+xml.responseText);});
 };
 
 function RTZ_contextmenu (e) {

@@ -94,12 +94,18 @@ function createBookFromFile ($bookshelf, &$info, $file) {
 global $booksdir;
 $fs = new ZipFileSystem($file->getRealFileName());
 $b = new Book(array('fs'=>$fs));
-$name = @$info['title'];
-if (!$name) $name = $b->getTitle();
-$name = Misc::toValidName($name);
+$title = @$info['title'];
+if (!$title) $title = $b->getTitle();
+if (!$title) {
+$title = $b->getItemByFileName($b->getFirstNonTOCPageFileName() ) ->getTitle();
+if ($title=='Untitled document') $title=null;
+}
+if (!$title) $title = substr($file->getRealFileName(), 0, -4);
+$name = Misc::toValidName($title);
 $epubFile = "$booksdir/$name.epub";
+$info['title'] = $title;
 @copy($file->getRealFileName(), $epubFile);
-return new Book(array('name'=>$name));
+return new Book(array('name'=>$name, 'title'=>$title));
 }}
 
 ?>

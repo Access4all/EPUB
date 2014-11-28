@@ -1,6 +1,7 @@
 <?php
 require_once('BookFactory.php');
 require_once('core/kernel.php');
+define('NS_XHTML', 'http://www.w3.org/1999/xhtml');
 define('NS_EPUB', 'http://www.idpf.org/2007/ops');
 define('NS_DC', 'http://purl.org/dc/elements/1.1/');
 
@@ -115,10 +116,9 @@ else return null;
 function getOpfFileName () {
 if (!isset($this->opfFileName)) {
 $fs = $this->getFileSystem();
-//$sxml = new SimpleXMLElement($fs->getFromName('META-INF/container.xml'));
-$container = DOM::loadXMLString($fs->getFromName('META-INF/container.xml'));
+$container = DOM::loadXMLString($fs->getFromName('META-INF/container.xml') );
 $rootfile = $container->getFirstElementByTagName('rootfile');
-$this->opfFileName = $rootfile->getAttribute('full-path');
+$this->opfFileName = urldecode($rootfile->getAttribute('full-path'));
 }
 return $this->opfFileName;
 }
@@ -147,7 +147,7 @@ $itemid = $item->getAttribute('id');
 $o = $bf->createBookResourceFromManifestEntry($this, $item);
 $o->book = $this;
 $o->id = $itemid;
-$o->href = $item->getAttribute('href');
+$o->href = urldecode($item->getAttribute('href'));
 $o->mediaType = $mediaType;
 $o->props = $item->getAttribute('properties');
 $o->fileName = pathResolve($this->getOpfFileName(), $o->href);
@@ -414,6 +414,7 @@ else return $this->getFirstNonTOCPageFileName();
 }
 
 function updateTOC () {
+loadTranslation('editor');
 if ($this->getOption('tocNoGen', false)) return;
 if (!$this->isExtracted()) return;
 $maxDepth = $this->getOption('tocMaxDepth', 4);
@@ -447,7 +448,8 @@ $anchor = $heading->getAttribute('id');
 if ($curLevel<0) $curLevel = $level;
 while($level<$curLevel) {
 $curLevel--;
-$ol = $ol->parentNode->parentNode;
+$newOl = $ol->parentNode->parentNode;
+if ($newOl->nodeName=='ol') $ol = $newOl;
 }
 while ($level>$curLevel) {
 $curLevel++;

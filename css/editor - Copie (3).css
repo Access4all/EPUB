@@ -26,57 +26,22 @@ border-top: solid 2px #aaa;
 float: left;
 width: 22%;
 max-width: 22%;
-min-height: 120em;
 border-right: solid 4px #ccc;
-padding-top: 1.6em;
-padding-right: 1em;
-}
-
-#leftPanel h2 {
-font-size: 1.1em;
-height: 2.4em;
-line-height: 2.4em;
-margin-top: .2em;
-background-image: radial-gradient(#86B918 50%, #436200  99%);
-border: solid 3px #86B918;
-vertical-align: middle;
-text-align: center;
-}
-#leftPanel h2:last-child {
-border-bottom: solid 3px #86B918;
-}
-
-#leftPanel h2.active{
-background-image: radial-gradient(#436200 50%, #86B918 99%);
-border: solid 3px #436200;
-vertical-align: middle;
-text-align: center;
-}
-
-#leftPanel h2 a {
-text-decoration: none;
-color: black;
-}
-
-#leftPanel h2.active a {
-color: white;
+/*padding: 0em 1em;*/
 }
 
 .leftPanelTab {
-
-border-left: solid 3px #436200;
-border-right: solid 3px #436200;
-border-bottom: solid 3px #436200;
-margin-bottom: .2em;
+border: solid 3px #86B918;
+margin: 0 1em 0 0;
 padding: 1em 2em;
 height: auto;
+min-height: 260px;
 }
 
 #rightPanel {
 float: left;
-width: 74%;
-max-width: 74%;
-min-height: 120em;
+width: 75%;
+max-width: 75%;
 padding-left: 1em;
 border-left: 2px solid #aaa;
 }
@@ -93,7 +58,7 @@ top: 0px;
 width: auto;
 height: auto;
 border: 3px solid #86B918;
-padding: 2em;
+margin: 1em 2em;
 min-height: 200px;
 }
 
@@ -105,13 +70,6 @@ list-style-type: none;
 list-style-type: none;
 display: inline;
 }
-/*.active{
-background-color:#86B918; 
-}*/
-li.active a{
-background-color:#86B918; 
-} 
-
 
 .toolbar {
 background-color: #86B918;
@@ -270,45 +228,6 @@ margin-right:  1em;
 p>button, p>input[type=checkbox], p>input[type=radio], p>input[type=submit], p>input[type=reset], p>input[type=button]  { margin-left: 23em; }
 p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; margin-left: initial; }
 
-#styleEditor p {
-margin: 1em 0 1em 0;
-}
-
-#styleEditor h3 {
-margin: 2em 0 1em 0;
-clear: left;
-}
-
-#styleEditor button {
-margin: 0 1em 1em 0;
-float: left;
-}
-
-#styleEditor button:last-child {
-margin-bottom: 1.5em;
-}
-
-#styleEditor label {
-margin: 0 1em 0 0;
-float: left;
-min-width: 0em;
-text-align: left;
-}
-
-#styleEditor input {
-margin: 0 1em 1em 0;
-clear: left;
-vertical-align: middle;
-}
-
-#styleEditor input[type=checkbox] {
-margin: 0 1em 0 0;
-float: left;
-min-width: 0em;
-text-align: left;
-vertical-align: middle;
-}
-
 form.dialogBox label {
 min-width: 16em;
 text-align: right;
@@ -335,6 +254,5 @@ margin: 2em 1em 0 0;
 clear: right;
 text-align: right;
 font-size: 100%;
-margin-top: 2em;
 }
 

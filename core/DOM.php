@@ -20,7 +20,7 @@ return $doc;
 
 static function loadXMLString ($data) {
 $doc = DOM::newDocument();
-if ($data) $doc->loadXML($data, DOM_LIBXML_OPTIONS);
+if ($data) $doc->loadXML(trim($data), DOM_LIBXML_OPTIONS);
 return $doc;
 }
 
@@ -133,7 +133,17 @@ return new DOMElementIterator( $this->getElementsByTagName('*'), $func);
 }
 
 function setAttributes ($attrs) {
-foreach($attrs as $name=>$value) $this->setAttribute($name, $value);
+foreach($attrs as $name=>$value) {
+$prefixpos = strpos($name, ':');
+if ($prefixpos===false) $this->setAttribute($name, $value);
+else {
+$ns = 'http://0.0.0.0/unknown-ns';
+switch(substr($name, 0, $prefixpos)) {
+case 'epub': $ns = NS_EPUB; break;
+case 'dc': $ns = NS_DC; break;
+}
+$this->setAttributeNs($ns, $name, $value);
+}}
 }
 
 function appendElement ($tagName, $attrs = null) {
