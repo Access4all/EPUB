@@ -1133,6 +1133,19 @@ tr.removeChild(theCell);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
+function RTZ_hnChangeTocLabelDialog (hn) {
+var toclabel = hn.getAttribute('data-toclabel') || '';
+var _this = this;
+DialogBox(msgs.HnChangeTocLabel, [
+{label:msgs.HnChangeTocLabel, name:'toclbl', value:toclabel},
+], function(){ 
+toclabel = this.elements.toclbl.value;
+if (toclabel) hn.setAttribute('data-toclabel', toclabel);
+else hn.removeAttribute('data-toclabel');
+_this.zone.focus();
+});//DialogBox
+}
+
 function RTZ_insertAbbrDialog () {
 if (!this.inlineFormat('abbr', false, null, true)) {
 this.inlineFormat('abbr', false);
@@ -1336,6 +1349,7 @@ if (this.onsave) this.onsave();
 }
 
 function RTZ_cleanHTML (frag, inlineContext) {
+if (typeof(inlineContext)=='undefined') inlineContext = this.inlineOnly;
 var fragWasNull = !frag, curSel=null, sel = document.createRange();
 if (fragWasNull) {
 cursel = this.getSelection() || document.createRange();
@@ -1559,7 +1573,8 @@ debug(e, true);
 
 function RTZ_contextmenu (e) {
 e = e || window.event;
-if (e.ctrlKey || e.shiftKey) return true;
+//if (e.ctrlKey || e.shiftKey) return true; // Allow original OS/browser context menu if shift and/or Ctrl are held down; 
+// finally OS/browser menu is always disabled because undo/redo is customized, and copy/cut/paste are only working when invoked via Ctrl+C/X/V; there is usually no other indispensable command in the OS/browser context menu.
 var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
 var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
@@ -1583,9 +1598,10 @@ for (var t in types) {
 items.merge([{text:msgs[t], type:'menuitemcheckbox', checked:curtype==types[t]}, RTZ_setListNumbering.bind(this, ol, types[t]) ]);
 }}
 else if (hn && hn.isInside(this.zone)) {
-var level = parseInt(hn.nodeName.substring(1));
-for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemcheckbox', checked:level==i}, RTZ_simpleBlockFormat.bind(this, 'h'+i, {role:'heading', 'aria-level':i})]);
+var level = parseInt(hn.nodeName.substring(1)), toclabel = hn.getAttribute('data-toclabel');
+for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemradio', checked:level==i}, RTZ_simpleBlockFormat.bind(this, 'h'+i, {role:'heading', 'aria-level':i, 'data-toclabel':toclabel})]);
 items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAttribute('data-notoc')}, RTZ_hnSwitchNotoc.bind(this,hn)]);
+items.merge([msgs.HnIChangeTocLabel + (toclabel? " ["+toclabel+"]" : ""), RTZ_hnChangeTocLabelDialog.bind(this,hn)]);
 }
 if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
 else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
@@ -1601,6 +1617,7 @@ if (nCols>2) items.merge([msgs.TableDeleteCol, RTZ_tableDeleteColumn.bind(this,t
 }
 if (table && table.isInside(this.zone)) items.merge([msgs.TableModify, RTZ_modifyTableDialog.bind(this,table)]);
 if (box && box.isInside(this.zone)) items.merge([msgs.BoxModify, RTZ_modifyBoxDialog.bind(this,box)]);
+if (this.oncontextmenu) this.oncontextmenu(items,sel);
 items.merge([msgs.Cancel,null]);
 Menu_show(items, this.zone, x+7, y+7);
 if (e.preventDefault) e.preventDefault();

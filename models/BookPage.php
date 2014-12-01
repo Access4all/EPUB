@@ -79,6 +79,7 @@ $this->saveDoc();
 
 function updatePageSettings (&$info) {
 $doc = $this->getDoc();
+$bookOpfModified = false;
 if (isset($info['title'])) {
 $title = $doc->getFirstElementByTagName('title');
 $title->nodeValue = trim($info['title']);
@@ -89,7 +90,14 @@ $html = $doc->documentElement;
 $html->setAttribute('lang', $lng);
 $html->setAttribute('xml:lang', $lng);
 }
+if ($this->linear == isset($info['linear'])) {
+$this->linear = !isset($info['linear']);
+$this->book->spineModified = true;
+$this->book->setOption('tocNeedRegen', true);
+$bookOpfModified = true;
+}
 $this->saveDoc();
+if ($bookOpfModified) $this->book->saveOpf();
 }
 
 function initNewPage ($b) {}

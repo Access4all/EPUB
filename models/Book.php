@@ -563,6 +563,7 @@ return $this->getFileSystem() ->directEcho($fileName);
 }
 
 function getContentsByFileName ($fileName) {
+if (!$fileName) return null;
 return $this->getFileSystem() ->getFromName($fileName);
 }
 

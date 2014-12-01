@@ -100,6 +100,8 @@ String.prototype.stripHTML = function () {
 return this.replace(/<.*?>/g, '');
 }
 
+NodeList.prototype.join = Array.prototype.join;
+
 NodeList.prototype.each = function () {
 var f = arguments[0], args = [];
 for (var i=1; i<arguments.length; i++) args.push(arguments[i]);
@@ -166,7 +168,7 @@ else return {x:cx, y:cy};
 
 Document.prototype.createElement2 = function (tagName, attrs, text) {
 var e = this.createElement(tagName);
-if (attrs) for (var i in attrs) e.setAttribute(i, attrs[i]);
+if (attrs) for (var i in attrs) if (attrs[i]!=null) e.setAttribute(i, attrs[i]);
 if (text) e.appendText(text);
 return e;
 }

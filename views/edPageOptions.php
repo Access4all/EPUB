@@ -4,6 +4,7 @@ $filename = basename($p->fileName);
 $h = 'htmlspecialchars';
 $pageTitle = "{$t('PageOptions')} {$filename}";
 $edpPageOptions = true;
+$cbIsLinear = (@$p->linear===false? ' checked="checked"' : '');
 require('edRightHeader.php');
 echo <<<END
 <form action="" method="post" data-track-changes>
@@ -23,6 +24,8 @@ echo <<<END
 <input type="text" id="filename" name="fileName" readonly value="{$p->fileName}" /></p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
 <input type="text" id="id" name="id" readonly value="{$h($p->id)}" /></p>
+<p><input type="checkbox" id="linear" name="linear"$cbIsLinear />
+<label for="linear">{$t('CbLinear')}</label></p>
 </div>
 END;
 $apo = $p->getAdditionalPageOptions();

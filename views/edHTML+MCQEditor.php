@@ -1,6 +1,7 @@
 <?php
 loadTranslation('editor-mcq');
 $rnd = substr(md5(time()), 0, 12);
+$otherStringTable = ',editor-mcq';
 $simpleFileName = basename($p->fileName);
 $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;

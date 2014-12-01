@@ -92,6 +92,7 @@ $parts = explode('/', dirname($ref).'/'.$file);
 while(($i=array_search('..', $parts))>0) {
 array_splice($parts, $i -1, 2);
 }
+if ($parts && $parts[0]=='.') array_shift($parts);
 return implode('/', $parts);
 }
 

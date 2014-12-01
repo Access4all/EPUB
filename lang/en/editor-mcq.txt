@@ -1,6 +1,9 @@
 IntroText=Introductory Text
 Question=Question
 Answer=Answer
+InsertNewQuestion=Add question
+InsertNewAnswer=Add answer
+DeleteAnswer=Delete answer
 MCQLong=Multiple choice Quiz
 QuizType=Quiz type
 QuizType_simple=Simple

@@ -2,6 +2,7 @@ DirectUpload=Direct upload
 FileName=File path
 PageIdentifier=Identifier
 PageTitle=Page title
+CbLinear=Don't include this page in the table of contents and in the linear navigation
 PageType=Page type
 PageType_document=Regular document
 PageTypeDesc_document=A regular document which will contain text, images, and multimedia objects. Use this type to write the actual contents of your course or presentation.

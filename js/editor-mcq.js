@@ -2,6 +2,7 @@ function onRTZCreate (rtz) {
 rtz.ontab = RTZ_MCQ_onTab;
 rtz.onenter = RTZ_MCQ_onenter;
 rtz.onsave = RTZ_MCQ_save;
+rtz.oncontextmenu = RTZ_MCQ_contextMenu;
 }
 
 function RTZ_MCQ_onenter () {
@@ -35,6 +36,16 @@ data = JSON.stringify(data);
 RTZ_defaultSave.call(this,data);
 }
 
+function RTZ_MCQ_contextMenu (items, sel) {
+var qt = this.zone.queryAncestor('.questionText');
+var fieldset = this.zone.queryAncestor('fieldset');
+if (!qt&&!fieldset) return;
+var qr = this.zone.tagName.toLowerCase()=='label'?  this.zone : fieldset.querySelectorLast('label');
+items.merge([msgs.InsertNewQuestion, MCQ_createNewQuestion.bind(this, fieldset)]);
+if (qr) items.merge([msgs.InsertNewAnswer, MCQ_createNewAnswer.bind(this, qr)]);
+if (qr) items.merge([msgs.DeleteAnswer, MCQ_deleteAnswer.bind(this, qr)]);
+}
+
 function MCQ_createNewQuestion (last) {
 var fieldset = last.cloneNode(true);
 var qNumSpan = fieldset.querySelector('span.questionNumber');
@@ -43,8 +54,7 @@ var ps = fieldset.$('p');
 var firstContentEditable = null;
 for (var i=ps.length -1; i>=2; i--) ps[i].parentNode.removeChild(ps[i]);
 for (var i=0; i<2; i++) {
-var input = ps[i].querySelector('input');
-var label = ps[i].querySelector('label');
+var label = ps[i].querySelector('label'), input = ps[i].querySelector('input');
 var id = 'q' + qNum + '_' + i;
 var name = 'q[' + qNum + (input.getAttribute('type')=='radio'? ']' : '][]');
 input.setAttribute('name', name);
@@ -59,6 +69,12 @@ rtz.init();
 if (!firstContentEditable) firstContentEditable = f;
 });//each contenteditable
 last.parentNode.insertBefore(fieldset, last.nextElementSibling);
+while (fieldset = fieldset.nextElementSibling) {
+fieldset.$('.questionNumber').each(function(l){ l.innerHTML  = l.innerHTML.toString().replace(/(\d+)/, function(n){ return 1+parseInt(n); }); });
+fieldset.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
+fieldset.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
+fieldset.$('input').each(function(i){ i.setAttribute('name', i.getAttribute('name').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
+}
 firstContentEditable.focus();
 return false;
 }
@@ -74,15 +90,26 @@ input.setAttribute('id', id);
 label.setAttribute('for', id);
 label.innerHTML = '';
 label.setAttribute('aria-label', label.getAttribute('aria-label').replace(/\d+$/g, function(m){ return 1+parseInt(m); }));
-last.parentNode.parentNode.appendChild(p);
+last.parentNode.parentNode.insertBefore(p, last.parentNode.nextSibling);
 var rtz = new RTZ(label, null);
 rtz.init();
+while(p = p.nextElementSibling) {	
+p.$('label').each(function(l){ l.setAttribute('aria-label', l.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
+p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
+p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
+}
 label.focus();
 return false;
 }
 
 function MCQ_deleteAnswer (ref) {
-ref.parentNode.parentNode.removeChild(ref.parentNode);
+var p = ref.parentNode, p0=p;
+while(p = p.nextElementSibling) {	
+p.$('label').each(function(l){ l.setAttribute('aria-label', l.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+}
+p0.parentNode.removeChild(p0);
 }
 
 if (!window.onloads) window.onloads = [];

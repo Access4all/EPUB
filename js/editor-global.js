@@ -51,11 +51,13 @@ if (e.altKey) k|=vk.alt;
 switch(k){
 case vk.up: {
 var prevLi = this.parentNode.previousElementSibling;
+if (!prevLi) prevLi = this.parentNode.parentNode.lastElementChild;
 var prevItem = prevLi && prevLi.querySelector('a');
 if (prevItem) prevItem.focus();
 }break;
 case vk.down: {
 var nextLi = this.parentNode.nextElementSibling;
+if (!nextLi) nextLi = this.parentNode.parentNode.firstElementChild;
 var nextItem = nextLi && nextLi.querySelector('a');
 if (nextItem) nextItem.focus();
 }break;

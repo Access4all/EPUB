@@ -1,12 +1,13 @@
 <?php
 if ($b->getOption('tocNeedRegen', false)) $b->updateTOC();
 
+$toc = null;
 $doc = DOM::loadXMLString( $b->getContentsByFileName( $b->getNavFileName() ));
-$toc = $doc->documentElement->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
+if ($doc && $doc->documentElement) $toc = $doc->documentElement->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
 if (!$toc) {
 $b->updateTOC();
 $doc = @DOM::loadHTMLString( $b->getContentsByFileName( $b->getNavFileName() ));
-$toc = $doc->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
+if ($doc&&$doc->documentElement) $toc = $doc->documentElement->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
 }
 if ($toc) {
 $toc = $toc->getFirstElementByTagName('ol');
