@@ -1,0 +1,15 @@
+﻿IntroText=Texte d'introduction
+GapText=Texte à trous
+MarkGap=Ajouter un trou
+GapList=Liste de suggestions
+GapListTipp=Astuce: si vous laissez cette zone vierge, une nouvelle liste sera générée automatiquement en se basant surles trous existants
+SelectAGap=--------
+FillTheGaps=Texte à trous
+FTGType=Suggestions aidant à remplir les trous
+FTGType_simple=Aucune suggestion
+FTGType_indicative=Liste de suggestions indicatives
+FTGType_strict=Liste prédéfinie et stricte de suggestions
+FTGTypeDesc_simple=Absolument aucune suggestion n'est donnée pour aider à remplir les trous. n'importe quoi peut être saisi.
+FTGTypeDesc_indicative=Une liste de suggestions est donnée pour aider à compléter les trous, mais elles est uniquement indicative et ce qu'elle contient ne doit en règle générale pas être utilisé telles quelles. Utilisez ceci dans les cas où les réponses prises de la liste doivent encore être légèrement modifiées pour qu'elles soient véritablement justes. Par exemple, une liste de verbes ou d'adjectifs qui doivent être accordés dans leur forme correcte.
+FTGTypeDesc_strict=Une liste de réponses est donnée et tous les trous doivent être remplis avec exactement une des propositions listées. Rien n'est précisé si chaque élément ne peut être utilisé qu'une seule fois ou autant de fois que nécessaire.
+QuizResult=Vous avez répondu correctement à %1 questions sur %2.

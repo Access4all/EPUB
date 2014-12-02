@@ -242,6 +242,7 @@ $this->saveBO();
 function saveOpf () {
 $opfFile = $this->getOpfFileName();
 $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($opfFile));
+if ($opf->documentElement->getAttribute('version')!='3.0') $opf->documentElement->setAttribute('version', '3.0');
 if (@$this->metadataModified) {
 $this->metadataModified = false;
 $metadata = $opf->getFirstElementByTagName('metadata');
@@ -416,10 +417,23 @@ else return $this->getFirstNonTOCPageFileName();
 function updateTOC () {
 loadTranslation('editor');
 if ($this->getOption('tocNoGen', false)) return;
-if (!$this->isExtracted()) return;
+$this->ensureExtracted();
 $maxDepth = $this->getOption('tocMaxDepth', 4);
 $navItem = $this->getNavItem();
+$navdoc = null;
+if ($navItem) $navdoc = $navItem->getDoc();
+if (!$navItem || !$navdoc->documentElement) {
+$this->ensureExtracted();
+$defdir = $this->getOption('defaultDirByType:text', null);
+$fn = ($defdir? "$defdir/toc.xhtml" : 'toc.xhtml');
+$pInfo = array('title'=>getTranslation('TableOfContents'), 'fileName'=>$fn);
+$navItem = $this->addNewEmptyPage($pInfo);
+$navItem->props = array('nav');
+$this->navFileName = $navItem->fileName;
+$this->manifestModified=true;
+$this->saveOpf();
 $navdoc = $navItem->getDoc();
+}
 $body = $navdoc->getFirstElementByTagName('body');
 $body->removeAllChilds();
 $nav = $body->appendElement('nav', array('role'=>'navigation', 'epub:type'=>'toc'));

@@ -10,6 +10,7 @@ static $CLASSMAPPING = array(
 'application/epub+zip' => 'EPUBBookFactory',
 'application/xhtml+xml' => 'XHTMLBookFactory',
 'text/html' => 'HTMLBookFactory',
+//'application/zip' => 'ZipBookFactory',
 'application/font-woff' => 'FontFactory',
 'application/font-sfnt' => 'FontFactory',
 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'PandocFactory',
@@ -39,7 +40,7 @@ return $factory->createBookFromFile($bookshelf, $info, $file);
 }
 else if (method_exists($factoryClass, 'createResourcesFromFile')) {
 $tplFile = './data/template.epub';
-$title = 'UntitledBook'.time();
+$title = 'UntitledBook'.date('Y.m.d.H.i.s');
 $book = $bookshelf->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
 $book->extract();
 $book->updateBookSettings(array('title'=>$title));
@@ -106,6 +107,29 @@ $epubFile = "$booksdir/$name.epub";
 $info['title'] = $title;
 @copy($file->getRealFileName(), $epubFile);
 return new Book(array('name'=>$name, 'title'=>$title));
+}}
+
+class ZipBookFactory {
+function createResourcesFromFile ($book, &$info, $zipFile) {
+if (isset($info['inzip'])) return array();
+$bf = new BookFactory();
+$fs = new ZipFileSystem($zipFile->getRealFileName());
+$files = array();
+$resources = array();
+for ($i=0; $i<$fs->numFiles; $i++) $files[]=$fs->getNameIndex($i);
+sort($files);
+foreach($files as $fileName) {
+$data = $fs->getFromName($fileName);
+$file = new MemoryFile(array('fileName'=>$fileName, 'contents'=>$data));
+$mt = $file->getGenericType();
+$fullMt = $file->getMediaType();
+if ($mt!='text' && $mt!='image' && $mt!='javascript' && $mt!='css' && $mt!='audio' && $mt!='video') continue;
+$info2 = array('fileName'=>$fileName, 'mediaType'=>$fullMt, 'inzip'=>true);
+echo "$fileName<br />";
+$res2 = $bf->createResourcesFromFile($book, $info2, $file);
+if (is_array($res2)) $resources = array_merge($resources, $res2);
+}
+return $resources;
 }}
 
 ?>

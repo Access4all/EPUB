@@ -40,6 +40,7 @@ else return 'application/octetstream';
 
 static $MIMETYPES = array(
 'epub' => 'application/epub+zip',
+'zip' => 'application/zip',
 'xhtml' => 'application/xhtml+xml',
 'html' => 'text/html',
 'htm' => 'text/html',

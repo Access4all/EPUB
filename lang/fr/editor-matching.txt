@@ -1,0 +1,11 @@
+﻿
+IntroText=Texte d'introduction
+leftELbl=Gauche
+rightELbl=Droite
+leftSLbl=Relier à
+rightSLbl=Relier à
+leftSLbl2=Relier %1 à
+rightSLbl2=Relier %1 à
+hList0=Liste 1
+hList1=Liste 2
+QuizResult=Vous avez répondu correctement à %1 questions sur %2.

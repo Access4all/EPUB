@@ -1,0 +1,24 @@
+﻿
+Bookshelf=Bibliothèque
+Language=Langue
+ChangeLanguage=Changer la langue
+BookTitle=Titre
+BookAuthors=Auteur(s)
+Actions=Actions
+AddToBookshelf=Ajouter des livres
+CreateNewBook=Créer un nouveau livre
+UploadFile=Envoyer un fichier
+UploadFailed=Le livre n'a pas pu être ajouté à la bibliothèque.
+UploadSuccess=Le livre a bien été ajouté à la bibliothèque.
+DeleteFailed=Le livre n'a pas pu être supprimé de la bibliothèque.
+DeleteSuccess=Le livre a bien été supprimé de la bibliothèque.
+CreateNewFailed=La création du nouveau livre a échoué.
+CreateNewSuccess=Votre nouveau livre a bien été créé.
+ExportFailed=L'exportation a échoué.
+Send=Envoyer
+btnDelete=Supprimer
+btnEdit=Éditer
+btnView=Lire
+btnExport=Exporter
+BtnCreate=Créer
+BtnAdd=Ajouter

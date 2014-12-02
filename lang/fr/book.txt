@@ -1,0 +1,4 @@
+﻿
+btnNav=Table des matières
+btnNext=Suivant
+btnPrev=Précédent

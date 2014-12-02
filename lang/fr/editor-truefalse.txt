@@ -1,0 +1,15 @@
+﻿
+IntroText=Texte d'introduction
+Question=Question
+Answer=Réponse
+True=Vrai
+False=Faux
+AddColumn=Ajoeur une colonne
+RemoveColumn=Supprimer une colonne
+TFQLong=Vrai/faux
+QuizType=Type de quiz
+QuizType_simple=Simple
+QuizTypeDesc_simple=Dans un questionnaire simple, il y a toujours exactement une et une seule bonne réponse par question.
+QuizType_complex=Complexe
+QuizTypeDesc_complex=Dans un questionnaire complexe, la bonne réponse à une question peut être une combinaison quelconque de choix, y compris aucun ou tous.
+QuizResult=Vous avez répondu correctement à %1 questions sur %2.

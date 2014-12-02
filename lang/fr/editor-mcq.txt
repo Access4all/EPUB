@@ -1,0 +1,14 @@
+﻿
+IntroText=Texte d'introduction
+Question=Question
+Answer=Réponse
+InsertNewQuestion=Ajouter une question
+InsertNewAnswer=Ajouter une réponse
+DeleteAnswer=Supprimer cette réponse
+MCQLong=Questionnaire à choix multiples
+QuizType=Type de quiz
+QuizType_simple=Simple
+QuizTypeDesc_simple=Dans un questionnaire à choix multiples simple, il y a toujours exactement une et une seule bonne réponse par question.
+QuizType_complex=Complexe
+QuizTypeDesc_complex=Dans un questionnaire à choix multiples complexe, la bonne réponse à une question peut être une combinaison de choix quelconque, y compris aucun ou tous.
+QuizResult=Vous avez répondu correctement à %1 questions sur %2.

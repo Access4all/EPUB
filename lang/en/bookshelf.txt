@@ -1,4 +1,6 @@
 Bookshelf=Bookshelf
+Language=Language
+ChangeLanguage=Change language
 BookTitle=Title
 BookAuthors=Author(s)
 Actions=Actions
@@ -7,7 +9,7 @@ CreateNewBook=Create new book
 UploadFile=Upload file
 UploadFailed=The book couldn't have been added to your bookshelf.
 UploadSuccess=The book has been added to your bookshelf.
-DeleteFailed=The book couldn't ahve been removed from your bookshelf.
+DeleteFailed=The book couldn't have been removed from your bookshelf.
 DeleteSuccess=The book has been removed from your bookshelf.
 CreateNewFailed=The creation of your new book has failed.
 CreateNewSuccess=A new book has been created.

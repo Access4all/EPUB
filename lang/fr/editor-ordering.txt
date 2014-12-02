@@ -1,0 +1,3 @@
+﻿
+IntroText=Texte d'introduction
+TheItem=Élément %1

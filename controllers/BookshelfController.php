@@ -11,6 +11,17 @@ $bv = new BookshelfView();
 $bv->index($books);
 }
 
+function changeLanguage () {
+global $lang, $langs;
+$newLang = @$_POST['lang'];
+if (array_key_exists($newLang, $langs)) {
+$lang = $newLang;
+$_SESSION['language'] = $lang;
+}
+header("Location:{$_SERVER['HTTP_REFERER']}");
+exit();
+}
+
 function delete ($id) {
 global $root;
 $failed = true;

@@ -1,0 +1,17 @@
+﻿
+BookTitle=Titre du livre
+Authors=Auteur(s)
+BookIdentifier=Identifiant du livre
+BookLanguage=Langue
+TOCOptions=Table des matières
+TOCNoGen=NE pas générer de table des matières automatiquement
+TOCHeadingText=Titre d'introduction à la table
+TOCMaxDepth=Profondeur maximale
+levels=niveaux
+BookOrganisation=Organisation
+DefaultDirs=Dossiers par défaut
+DDBTTipp=Quand vous importez des fichiers dans votre livre, vous pouvez décider où ceux-ci doivent aller par défaut dans l'arborescence. Ceci peut vous aider à mieux vous organiser lorsque votre livre est composé de nombreux documents, images, et autres fichiers. Vous pouvez laisser ces champs vides si vous n'avez pas de préférence, pas de souhait d'imposer une structure arborescente particulière, ou si vous ne voulez pas utiliser cette fonctionnalité.
+DDBT_text=Documents
+DDBT_image=Images
+DDBT_javascript=Scripts
+DDBT_font=Polices d'écriture
