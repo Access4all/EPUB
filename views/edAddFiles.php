@@ -11,8 +11,8 @@ echo <<<END
 <p><label for="id">{$t('PageIdentifier')}: </label>
 <input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" /></p>
 <h2>{$t('DirectUpload')}</h2>
-<p><label for="upload">{$t('DirectUpload')}: </label>
-<input type="file" id="upload" name="upload" /></p>
+<p><label for="uploads">{$t('DirectUpload')}: </label>
+<input type="file" id="uploads" name="uploads[]" multiple="multiple" /></p>
 <p>
 <input type="hidden" name="addfiles" value="true" />
 <button type="submit">{$t('Save')}</button>

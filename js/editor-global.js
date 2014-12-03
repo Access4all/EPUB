@@ -87,7 +87,7 @@ for (val in item.values) input.appendElement('option', {'value':val}).appendText
 if (item.value) input.value = item.value;
 }
 else {
-var exargs = ['min', 'max', 'step', 'pattern', 'maxlength'];
+var exargs = ['min', 'max', 'step', 'pattern', 'maxlength', 'multiple'];
 var args = {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'};
 for (var j=0; j<exargs.length; j++) if (item[exargs[j]]) args[exargs[j]]=item[exargs[j]];
 input = p.appendElement('input', args);
@@ -246,7 +246,10 @@ src = src.substring(window.rootUrl.length);
 ref = ref.substring(window.rootUrl.length);
 window.tmpMoveName = window.tmpMoveHref = null;
 var url = window.rootUrl2 + actionName + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
-ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!5');});
+ajax('GET', url, null, function(re){
+if(re=='OK') window.location.reload(); 
+else debug('Return!'+re.length+'!'+re+'!');
+}, function(){alert('Failed!5');});
 return false;
 }
 

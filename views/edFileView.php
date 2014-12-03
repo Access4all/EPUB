@@ -16,8 +16,8 @@ if (is_dir("$base/$dir$fn"))  $dirs[] = $fn;
 else $files[] = $fn;
 }
 closedir($dd);
-sort($dirs);
-sort($files);
+natsort($dirs);
+natsort($files);
 $a = array_merge($dirs,$files);
 if ($first) echo '<ul class="fileTree" data-ctxtype="file">';
 else echo '<ul>';

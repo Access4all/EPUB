@@ -13,6 +13,9 @@ $fi = new FontInfo($this->getContents(), true);
 $this->family = $fi->getFontFamily();
 $this->subfamily = $fi->getFontSubFamily();
 $this->fontname = $fi->getFontName();
+if (!$this->family) $this->family = basename($this->fileName, strstr($this->fileName, '.'));
+if (!$this->subfamily) $this->subfamily = 'normal';
+if (!$this->fontname) $this->fontname = $this->family;
 }
 
 function getFamily () {

@@ -48,7 +48,7 @@ header("Content-Type: text/html; charset=utf-8");
 echo $html;
 }
 else {
-@ob_end_clean();
+ob_end_clean();
 header("Content-Type: $ct");
 $b->directEchoFile($fileName);
 }

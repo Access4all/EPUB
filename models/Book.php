@@ -166,7 +166,7 @@ if (!$spine) return null;
 foreach($spine->getElementsByTagName('itemref') as $itemref) {
 $id = $itemref->getAttribute('idref');
 if (!$id) continue;
-$item = $this->itemIdMap[$id];
+$item = @$this->itemIdMap[$id];
 if (!$item) continue;
 $a[] = $id;
 $item->linear = $itemref->getAttribute('linear')!='no';
@@ -266,12 +266,10 @@ $spine->appendElement('itemref', $attrs);
 if (@$this->manifestModified) {
 $this->manifestModified=false;
 $manifest = $opf->getFirstElementByTagName('manifest');
-$dir = dirname($this->getOpfFileName());
-$dirlen = 1+strlen($dir);
 $manifest->removeAllChilds();
 foreach($this->itemIdMap as $p){
 if (!$p) continue;
-$href = substr($p->fileName, $dirlen);
+$href = pathRelativize($this->getOpfFileName() , $p->fileName);
 $attrs = array('id'=>$p->id, 'media-type'=>$p->mediaType, 'href'=>$href);
 if (@$p->props) $attrs['properties'] = implode(' ', $p->props);
 $manifest->appendElement('item', $attrs);
@@ -343,29 +341,35 @@ $bf = new BookFactory();
 $resources = $bf->createResourcesFromFile($this, $info, $srcFile);
 if (!$resources) return null;
 foreach($resources as $lst) {
-list($res, $srcFile) = $lst;
+list($res, $dstFile) = $lst;
 $res->book = $this;
-$mediaType = $srcFile->getMediaType();
-$srcFile->copyTo($this->getFileSystem(), $info['fileName']);
-$srcFile->release();
+$mediaType = $dstFile->getMediaType();
+$fileName = ($srcFile==$dstFile? $info['fileName'] : $dstFile->getFileName() );
+$itemId = ($srcFile!=$dstFile&&$res->id? $res->id : $info['id'] );
+$dstFile->copyTo($this->getFileSystem(), $fileName);
+$dstFile->release();
+//echo "$fileName, $mediaType, ".get_class($res).", {$srcFile->getFileName()}, {$dstFile->getFileName()}<br />";
 $this->getItemById(null);
 $this->getItemByFileName(null);
 $this->manifestModified = true;
-$this->itemIdMap[$info['id']] = $res;
-$this->itemFileNameMap[$info['fileName']] = $res;
+$this->itemIdMap[$itemId] = $res;
+$this->itemFileNameMap[$fileName] = $res;
 if ($res instanceof BookPage) {
 $className = get_class($res);
 if ($className!='BookPage') $this->setOption("PageClass:{$res->id}", $className);
 $res->initNewPage($this);
 $this->getSpine();
 $this->spineModified = true;
-if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($info['id']));
-else $this->spine[] = $info['id'];
+if ($pageFrom) array_splice($this->spine, 1+array_search($pageFrom->id, $this->spine), 0, array($itemId));
+else $this->spine[] = $itemId;
 }
 else if ($res instanceof Font) $this->updateCssTemplate(array());
 }
+$srcFile->release();
 $this->saveBO();
 $this->saveOpf();
+//die(nl2br(print_r($resources,true)));
+//die('Done');
 return $resources[0][0];
 }
 

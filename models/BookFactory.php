@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 function changeFileExtension (&$info) {
 return ($info['fileName'] = preg_replace('/\.\w+$/', '.xhtml', $info['fileName']));
@@ -10,7 +10,7 @@ static $CLASSMAPPING = array(
 'application/epub+zip' => 'EPUBBookFactory',
 'application/xhtml+xml' => 'XHTMLBookFactory',
 'text/html' => 'HTMLBookFactory',
-//'application/zip' => 'ZipBookFactory',
+'application/zip' => 'ZipBookFactory',
 'application/font-woff' => 'FontFactory',
 'application/font-sfnt' => 'FontFactory',
 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'PandocFactory',
@@ -79,8 +79,12 @@ return new $className();
 
 class HTMLBookFactory {
 function createResourcesFromFile ($book, &$info, $file) {
+$doc = null;
 $contents = $file->getContents();
-$doc = DOM::loadHTMLString($contents  );
+if (substr($contents, 0, 3)=='﻿') $contents = substr($contents,3); // Get rid of UTF-8 BOM if present
+// Check if there is an XML prolog at the beginning of the file, in which case it would be an XHTML document; this is needed in case the file is wrongly indicated as text/html and/or has .htm/.html extension
+if (substr($contents, 0, 5) == '<?xml') $doc = DOM::loadXMLString($contents  ); 
+else $doc = DOM::loadHTMLString($contents  );
 changeFileExtension($info);
 $file->release();
 $cleaner = new HTMLCleaner();
@@ -117,15 +121,15 @@ $fs = new ZipFileSystem($zipFile->getRealFileName());
 $files = array();
 $resources = array();
 for ($i=0; $i<$fs->numFiles; $i++) $files[]=$fs->getNameIndex($i);
-sort($files);
+natsort($files);
+$files = array_reverse($files);
 foreach($files as $fileName) {
 $data = $fs->getFromName($fileName);
 $file = new MemoryFile(array('fileName'=>$fileName, 'contents'=>$data));
 $mt = $file->getGenericType();
 $fullMt = $file->getMediaType();
 if ($mt!='text' && $mt!='image' && $mt!='javascript' && $mt!='css' && $mt!='audio' && $mt!='video') continue;
-$info2 = array('fileName'=>$fileName, 'mediaType'=>$fullMt, 'inzip'=>true);
-echo "$fileName<br />";
+$info2 = array('fileName'=>$fileName, 'mediaType'=>$fullMt, 'inzip'=>true, 'id'=>Misc::toValidName($fileName));
 $res2 = $bf->createResourcesFromFile($book, $info2, $file);
 if (is_array($res2)) $resources = array_merge($resources, $res2);
 }

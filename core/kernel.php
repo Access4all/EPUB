@@ -43,6 +43,16 @@ function autofill ($obj, $a) {
 foreach($a as $k=>$v) $obj->$k=$v;
 }
 
+function errorHandler ($errno, $msg, $file, $line, $context) {
+//if (!($errno&error_reporting())) return false;
+//@ob_end_clean();
+$ar = array(E_ERROR=>'Error', E_NOTICE=>'Notice', E_WARNING=>'Warning', E_USER_NOTICE=>'Notice', E_USER_WARNING=>'Warning');
+echo "{$ar[$errno]}: $msg at $file on line $line<br />";
+//var_dump($context);
+if (($errno&error_reporting())) die('Exit due to error');
+}
+//set_error_handler('errorHandler', E_ALL &~ E_STRICT);
+
 $db = null; 
 try {
 if (!defined('NODB')) require_once('gdba.php');

@@ -11,14 +11,18 @@ return @file_get_contents($this->dir .$name);
 }
 
 function addFromFile ($name, $orig) {
-return @copy($orig, $this->dir .$name);
+$fn = $this->dir .$name;
+if (false === @copy($orig, $fn)) {
+if (@mkdir(dirname($fn), 0777, true)) return @copy($orig, $fn);
+}
+else return true;
+return false;
 }
 
 function addFromString ($name, $data) {
 $fn = $this->dir .$name;
 if (false===@file_put_contents($fn, $data)) {
-if (@mkdir(dirname($fn), 0777, true))
-@file_put_contents($fn, $data);
+if (@mkdir(dirname($fn), 0777, true)) @file_put_contents($fn, $data);
 }}
 
 function moveFile ($oldName, $newName) {
@@ -45,7 +49,9 @@ function isExtracted () { return true; }
 function close () {}
 
 function directEcho ($name) {
+@ob_end_clean();
 @readfile($this->dir .$name);
+exit();
 }
 
 }

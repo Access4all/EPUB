@@ -9,6 +9,9 @@ $doc->registerNodeClass('DOMElement', 'DOMElement2');
 $doc->formatOutput = true;
 $doc->preserveWhiteSpace = false;
 $doc->strictErrorChecking = false;
+$doc->validateOnParse = false;
+$doc->substituteEntities = true;
+$doc->resolveExternals = false;
 return $doc;
 }
 

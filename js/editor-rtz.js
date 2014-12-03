@@ -1334,7 +1334,7 @@ _this.zone.focus();
 function RTZ_quickUploadDialog () {
 if (!window.FormData) { MessageBox(msgs.FeatureNotAvailT, msgs.FeatureNotAvail,[msgs.OK]); return; }
 DialogBox(msgs.AddFiles, [
-{name:'upload', label:msgs.Upload, type:'file'}
+{name:'upload', label:msgs.Upload, type:'file', multiple:'multiple'}
 ], function(){
 RTZ_uploadFiles(this.elements.upload.files);
 });//DialogBox
@@ -1490,6 +1490,7 @@ var sel = this.getSelection();
 var sc = sel.startContainer, ec = sel.endContainer, so = sel.startOffset, eo = sel.endOffset;
 var bcr = this.zone.getBoundingClientRect();
 var div = document.createElement2('div', {contenteditable:true, tabindex:0, style:"position: absolute; z-index: -100; width: 1px; overflow: hidden; left: "+bcr.left+"px; top: "+bcr.top+"px;"}, '\u00A0');
+div.onpaste = RTZ_paste.bind(this);
 document.querySelector('body').appendChild(div);
 div.focus();
 sel.selectNodeContents(div);
@@ -1497,13 +1498,14 @@ this.select(sel);
 setTimeout(function(){ 
 sel.selectNodeContents(div);
 var frag = sel.extractContents();
-if (frag.childNodes.length<=0 || (frag.firstChild.nodeType==3 && !frag.firstChild.data.trim() )) return; // Nothing has been effectively pasted, abort
+var pastedSomething = (frag.childNodes.length>0 && (frag.firstChild.nodeType!=3 || frag.firstChild.data.trim() )) ;
 var inlineContext = !frag.querySelector('p, pre, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dd, dt, table, tr, td, th, div, header, footer, section, aside, figure');
 div.parentNode.removeChild(div);
 sel.setStart(sc,so);
 sel.setEnd(ec,eo);
 this.zone.focus();
 this.select(sel);
+if (!pastedSomething) return; 
 this.cleanHTML(frag, inlineContext);
 if (!inlineContext && sel.commonAncestorContainer.nodeType==3 && sel.commonAncestorContainer.parentNode.nodeName.toLowerCase()=='p') { // We are in the middle of a paragraph, we perhaps need to split it
 if (sel.endOffset >= sel.endContainer.length) { // At the end of the paragraph, don't split it it is useless; just place the cursor after it
@@ -1545,13 +1547,12 @@ return false;
 }
 else if (e && e.clipboardData && e.clipboardData.getData) {
 var result=false, text = null;
-try { text = e.clipboardData.getData('Text'); } catch(ex){}
-if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this, text.trim() );
-else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() );
-if (result) { if (e.preventDefault) e.preventDefault(); return false; }
+try { text = e.clipboardData.getData('Text'); } catch(ex){} // a weird security error may occur when retriving the text present in the clipboard
+if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this, text.trim() ); // We are pasting an URL; we can directly make a link out of it
+else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() ); // We are pasting an element from the file/spine/toc view; this could be a link or an image
+if (result) { if (e.preventDefault) e.preventDefault(); return false; } // IF the paste opration ahs been handled in one of the case above, prevent the normal behavior
 }
-// Default paste behavior
-return true;
+return true; // the default paste behavior will occur
 }
 
 function RTZ_save () {
@@ -1674,10 +1675,11 @@ data.append('noredir', '1');
 if (forcedir) data.append('forcedir', '1');
 data.append('id', '');
 data.append('fileName', '');
-for (var i=0; i<files.length; i++) data.append('upload', files[i], files[i].name);
+debug(files.length + ' files');
+for (var i=0; i<files.length; i++) data.append('uploads[]', files[i], files[i].name);
 ajax('POST', url, data, function(re){
 debug(re);
-if (okFunc && re.startsWith('Uploaded: ')) okFunc(re.substring(10).trim());
+if (okFunc && re.startsWith('Uploaded: ')) okFunc(re.substring(10, re.indexOf('\r\n')).trim());
 }, function(){alert('Upload failed');});
 }
 
