@@ -1,5 +1,6 @@
 ﻿
 ErrFileAccess=Impossible d'accéder à <em>%1</em>; Veuillez vérifier les autorisations et droits d'accès.
+ErrBodyFail=Impossible d'ouvrir le document; il est peut-être endommagé, syntaxiquement invalide, ou alors ce n'est pas vraiment une page HTML.
 ErrTocNotAvail=La table des matières n'a pas pu être récupérée.
 ErrTocEmpty=La table des matières est actuellement vierge.
 BackToBookshelf=Retour à la bibliothèque
@@ -33,6 +34,7 @@ Edit=Éditer
 Delete=Supprimer
 Rename=Renommer
 General=Général
+Advanced=Avancé
 URL=URL
 Preview=Aperçu
 Save=Enregistrer

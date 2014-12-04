@@ -18,7 +18,7 @@ return array_keys(get_object_vars($this));
 
 function getDoc () {
 if (!@$this->doc) {
-$this->doc = DOM::loadXMLString( DOM::decodeEntities($this->book->getContentsByFileName($this->fileName)));
+$this->doc = DOM::loadXMLString( trim( DOM::decodeEntities($this->book->getContentsByFileName($this->fileName))));
 }
 return $this->doc;
 }

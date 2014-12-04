@@ -51,15 +51,16 @@ if ($remove) $el->removeAttributeNode($attr);
 $remove = false;
 $rename = null;
 switch($el->nodeType){
-case 1:
+case 1: // Regular element node
 if (!in_array($el->nodeName, $allowedTags)) $remove=true;
 if (!$el->hasChildNodes() && !in_array($el->nodeName, $allowedEmptyTags)) $remove = true;
 if ($el->nodeName=='p' && in_array($el->parentNode->nodeName, array('li', 'dt', 'dd', 'td', 'th', 'p'))) $remove=true;
 if ($el->attributes->length<=0 && ($el->nodeName=='div' || $el->nodeName=='span')) $remove=true;
 if ($el->nodeName=='b') $rename='strong';
 else if ($el->nodeName=='i') $rename='em';
+if ($remove && $el==$el->ownerDocument->documentElement) $remove=false;
 break;	
-case 3:
+case 3: // Text node
 if (($el->length<=0 || strlen(trim(str_replace(chr(160),' ', utf8_decode($el->data))))<=0)) $remove=true;
 break;
 default: $remove=true; break;

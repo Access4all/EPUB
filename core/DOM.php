@@ -29,7 +29,8 @@ return $doc;
 
 static function loadHTMLString ($data) {
 $doc = DOM::newDocument();
-$doc->loadHTML($data, DOM_LIBXML_OPTIONS);
+if (PHP_VERSION_ID>=50400) $doc->loadHTML($data, DOM_LIBXML_OPTIONS);
+else $doc->loadHTML($data);
 return $doc;
 }
 

@@ -9,11 +9,7 @@ echo <<<END
 <div id="partGeneral">
 <p><label for="title">{$t('PageTitle')}: </label>
 <input type="text" id="title" name="title" value="{$h(@$_POST['title'])}" required="required" aria-required="true" /></p>
-<p><label for="filename">{$t('FileName')}: </label>
-<input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" /></p>
-<p><label for="id">{$t('PageIdentifier')}: </label>
-<input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" /></p>
-</div><!--paratGEneral-->
+</div><!--partGeneral-->
 <fieldset>
 <legend><h2 data-expands="partPageType">{$t('PageType')}</h2></legend>
 <div id="partPageType">
@@ -31,6 +27,13 @@ END;
 echo <<<END
 </div><!--partPageType-->
 </fieldset>
+<h2 data-expands="partAdvanced">{$t('Advanced')}</h2>
+<div id="partAdvanced">
+<p><label for="filename">{$t('FileName')}: </label>
+<input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" /></p>
+<p><label for="id">{$t('PageIdentifier')}: </label>
+<input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" /></p>
+</div>
 <p>
 <input type="hidden" name="newpage" value="true" />
 <button type="submit">{$t('Save')}</button>

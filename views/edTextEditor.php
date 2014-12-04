@@ -1,7 +1,9 @@
 <?php
 $simpleFileName = basename($p->fileName);
 $contents = $b->getContentsByFileName($p->fileName);
-$contents = htmlspecialchars($contents);
+$contents2 = htmlspecialchars($contents);
+if (!$contents2) $contents2 = htmlspecialchars(utf8_encode($contents));
+$contents = $contents2; $contents2=null;
 $pageTitle = $simpleFileName;
 if (!isset($theToolbarId)) $theToolbarId = 'toolbar';
 if (!isset($theToolbarAdditionalItems)) $theToolbarAdditionalItems='';
@@ -23,9 +25,7 @@ echo <<<END
 </div>
 -->
 <div class="edWrapper">
-<textarea id="editor" rows="25" cols="80">
-$contents
-</textarea>
+<textarea id="editor" rows="25" cols="80">$contents</textarea>
 </div><!--edwrapper-->
 END;
 ?>

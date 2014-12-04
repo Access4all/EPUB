@@ -3,15 +3,20 @@ $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
 $doc = $p->getDoc();
 $body = $doc->getFirstElementByTagName('body');
-$contents = $body->saveInnerHTML();
+$contents = $body? $body->saveInnerHTML() : null;
 $pageTitle = $simpleFileName;
 require('edRightHeader.php');
+if (!$contents) {
+echo '<p><strong>', getTranslation('ErrBodyFail'), '</strong></p>';
+return;
+}
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
 <div id="document" class="editor" contenteditable="true" role="textbox" data-toolbar="toolbar" aria-label="{$t('RTZLabel')}">
 $contents
 </div></div><!--editor-->
+<!--
 <h2>Keyboard shortcuts</h2>
 <ul>
 <li>Ctrl+0: regular paragraph</li>
@@ -38,6 +43,7 @@ $contents
 <li>Ctrl+Shift+T: insert table</li>
 <li>Ctrl+Shift+Z: redo</li>
 </ul>
+-->
 <script type="text/javascript" src="$root/js/editor-rtz.js?rnd=$rnd"></script>
 END;
 ?>

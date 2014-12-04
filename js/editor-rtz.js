@@ -20,7 +20,8 @@ if (this.childNodes) for (var i=this.childNodes.length -1; i>=0; i--) this.child
 }
 
 function RTZ (zone, toolbar) {
-window.lastRTZ = this;
+if (!window.rtzs) window.rtzs = [];
+window.rtzs.push(this);
 this.zone = zone;
 this.toolbar = toolbar;
 this.select = RTZ_select;
@@ -1564,12 +1565,12 @@ saveBtn.setAttribute('aria-disabled', true);
 this.saveBtn = saveBtn;
 }
 
-function RTZ_defaultSave (code) {
+function RTZ_defaultSave (code, sync) {
 var data = code || this.zone.innerHTML;
 var url = encodeURI( window.actionUrl.replace('@@', 'save') );
 ajax('POST', url, 'content='+encodeURIComponent(data), function(e){
 debug(e, true);
-}, function(re,xml){debug('Save failed'+re+xml.responseText);});
+}, function(re,xml){debug('Save failed'+re+xml.responseText);}, !sync);
 };
 
 function RTZ_contextmenu (e) {

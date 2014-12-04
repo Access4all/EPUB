@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 
 function changeFileExtension (&$info) {
 return ($info['fileName'] = preg_replace('/\.\w+$/', '.xhtml', $info['fileName']));
@@ -81,7 +81,7 @@ class HTMLBookFactory {
 function createResourcesFromFile ($book, &$info, $file) {
 $doc = null;
 $contents = $file->getContents();
-if (substr($contents, 0, 3)=='ï»¿') $contents = substr($contents,3); // Get rid of UTF-8 BOM if present
+if (substr($contents, 0, 3)=='ï'.'»'.'¿') $contents = substr($contents,3); // Get rid of UTF-8 BOM if present
 // Check if there is an XML prolog at the beginning of the file, in which case it would be an XHTML document; this is needed in case the file is wrongly indicated as text/html and/or has .htm/.html extension
 if (substr($contents, 0, 5) == '<?xml') $doc = DOM::loadXMLString($contents  ); 
 else $doc = DOM::loadHTMLString($contents  );

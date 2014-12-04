@@ -15,8 +15,9 @@ s.setAttribute('src', url);
 document.getElementsByTagName('head')[0].appendChild(s);
 }
 
-function ajax (method, url, data, success, failure) {
+function ajax (method, url, data, success, failure, async) {
 var xhr = null;
+if (async!==false) async=true;
 if (window.XMLHttpRequest) xhr = new XMLHttpRequest();
 else if (window.ActiveXObject) xhr = new ActiveXObject('Microsoft.XMLHTTP');
 if (!xhr) return null;
@@ -28,7 +29,7 @@ else failure(xhr.status, xhr);
 xhr.onerror = xhr.onabort = function () { 
 failure(-1, xhr); 
 };
-xhr.open(method, url, true);
+xhr.open(method, url, async);
 if (data && typeof(data)!='object') xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xhr.send(data);
 return xhr;

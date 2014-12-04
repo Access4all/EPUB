@@ -1,4 +1,6 @@
+
 ErrFileAccess=Couldn't access <em>%1</em>; please check authorizations and access rights.
+ErrBodyFail=Unable to open the document. It may be corrupted, syntactically invalid, or not a real HTML page.
 ErrTocNotAvail=The table of contents couldn't be generated or retrived.
 ErrTocEmpty=The table of contents is currently empty.
 BackToBookshelf=Back to bookshelf
@@ -32,6 +34,7 @@ Edit=Edit
 Delete=Delete
 Rename=Rename
 General=General
+Advanced=Advanced
 URL=URL
 Preview=Preview
 Save=Save
