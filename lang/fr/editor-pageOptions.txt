@@ -1,5 +1,5 @@
 ﻿
-DirectUpload=Envoi de fichier
+DirectUpload=Envoi de fichiers
 FileName=Chemin du fichier
 PageIdentifier=Identifiant
 PageTitle=Titre de la page

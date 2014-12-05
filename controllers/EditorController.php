@@ -151,7 +151,6 @@ if (!$b->ensureExtracted()) exit500();
 $file = null;
 if (isset($_FILES['uploads'])) {
 $nFiles = count($_FILES['uploads']['name']);
-echo "$nFiles files uploaded<br />";
 if ($nFiles>1) { unset($_POST['fileName']); unset($_POST['id']); }
 for($uIdx=$nFiles -1; $uIdx>=0; $uIdx--) {
 $f = &$_FILES['uploads'];
@@ -160,7 +159,6 @@ $name = Misc::toValidName(basename($f['name'][$uIdx], $ext));
 $name = 'data/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'][$uIdx], $name);
 $file = new UploadedFile($name);
-echo 'Processing ', $file->getFileName(), '...<br />';
 $info = array_merge($_POST, array()); // This makes a copy of the original $_POST array
 $res = $b->addNewResource($info, $file, $p);
 $retFn = '';
