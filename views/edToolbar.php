@@ -17,7 +17,7 @@ echo <<<END
 <label for="structureDropDown"><img src="$root/images/24px/structure.png" alt=""><span class="hidden">{$t('StructureDropDown')}</span></label>
 <select id="structureDropDown">
 <option value="nothing">{$t('StructureDropDown')}</option>
-<option value="regular">{$t('Regular')}</option>
+<option value="regular" selected="selected">{$t('Regular')}</option>
 <option value="h1">{$t('Heading1')}</option>
 <option value="h2">{$t('Heading2')}</option>
 <option value="h3">{$t('Heading3')}</option>
@@ -29,7 +29,7 @@ echo <<<END
 </select>
 <label for="listsDropDown"><img src="$root/images/24px/list.png" alt=""><span class="hidden">{$t('ListsDropDown')}</span></label>
 <select id="listsDropDown">
-<option value="nothing">{$t('ListsDropDown')}</option>
+<option value="nothing" selected="selected">{$t('ListsDropDown')}</option>
 <option value="regular">{$t('NoList')}</option>
 <option value="orderedList">{$t('OrderedList')}</option>
 <option value="unorderedList">{$t('UnorderedList')}</option>

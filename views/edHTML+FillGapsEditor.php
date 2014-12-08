@@ -12,7 +12,7 @@ require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 END;
@@ -32,8 +32,8 @@ END;
 
 $theToolbarId = 'toolbar2';
 $theToolbarAdditionalItems = <<<END
-<span calss="buttonGroup">
-<button type="button" data-action="mark"><img src="$root/images/24px/gap.png" alt="{$t('MarkGap')}" title="{$t('MarkGap')}"></button>
+<span class="buttonGroup">
+<button type="button" data-action="mark">{$t('MarkGap')}</button>
 </span>
 END;
 require('edToolbar.php');

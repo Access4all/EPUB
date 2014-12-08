@@ -169,6 +169,7 @@ else this.debug = function(str) {};
 this.cleanHTML();
 this.startRecordDOMChanges();
 if (window.onRTZCreate) window.onRTZCreate(this);
+if (this.zone.hasAttribute('data-autofocus')) this.zone.focus();
 }
 
 function RTZ_loadStyles () {
@@ -997,7 +998,7 @@ function RTZ_insertIllustration (url, alt, caption, style) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
 var figure = this.createObservedElement('figure', {'class':style});
-var img = figure.appendElement('img', {'alt':alt, 'src':url, 'width':'auto'});
+var img = figure.appendElement('img', {'alt':alt, 'src':url, 'width':'100%', 'height':'auto'});
 var capt = figure.appendElement('figcaption');
 var captP = capt.appendElement('p').appendText(caption);
 var sel = this.getSelection();

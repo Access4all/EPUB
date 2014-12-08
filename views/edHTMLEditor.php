@@ -13,7 +13,7 @@ return;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="document" class="editor" contenteditable="true" role="textbox" data-toolbar="toolbar" aria-label="{$t('RTZLabel')}">
+<div id="document" class="editor" contenteditable="true" role="textbox" data-toolbar="toolbar" data-autofocus="true" aria-label="{$t('RTZLabel')}">
 $contents
 </div></div><!--editor-->
 <!--

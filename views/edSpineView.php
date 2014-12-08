@@ -4,6 +4,7 @@ echo '<div class="leftPanelTab">';
 echo '<ol class="fileTree" data-ctxtype="spine">';
 foreach($b->getSpine() as $id) {
 $item = $b->getItemById($id);
+if (!$item) continue;
 $url = "$root/editor/{$b->name}/{$leftView}_{$rightView}/{$item->fileName}";
 $relativeUrl = $p? pathrelativize($p->fileName, $item->fileName) : '';
 $label = basename($item->fileName);

@@ -94,6 +94,8 @@ width: auto;
 height: auto;
 border: 3px solid #86B918;
 padding: 2em;
+overflow: scroll;
+max-height: 800px;
 min-height: 200px;
 }
 
@@ -114,6 +116,9 @@ background-color:#86B918;
 
 
 .toolbar {
+/*position: fixed;
+z-index: 100;
+*/
 background-color: #86B918;
 border: 3px solid #86B918;
 }
@@ -141,6 +146,7 @@ button[data-action=icon] { background-image: URL('../images/24px/icon.png'); }
 button[data-action=illustration] { background-image: URL('../images/24px/illustration.png'); }
 button[data-action=table] { background-image: URL('../images/24px/table.png'); }
 button[data-action=box] { background-image: URL('../images/24px/box.png'); }
+button[data-action=mark] { background-image: URL('../images/24px/gap.png'); }
 
 .dialogBox {
    position:fixed;

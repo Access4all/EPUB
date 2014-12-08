@@ -1,4 +1,5 @@
-﻿IntroText=Texte d'introduction
+﻿
+IntroText=Texte d'introduction
 GapText=Texte à trous
 MarkGap=Ajouter un trou
 GapList=Liste de suggestions
