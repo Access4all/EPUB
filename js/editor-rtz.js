@@ -35,12 +35,14 @@ this.removeFormatting = RTZ_removeFormatting;
 this.insertElement = RTZ_insertElement;
 this.insertIcon = RTZ_insertIcon;
 this.insertIllustration = RTZ_insertIllustration;
+this.insertMultimediaClip = RTZ_insertMultimediaClip;
 this.insertTable = RTZ_insertTable;
 this.insertBox = RTZ_insertBox;
 this.insertFootnote = RTZ_insertFootnote;
 this.insertLinkDialog = RTZ_insertLinkDialog;
 this.insertIconDialog = RTZ_insertIconDialog;
 this.insertIllustrationDialog = RTZ_insertIllustrationDialog;
+this.insertMultimediaClipDialog = RTZ_insertMultimediaClipDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
@@ -105,6 +107,7 @@ blockquote: vk.ctrl+vk.q,
 box: vk.ctrl+vk.shift+vk.a,
 icon: vk.ctrl+vk.shift+vk.i,
 illustration: vk.ctrl+vk.shift+vk.g,
+multimediaClip: vk.ctrl+vk.shift+vk.m,
 table: vk.ctrl+vk.shift+vk.t,
 footnote: vk.ctrl+vk.shift+vk.f,
 quickUpload: vk.ctrl+vk.shift+vk.u,
@@ -389,6 +392,9 @@ this.insertIllustrationDialog();
 break;
 case keys.table :
 this.insertTableDialog();
+break;
+case keys.multimediaClip:
+this.insertMultimediaClipDialog();
 break;
 case keys.copy:
 if (!simulated) return true;
@@ -1010,6 +1016,24 @@ this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 }
 
+function RTZ_insertMultimediaClip (type, urls, alt, caption, style) {
+if (this.inlineOnly) return false;
+this.pushUndoState2();
+var figure = this.createObservedElement('figure', {'class':style});
+var mm = figure.appendElement(type, {'width':'100%', 'height':'auto', 'controls':'controls'});
+for (var i=0; i<urls.length; i++) mm.appendElement('source', urls[i]);
+mm.appendText(alt);
+var capt = figure.appendElement('figcaption');
+var captP = capt.appendElement('p').appendText(caption);
+var sel = this.getSelection();
+var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
+ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
+sel.selectNodeContents(captP);
+sel.collapse(false);
+this.select(sel);
+setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+}
+
 function RTZ_insertBox (type, position) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
@@ -1252,6 +1276,81 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_MMObject_parseSources (urlsText) {
+var type='undefined', utab = urlsText.split(/[\r\n\t,; ]+/g), urls = [];
+for (var i=0; i<utab.length; i++) {
+var url = utab[i];
+var extidx = url.lastIndexOf('.');
+if (extidx<0) continue;
+var ext = url.substring(extidx+1).toLowerCase();
+switch(ext){
+case 'mp3': 
+ext = 'mpeg';
+case 'ogg': case 'wav':
+type='audio'; break;
+case 'ogv': 
+ext='ogg';
+case 'mp4': case 'webm':
+type='video'; break;
+default: continue;
+}
+urls.push({'type':type+'/'+ext, src:url});
+}
+return urls;
+}
+
+function RTZ_insertMultimediaClipDialog (defUrl) {
+if (this.inlineOnly) return false;
+defUrl = defUrl || '';
+var sel = this.getSelection();
+var _this = this;
+DialogBox(msgs.InsertMM, [
+{type:'textarea', label:msgs.MMURLs, name:'urls', value:defUrl},
+{label:msgs.MMAlt, name:'alt'},
+{label:msgs.MMCapt, name:'caption'},
+{label:msgs.MMStyle, name:'istyle', type:'select', values:this.positionalStyles},
+], function(){ 
+_this.select(sel);
+var urls = RTZ_MMObject_parseSources(this.elements.urls.value + '');
+var type = urls[0].type.substring(0,urls[0].type.indexOf('/'));
+_this.insertMultimediaClip(type, urls, this.elements.alt.value, this.elements.caption.value, this.elements.istyle.value);
+_this.zone.focus();
+});//DialogBox
+}
+
+function RTZ_modifyMultimediaClipDialog (figure) {
+var mm = figure.querySelector('video, audio');
+if (!mm) return;
+var caption = figure.querySelector('figcaption') || figure.appendElement('figcaption');
+var captionText = caption.textContent;
+var altText = mm.textContent || '';
+var curclass = figure.getAttribute('class') || '';
+var srcs = [mm.getAttribute('src')] || mm.$('source, track').reduce(function(ar, cur, idx, lst){ ar.push(cur.getAttribute('src')); return ar; }, []);
+var src = srcs.join(', ');
+var _this = this;
+DialogBox(msgs.MMObject, [
+{type:'textarea', label:msgs.MMURLs, name:'urls', value:src},
+{label:msgs.MMAlt, name:'alt', value:altText},
+{label:msgs.MMCapt, name:'caption', value:captionText},
+{label:msgs.MMStyle, name:'istyle', type:'select', value:curclass, values:this.positionalStyles},
+], function(){
+_this.pushUndoState2();
+var newCaptionText = this.elements.caption.value; 
+figure.setAttribute('class', this.elements.istyle.value);
+if (newCaptionText!=captionText){
+caption.innerHTML = '';
+caption.appendElement('p').appendText(newCaptionText);
+}
+mm.innerHTML = '';
+var urls = RTZ_MMObject_parseSources(this.elements.urls.value + '');
+for (var i=0; i<urls.length; i++) mm.appendElement('source', urls[i]);
+mm.appendText(this.elements.alt.value);
+setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
+_this.zone.focus();
+});//DialogBox
+}
+
+
 function RTZ_insertTableDialog () {
 if (this.inlineOnly) return false;
 var sel = this.getSelection();
@@ -1376,13 +1475,17 @@ function RTZ_cleanHTMLElement (sel, o, inlineContext) {
 var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
 var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.split(' ');
 var ignoreElements = ['math', 'script'];
-var allowedEmptyElements = ['br', 'img', 'hr', 'mark'];
+var allowedEmptyElements = ['br', 'img', 'hr', 'source', 'track', 'mark'];
 var allowedAttrs = {
 '#':[ 'id', 'class', 'epub:type', 'xmlns:epub', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 img:['src', 'width', 'height', 'alt'],
 ol:['type', 'start'],
+source:['src', 'type'],
+video:['width', 'height', 'controls', 'src'],
+audio:['width', 'height', 'controls', 'src'],
+track:['kind', 'srclang', 'src', 'label'],
 };
 var remove = false, rename=null, surround=null;
 if (o.nodeType==1 && ignoreElements.indexOf(o.nodeName.toLowerCase())>=0) return; // Ignored type of element: don't go further
@@ -1587,6 +1690,7 @@ var ol = ca.findAncestor(['ol']);
 var figure = ca.findAncestor(['figure']);
 var box = ca.findAncestor(['aside', 'section', 'footer', 'header', 'div']);
 var img = ca.parentNode.querySelector('img');
+var mm = ca.parentNode.querySelector('video, audio');
 var hn = ca.findAncestor(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 var table = ca.findAncestor(['table']);
 var td = ca.findAncestor(['td', 'th']);
@@ -1606,7 +1710,8 @@ for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemrad
 items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAttribute('data-notoc')}, RTZ_hnSwitchNotoc.bind(this,hn)]);
 items.merge([msgs.HnIChangeTocLabel + (toclabel? " ["+toclabel+"]" : ""), RTZ_hnChangeTocLabelDialog.bind(this,hn)]);
 }
-if (figure) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
+if (figure && mm) items.merge([msgs.MMModify, RTZ_modifyMultimediaClipDialog.bind(this,figure)]);
+else if (figure && img) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
 else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
 if (td && table && td.isInside(this.zone)) {
 var nCols = td.parentNode.$('th,td').length;
@@ -1655,9 +1760,13 @@ else this.insertElement(null, null, text);
 function RTZ_dropFinishedWithFiles (url) {
 this.pushUndoState2();
 var result = false;
-if (url && /\.(?:png|gif|jpg|jpeg|svg|avi|mp3|mp4|ogg|ogv)$/i .test(url)) { // Probably an image or another multimedia file
+if (url && /\.(?:png|gif|jpg|jpeg|svg)$/i .test(url)) { // Probably an image 
 if (this.inlineOnly) this.insertIconDialog(url);
 else this.insertIllustrationDialog(url);
+result = true;
+}
+else if (!this.inlineOnly && url && /\.(?:avi|mp3|mp4|ogg|ogv|webm|wav)$/i .test(url)) { // Probably a multimedia clip (audio/video)
+this.insertMultimediaClipDialog(url);
 result = true;
 }
 else if (url) { // URL but of unknown type, let's make a link by default

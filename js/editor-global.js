@@ -99,7 +99,9 @@ var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
 var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
 form.onsubmit = function(){ 
 var re;
+try {
 if (okFunc) re = okFunc.call(this);
+} catch(e){ debug(e.message); }
 if (re!==false) {
 this.parentNode.removeChild(this); 
 overlay.parentNode.removeChild(overlay);

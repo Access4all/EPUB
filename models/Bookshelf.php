@@ -5,7 +5,7 @@ class Bookshelf {
 
 function getBookList () {
 global $db;
-return $db->query('select * from Books')
+return $db->query('select * from '.DB_TABLE_PREFIX.'Books')
 ->fetchAll(PDO::FETCH_CLASS, 'Book');
 }
 
@@ -15,7 +15,7 @@ return new Bookshelf();
 
 function getBookById ($id) {
 global $db;
-$re = $db->query('select * from Books where id = %d', floor($id));
+$re = $db->query('select * from '.DB_TABLE_PREFIX.'Books where id = %d', floor($id));
 if (!$re || $re->rowCount()<1) return null;
 $re->setFetchMode(PDO::FETCH_CLASS, 'Book');
 return $re->fetch();
@@ -24,7 +24,7 @@ return $re->fetch();
 function deleteBook ($b) {
 global $db;
 if ($b && $b->delete()) {
-$db->exec('delete from Books where id = %d', floor($b->id));
+$db->exec('delete from '.DB_TABLE_PREFIX.'Books where id = %d', floor($b->id));
 return true;
 }
 else return false;
@@ -32,12 +32,12 @@ else return false;
 
 function updateBook ($b) {
 global $db;
-$db->exec('update Books set title = %s, authors = %s where name = %s', $b->getTitle(), $b->getAuthors(), $b->name);
+$db->exec('update '.DB_TABLE_PREFIX.'Books set title = %s, authors = %s where name = %s', $b->getTitle(), $b->getAuthors(), $b->name);
 }
 
 function addBook ($b) {
 global $db;
-$db->exec('replace into Books (name, title, authors, lastUpdate) values (%s, %s, %s, UNIX_TIMESTAMP())', $b->name, $b->getTitle(), $b->getAuthors() );
+$db->exec('replace into '.DB_TABLE_PREFIX.'Books (name, title, authors, lastUpdate) values (%s, %s, %s, UNIX_TIMESTAMP())', $b->name, $b->getTitle(), $b->getAuthors() );
 return $b;
 }
 

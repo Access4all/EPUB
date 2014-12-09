@@ -191,7 +191,7 @@ if (!$p && $rightViewMethod!='newpage' && $rightViewMethod!='addfiles' && $right
 $lf = $b->getLastOpenedFileName();
 if (!$lf || $lf==$pageName) $lf = $b->getFirstNonTOCPageFileName();
 if ($lf) header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$lf}");
-else header("Location: $root/editor/{$b->name}/{$leftViewMethod}_newpage/");
+else header("Location: $root/editor/{$b->name}/{$leftViewMethod}_bookoptions/");
 exit();
 }
 $view->editorMain($leftViewMethod, $rightViewMethod, $b, $p);

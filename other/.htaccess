@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteRule ^([a-zA-Z_0-9]+)/?$ index.php?controller=$1 [QSA,L]
+RewriteRule ^([a-zA-Z_0-9]+)/([a-zA-Z_0-9]+)/?$ index.php?controller=$1&action=$2 [QSA,L]
+RewriteRule ^([a-zA-Z_0-9]+)/([-a-zA-Z_0-9]+)/([a-zA-Z_0-9]+)(?:/(.+))?/?$ index.php?controller=$1&action=$3&param=$2&param2=$4 [QSA,L]
+
+
+AuthType Basic
+AuthName "Restricted access"
+AuthUserFile /home/httpd/vhosts/access4all.ch/subdomains/epubeditor/.htpass
+Require valid-user
+
+
+

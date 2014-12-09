@@ -102,6 +102,8 @@ return this.replace(/<.*?>/g, '');
 }
 
 NodeList.prototype.join = Array.prototype.join;
+NodeList.prototype.reduce = Array.prototype.reduce;
+NodeList.prototype.filter = Array.prototype.filter;
 
 NodeList.prototype.each = function () {
 var f = arguments[0], args = [];
