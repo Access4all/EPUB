@@ -75,7 +75,7 @@ field.focus();
 return false;
 }
 
-function RTZ_MPB_save () {
+function RTZ_MPB_save (_, sync) {
 var introText = $('#intro')[0].innerHTML, quiz = $('#quiz')[0];
 var l1h = $('#leftListHeading')[0], l2h = $('#rightListHeading')[0];
 var data = {intro:introText, list1h:l1h.innerHTML, list2h:l2h.innerHTML, matches:{}, list1:[], list2:[]};
@@ -93,7 +93,7 @@ var mapsto = parseInt(select.value);
 if (!isNaN(mapsto)) data.matches[mapsfrom]=mapsto;
 });
 data = JSON.stringify(data);
-RTZ_defaultSave.call(this,data);
+RTZ_defaultSave.call(this,data, sync);
 }
 
 if (!window.onloads) window.onloads=[];

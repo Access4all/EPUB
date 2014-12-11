@@ -2,7 +2,7 @@ function onRTZCreate (rtz) {
 rtz.onsave = RTZ_TFQ_save;
 }
 
-function RTZ_TFQ_save () {
+function RTZ_TFQ_save (_, sync) {
 var introText = $('#intro')[0].innerHTML, quiz = $('#quiz')[0];
 var data = {intro:introText, choices:[], questions:[]};
 quiz.$('span.qchoice').each(function(c){ data.choices.push(c.innerHTML); });
@@ -13,7 +13,7 @@ f.$('input').each(function(input,index){ if (input.checked) answers.push(index);
 data.questions.push({q:questionText, a:answers});
 });//each row
 data = JSON.stringify(data);
-RTZ_defaultSave.call(this,data);
+RTZ_defaultSave.call(this,data, sync);
 }
 
 function TFQ_onInputKeyDown (e) {

@@ -48,7 +48,7 @@ return $ar;
 
 static function HTMLToXML ($html) {
 $html = DOM::decodeEntities(trim($html));
-$html = preg_replace_callback( '#<((?:img|br|source)\b.*?)>#ms', function($m){ 
+$html = preg_replace_callback( '#<((?:img|br|source|track)\b.*?)>#ms', function($m){ 
 if (substr($m[1], -1)!='/') $m[1].=' /';
 return "<$m[1]>";
 }, $html);

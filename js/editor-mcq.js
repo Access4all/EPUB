@@ -21,7 +21,7 @@ if (nextFieldset) { nextFieldset.querySelector('*[contenteditable]').focus(); re
 return MCQ_createNewQuestion(thisFieldset);
 }
 
-function RTZ_MCQ_save () {
+function RTZ_MCQ_save (_, sync) {
 var introText = $('#intro')[0].innerHTML, quiz = $('#quiz')[0];
 var data = {intro:introText, questions:[]};
 quiz.$('fieldset').each(function(f){
@@ -33,7 +33,7 @@ f.$('input').each(function(input,index){ if (input.checked) answers.push(index);
 data.questions.push({q:questionText, c:choices, a:answers});
 });//each fieldset
 data = JSON.stringify(data);
-RTZ_defaultSave.call(this,data);
+RTZ_defaultSave.call(this,data, sync);
 }
 
 function RTZ_MCQ_contextMenu (items, sel) {

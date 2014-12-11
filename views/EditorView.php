@@ -21,7 +21,7 @@ $pn = (isset($p)&&is_object($p)? $p->fileName : '');
 $t = 'getTranslation';
 if ($rightView!='options' && $rightView!='code') $rightView = 'editor';
 
-foreach(array('sv', 'tv', 'fv', 'zv') as $vt) {
+foreach(array('sv', 'tv', 'fv', 'zv', 'ax') as $vt) {
 ${$vt.'Active'} = ($leftView==$vt? ' class="active"' : '');
 ${$vt.'Pressed'} = ($leftView==$vt? 'true' : 'false' );
 ${$vt.'LinkVN'} = ($leftView==$vt? '00' : $vt );
@@ -43,6 +43,10 @@ echo <<<END
 <h2$zvActive><a role="button" aria-expanded="$zvPressed" href="$root/editor/{$b->name}/{$zvLinkVN}_{$rightView}/$pn">{$t('TemplateEditorView')}</a></h2>
 END;
 if ($leftView=='zv') { require('edTemplateEditor.php'); }
+echo <<<END
+<h2$axActive><a role="button" aria-expanded="$axPressed" href="$root/editor/{$b->name}/{$axLinkVN}_{$rightView}/$pn">{$t('AccessibilityCheckerView')}</a></h2>
+END;
+if ($leftView=='ax') { require('edAccessibilityCheckerView.php'); }
 }
 
 function editorMain ($leftView, $rightView, $b, $p) {

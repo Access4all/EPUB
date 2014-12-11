@@ -1,3 +1,4 @@
+
 RTZLabel=Document contents
 StructureDropDown=Structure
 ListsDropDown=Lists
@@ -43,6 +44,7 @@ MMAlt=Alternate text
 MMCapt=Legend
 MMStyle=Style
 MMModify=Multimedia clip properties...
+MMEModify=Embedded element properties...
 MMObject=Multimedia clip
 NumberingArabic=Arabic numbering (1, 2, 3, ...)
 NumberingLowerAlpha=Latin lowercase numbering (a, b, c, ...)

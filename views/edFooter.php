@@ -1,4 +1,5 @@
 <?php
+global $otherStringTable;
 $rnd = md5(time());
 if (!isset($otherStringTable)) $otherStringTable='';
 echo <<<END

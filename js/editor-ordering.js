@@ -30,12 +30,12 @@ field.focus();
 return false;
 }
 
-function RTZ_SQO_save () {
+function RTZ_SQO_save (_, sync) {
 var introText = $('#intro')[0].innerHTML, quiz = $('#quiz')[0];
 var data = {intro:introText, items:[]};
 quiz.$('.itemText').each(function(item){ data.items.push(item.innerHTML); });
 data = JSON.stringify(data);
-RTZ_defaultSave.call(this,data);
+RTZ_defaultSave.call(this,data, sync);
 }
 
 if (!window.onloads) window.onloads=[];

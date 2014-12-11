@@ -43,6 +43,11 @@ else return $html->getAttribute('lang');
 
 function saveDoc () {
 $doc = $this->getDoc();
+//Php DOM hack:  Make sure that the following tags are never self-closed; having them self-closed can make trouble in certain browsers
+foreach(array('script', 'iframe') as $tgn) {
+foreach($doc->getElementsByTagName($tgn) as $el) {
+if (!$el->hasChildNodes()) $el->appendText('');
+}}
 $this->book->getFileSystem()->addFromString(
 $this->fileName,
 $doc->saveXML()

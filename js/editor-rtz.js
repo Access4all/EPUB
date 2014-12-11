@@ -1,4 +1,5 @@
 var undoStack = [], undoPos = 0;
+var changed = false;
 
 Node.prototype.getFirstTextNode =  function () {
 if (this.nodeType==3) return this;
@@ -238,6 +239,7 @@ if (!re){
 if (e.preventDefault) e.preventDefault();
 if (e.stopPropagation) e.stopPropagation();
 }
+if (!changed && k>=48) changed=true;
 return re;
 }
 
@@ -1020,9 +1022,13 @@ function RTZ_insertMultimediaClip (type, urls, alt, caption, style) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
 var figure = this.createObservedElement('figure', {'class':style});
-var mm = figure.appendElement(type, {'width':'100%', 'height':'auto', 'controls':'controls'});
+var mm = RTZ_MMObject_embedding(urls[0].src, false);
+if (mm) figure.appendChild(mm);
+else {
+mm = figure.appendElement(type, {'width':'100%', 'height':'auto', 'controls':'controls'});
 for (var i=0; i<urls.length; i++) mm.appendElement('source', urls[i]);
 mm.appendText(alt);
+}
 var capt = figure.appendElement('figcaption');
 var captP = capt.appendElement('p').appendText(caption);
 var sel = this.getSelection();
@@ -1276,6 +1282,20 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_MMObject_embedding (url, onlyCheck) {
+var m;
+if ( 
+(m = url.match(/^https?:\/\/(?:www\.)youtube\.com\/watch\?v=([-a-zA-Z_0-9]+)/))
+|| (m = url.match(/^https?:\/\/youtu\.be\/([-a-zA-Z_0-9]+)/))
+) { // Youtube 
+url = '//www.youtube.com/embed/' + m[1];
+if (onlyCheck) return true;
+else return document.createElement2('iframe', {width:'100%', height:'auto', src:url});
+}
+// Other recognized video websites should go here
+return null;
+}
+
 function RTZ_MMObject_parseSources (urlsText) {
 var type='undefined', utab = urlsText.split(/[\r\n\t,; ]+/g), urls = [];
 for (var i=0; i<utab.length; i++) {
@@ -1292,7 +1312,9 @@ case 'ogv':
 ext='ogg';
 case 'mp4': case 'webm':
 type='video'; break;
-default: continue;
+default: 
+if (/^https?:.*$/.test(url)) { ext='octetstream'; type='application'; }
+else continue;
 }
 urls.push({'type':type+'/'+ext, src:url});
 }
@@ -1319,8 +1341,9 @@ _this.zone.focus();
 }
 
 function RTZ_modifyMultimediaClipDialog (figure) {
-var mm = figure.querySelector('video, audio');
+var mm = figure.querySelector('video, audio, iframe');
 if (!mm) return;
+var isiframe = mm.tagName.toLowerCase()=='iframe';
 var caption = figure.querySelector('figcaption') || figure.appendElement('figcaption');
 var captionText = caption.textContent;
 var altText = mm.textContent || '';
@@ -1341,10 +1364,13 @@ if (newCaptionText!=captionText){
 caption.innerHTML = '';
 caption.appendElement('p').appendText(newCaptionText);
 }
+if (isiframe) mm.setAttribute('src', this.elements.urls.value);
+else {
 mm.innerHTML = '';
 var urls = RTZ_MMObject_parseSources(this.elements.urls.value + '');
 for (var i=0; i<urls.length; i++) mm.appendElement('source', urls[i]);
 mm.appendText(this.elements.alt.value);
+}
 setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 _this.zone.focus();
 });//DialogBox
@@ -1472,14 +1498,15 @@ this.select(cursel);
 }
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track iframe object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
 var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.split(' ');
 var ignoreElements = ['math', 'script'];
-var allowedEmptyElements = ['br', 'img', 'hr', 'source', 'track', 'mark'];
+var allowedEmptyElements = ['br', 'img', 'hr', 'source', 'track', 'iframe'];
 var allowedAttrs = {
 '#':[ 'id', 'class', 'epub:type', 'xmlns:epub', 'role', 'aria-label', 'aria-level', 'aria-describedby' ],
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
+iframe:['src', 'width', 'height'],
 img:['src', 'width', 'height', 'alt'],
 ol:['type', 'start'],
 source:['src', 'type'],
@@ -1652,10 +1679,10 @@ return false;
 }
 else if (e && e.clipboardData && e.clipboardData.getData) {
 var result=false, text = null;
-try { text = e.clipboardData.getData('Text'); } catch(ex){} // a weird security error may occur when retriving the text present in the clipboard
+try { text = e.clipboardData.getData('Text'); } catch(ex){} // a weird security error may occur when retriving the text present in the clipboard, so we need to do it inside try...catch
 if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this, text.trim() ); // We are pasting an URL; we can directly make a link out of it
 else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() ); // We are pasting an element from the file/spine/toc view; this could be a link or an image
-if (result) { if (e.preventDefault) e.preventDefault(); return false; } // IF the paste opration ahs been handled in one of the case above, prevent the normal behavior
+if (result) { if (e.preventDefault) e.preventDefault(); return false; } // IF the paste opration ahs been handled in one of the case above, cancel the normal behavior
 }
 return true; // the default paste behavior will occur
 }
@@ -1691,6 +1718,7 @@ var figure = ca.findAncestor(['figure']);
 var box = ca.findAncestor(['aside', 'section', 'footer', 'header', 'div']);
 var img = ca.parentNode.querySelector('img');
 var mm = ca.parentNode.querySelector('video, audio');
+var iframe = ca.parentNode.querySelector('iframe');
 var hn = ca.findAncestor(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 var table = ca.findAncestor(['table']);
 var td = ca.findAncestor(['td', 'th']);
@@ -1710,6 +1738,7 @@ for (var i=1; i<=6; i++) items.merge([{text:msgs["Heading"+i], type:'menuitemrad
 items.merge([{text:msgs.HnSwitchNoToc, type:'menuitemcheckbox', checked:hn.hasAttribute('data-notoc')}, RTZ_hnSwitchNotoc.bind(this,hn)]);
 items.merge([msgs.HnIChangeTocLabel + (toclabel? " ["+toclabel+"]" : ""), RTZ_hnChangeTocLabelDialog.bind(this,hn)]);
 }
+if (figure && iframe) items.merge([msgs.MMEModify, RTZ_modifyMultimediaClipDialog.bind(this,figure)]);
 if (figure && mm) items.merge([msgs.MMModify, RTZ_modifyMultimediaClipDialog.bind(this,figure)]);
 else if (figure && img) items.merge([msgs.IlluModify, RTZ_modifyIllustrationDialog.bind(this,figure)]);
 else if (img) items.merge([msgs.IconModify, RTZ_modifyIconDialog.bind(this,img)]);
@@ -1760,7 +1789,11 @@ else this.insertElement(null, null, text);
 function RTZ_dropFinishedWithFiles (url) {
 this.pushUndoState2();
 var result = false;
-if (url && /\.(?:png|gif|jpg|jpeg|svg)$/i .test(url)) { // Probably an image 
+if (!this.inlineOnly && url && RTZ_MMObject_embedding(url,true)) { // Some embedded object can be constructed from this url
+this.insertMultimediaClipDialog(url);
+result = true;
+}
+else if (url && /\.(?:png|gif|jpg|jpeg|svg)$/i .test(url)) { // Probably an image 
 if (this.inlineOnly) this.insertIconDialog(url);
 else this.insertIllustrationDialog(url);
 result = true;
@@ -1936,6 +1969,17 @@ rtz.debug = DEBUG && e.tagName.toLowerCase()=='div';
 rtz.init();
 if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
+if (window.location.host!='localhost') $('a[href]').each(function(a){
+var oldonclick  = a.onclick;
+a.onclick = function(e){
+if (!changed) return true;
+MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
+if (btnIdx==0) window.rtzs[0].onsave(null,true);
+if (oldonclick) oldonclick.call(a,e);
+window.location.href = a.href;
+});
+return false;
+};});//each link
 });
 
 //alert('RTZ13 loaded');
