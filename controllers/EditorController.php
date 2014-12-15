@@ -56,7 +56,8 @@ move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
 if ($file && $b->importCssTemplate($file)) die('Template imported');
-else die('No file received or importation failed');
+else if ($file) die('importation failed');
+else die('No file received');
 }
 
 public function preview ($bookName, $pageName) {

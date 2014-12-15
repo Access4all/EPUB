@@ -62,7 +62,29 @@ echo <<<END
 </select>
 </p>
 <p><label for="fontsize">{$t('FontSize')}:</label>
-<input id="fontsize" type="range" min="50" max="400" step="1" value="100" /></p>
+<input id="fontsize" name="fontsize" type="number" min="6" max="96" step="1" value="12" list="fontsizelist" />
+<datalist id="fontsizelist">
+<select onchange="this.form.elements.fontsize.value=this.value">
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>12</option>
+<option>14</option>
+<option>16</option>
+<option>18</option>
+<option>20</option>
+<option>24</option>
+<option>28</option>
+<option>32</option>
+<option>36</option>
+<option>40</option>
+<option>48</option>
+<option>60</option>
+<option>72</option>
+</select></datalist>
+</p>
 <p><label for="color">{$t('FontColor')}:</label>
 <input type="color" id="fontcolor" value="default" /></p>
 <p>
@@ -97,8 +119,8 @@ echo <<<END
 <option value="dashed">{$t('Dashed')}</option>
 </select>
 <input type="color" id="border{$side}Color" title="$t1 {$t('BorderColor')}" />
-<input type="range" min="0" max="20" step="1" id="border{$side}Width" title="$t1 {$t('BorderWidth')}" />
-<input type="range" min="0" max="20" step="1" id="border{$corner}Radius" title="{$t($corner)} {$t('BorderRadius')}" />
+<input type="number" min="0" max="20" step="1" id="border{$side}Width" title="$t1 {$t('BorderWidth')}" />
+<input type="number" min="0" max="20" step="1" id="border{$corner}Radius" title="{$t($corner)} {$t('BorderRadius')}" />
 </p>
 END;
 }
@@ -108,7 +130,7 @@ END;
 foreach($sides as $side) {
 echo <<<END
 <p><label for="margin$side">{$t("Margin$side")}</label>
-<input type="range" min="0" max="200" step="1" id="margin$side" /></p>
+<input type="number" min="0" max="200" step="1" id="margin$side" /></p>
 END;
 }
 echo <<<END
@@ -117,7 +139,7 @@ END;
 foreach($sides as $side) {
 echo <<<END
 <p><label for="padding$side">{$t("Padding$side")}</label>
-<input type="range" min="0" max="200" step="1" id="padding$side" /></p>
+<input type="number" min="0" max="200" step="1" id="padding$side" /></p>
 END;
 }
 echo <<<END

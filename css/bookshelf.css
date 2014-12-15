@@ -1,3 +1,59 @@
+* {
+margin: 0em;
+padding: 0em;
+}
+
+main, nav, header, footer, article, aside, section { display: block; }
+time, mark { display: inline; }
+
+body {
+font-family: Arial;
+font-size: 100%;
+color: black;
+background-color: #ededed;
+margin: 1em;
+}
+
+h1 {
+margin: 1.2em 0 .5em 0em;
+}
+
+h2 {
+margin: 1.1em 0 .4em 0em;
+}
+
+table {
+margin: 1em 0 1em 0;
+border: solid 3px #86B918;
+}
+
+thead {
+background-color: #86B918;
+}
+
+th {
+border: solid 1px #86B918;
+padding: .25em .5em;
+text-align: left;
+}
+
+th a {
+/* remove bold*/
+}
+
+td {
+border: solid 1px #86B918;
+padding: .25em .5em;
+text-align: left;
+}
+
+form {
+border: solid 3px #86B918;
+height: 4em;
+width: auto;
+padding: 1em;
+}
+
 a[role=button] {
 display: inline-block;
 margin-left: 7px;

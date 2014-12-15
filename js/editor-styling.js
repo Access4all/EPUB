@@ -61,7 +61,7 @@ this.form.elements.importStyleBtn.onclick = STE_importTemplate.bind(this);
 this.form.elements.newStyleBtn.onclick = STE_newStyleDialog.bind(this);
 this.form.styleSelect.onchange = function(){ _this.updateUI(this.value); };
 this.form.elements.font.onchange = function(){ _this.updateValue('fontFamily', this.value, 'default'); };
-this.form.elements.fontsize.onchange = function(){ _this.updateValue('fontSize', ((this.value/100) || 1) + 'em', '1em'); };
+this.form.elements.fontsize.onchange = function(){ _this.updateValue('fontSize', pt2rem(parseFloat(this.value) || 12)+'rem', '1rem'); };
 this.form.elements.fontcolor.onchange = function(){ _this.updateValue('color', this.value); };
 this.form.elements.fontstyle.onclick = function() { _this.updateValue('fontStyle', this.checked?'italic':'normal', 'normal'); };
 this.form.elements.fontweight.onclick = function(){ _this.updateValue('fontWeight', this.checked?'bold':'normal', 'normal'); };
@@ -149,7 +149,7 @@ var style = this.curStyle;
 var cd = this.parseCssText(style.cssText); //  will reflects the state of the style in the CSS code; more accurate than computed styles, but not always present, i.e. grouped properties like border/margin/padding
 var elem = document.querySelector(selector) || STE_createGhostElement(selector), cs = STE_getComputedStyle(elem); // Reflect the true computed style; is always present but is less accurate (the browser often make unit conversion and such)
 this.form.elements.font.value = style.fontFamily || cd.fontFamily || 'default';
-this.form.elements.fontsize.value = Math.round(100 * parseFloat(style.fontSize || cd.fontSize)) || 100; // Supposed to be in rem or em
+this.form.elements.fontsize.value = rem2pt(parseFloat(style.fontSize || cd.fontSize) || 1.0); // Supposed to be in rem or em
 this.form.elements.fontcolor.value = style.color || cd.color || 'default';
 this.form.elements.fontweight.checked = style.fontWeight=='bold' || cd.fontWeight=='bold';
 this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cd.fontStyle=='italic';
@@ -231,6 +231,14 @@ var url = window.actionUrl.replace('@@', 'importTemplate');
 data.append('upload', file, file.name);
 ajax('POST', url, data, function(text){ alert('Upload succeeded? '+text); }, function(){ alert('Upload failed'); });
 });//DialogBox
+}
+
+function pt2rem (pt) {
+return pt/12.0;
+}
+
+function rem2pt (rem) {
+return Math.floor(rem * 12.0 + 0.25);
 }
 
 if (!window.onloads) window.onloads=[];
