@@ -158,7 +158,7 @@ var tab = this.querySelectorAll(selector);
 return (tab&&tab.length? tab[tab.length -1] : null);
 }
 
-HTMLElement.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
+Element.prototype.$ = function (selector) { return this.querySelectorAll(selector); }
 window.$ = function (selector) { return document.querySelectorAll(selector); }
 
 HTMLElement.prototype.getAbsoluteScreenPosition = function (cx, cy) {

@@ -72,6 +72,11 @@ header("Location: $root/book/{$b->name}/view/{$p->fileName}");
 exit();
 }
 
+public function onepage ($bookName, $optName) {
+$bc = new BookController();
+$bc->onepage($bookName, $optName);
+}
+
 public function deleteFile ($bookName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();

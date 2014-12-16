@@ -81,9 +81,10 @@ if ($func($item)) return;
 }
 
 class DOMDocument2 extends DOMDocument {
-function appendElement ($tagName, $attrs = null) {
+function appendElement ($tagName, $attrs = null, $text=null) {
 $el = $this->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
+if ($text) $el->appendChild($el->ownerDocument->createTextNode($text));
 $this->appendChild($el);
 return $el;
 }
@@ -150,29 +151,32 @@ $this->setAttributeNs($ns, $name, $value);
 }}
 }
 
-function appendElement ($tagName, $attrs = null) {
+function appendElement ($tagName, $attrs = null, $text=null) {
 $el = $this->ownerDocument->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
+if ($text) $el->appendChild($el->ownerDocument->createTextNode($text));
 $this->appendChild($el);
 return $el;
 }
 
-function appendElementNs ($ns, $tagName, $attrs = null) {
+function appendElementNs ($ns, $tagName, $attrs = null, $text=null) {
 $el = $this->ownerDocument->createElementNs($ns, $tagName);
 if ($attrs) $el->setAttributes($attrs);
+if ($text) $el->appendChild($el->ownerDocument->createTextNode($text));
 $this->appendChild($el);
 return $el;
 }
 
-function insertElementBefore ($tagName, $ref, $attrs=null) {
+function insertElementBefore ($tagName, $ref, $attrs=null, $text=null) {
 $el = $this->ownerDocument->createElement($tagName);
 if ($attrs) $el->setAttributes($attrs);
+if ($text) $el->appendChild($el->ownerDocument->createTextNode($text));
 $this->insertBefore($el, $ref);
 return $el;
 }
 
-function renameElement ($newTagName, $attrs=null) {
-$el = $this->parentNode->insertElementBefore($newTagName, $this, $attrs);
+function renameElement ($newTagName, $attrs=null, $text=null) {
+$el = $this->parentNode->insertElementBefore($newTagName, $this, $attrs, $text);
 while($this->firstChild) $el->appendChild($this->firstChild);
 $this->parentNode->removeChild($this);
 return $el;

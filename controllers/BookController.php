@@ -55,5 +55,15 @@ $b->directEchoFile($fileName);
 exit();
 }
 
+function onepage ($bookName, $optName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+$doc = $b->generateSinglePageDocument($optName);
+header("Content-Type: text/html; charset=utf-8");
+echo $doc->saveXML();
+exit();
+}
+
+
 }
 ?>

@@ -2,9 +2,25 @@ function A11Y_startAnalysis () {
 var errdiv = document.getElementById('analysisResults'), 
 errContext = {errors:[]},
 checkfunc = A11Y_checkZone.bind(errContext);
-if (errdiv) errdiv.innerHTML = '<p>' + msgs.AnalysisInProgress + '</p>';
+if (errdiv) A11Y_showProgress(errdiv);
 $('.editor, *[contenteditable=true]').each(checkfunc);
-if (errdiv) {
+if (errContext.errors.length<=0) {
+ajax('GET', window.rootUrl2+'onepage', null, function(text){
+var xml = new DOMParser() .parseFromString(text, 'text/xml');
+var body = xml.querySelector('body');
+checkfunc(body, true);
+if (errdiv) A11Y_showErrors(errdiv, errContext);
+}, function(e){ debug(e); });//AJAX call
+}
+else if (errdiv) A11Y_showErrors(errdiv, errContext);
+return errContext;
+}
+
+function A11Y_showProgress (errdiv) {
+errdiv.innerHTML = '<p>' + msgs.AnalysisInProgress + '</p>';
+}
+
+function A11Y_showErrors (errdiv, errContext) {
 var clueMaxlen=50;
 errdiv.innerHTML = '';
 errContext.errors.sort(function(a,b){ return a.target==b.target? 0 : (a.target.isBefore(b.target)? -1 : 1); });
@@ -17,16 +33,20 @@ if (text.length>clueMaxlen) {
 var idx = Math.max(0, Math.min( text.indexOf(' ', clueMaxlen), text.length ));
 text = text.substring(0,idx).trim() + '...';
 }
-var a = ol.appendElement('li').appendElement('a', {href:'#'});
-a.innerHTML = msgs['MsgType_'+err.type] + ': ' + err.msg + ': ' + msgs.Near + ' ' + text.escapeHTML();
+var file = err.target.queryAncestor('div[data-page-file]');
+file = file? file.getAttribute('data-page-file') : null;
+err.file = file;
+var sFile = file? file.substring(1 + file.lastIndexOf('/')) : null;
+var a = ol.appendElement('li').appendElement('a', {href:file?window.rootUrl2+'ax_editor/'+file:'#'});
+a.innerHTML = (file? sFile+': ':'') + 
+msgs['MsgType_'+err.type] + ': ' + err.msg + ': ' + msgs.Near + ' ' + text.escapeHTML();
 a.onclick = A11Y_msgClick.bind(a,err);
 }}
 else errdiv.innerHTML = '<p>' + msgs.A11YNoLocalError + '</p>';
 }
-return errContext;
-}
 
 function A11Y_msgClick (err) {
+if (err.file) return true;
 var sel = RTZ_getSelection();
 try {
 if (err.target.hasChildNodes()) sel.selectNodeContents(err.target);
@@ -88,7 +108,7 @@ _this.errors.push({msg:msgs.HnBadStructure.replace('%1', l1).replace('%2', l2), 
 // Usually, a document should start with an heading
 {
 var node = zone.firstElementChild;
-while(node.matches('section, header, footer, main')) node = node.firstElementChild;
+while(node.matches('section, header, footer, main, div')) node = node.firstElementChild;
 if (!node.matches('h1, h2, h3, h4, h5, h6')) _this.errors.push({msg:msgs.HnStartingHeading, type:'warn', target:zone.getFirstTextNode(), 'zone':zone}); 
 }
 
@@ -172,4 +192,4 @@ window.onloads.push(function(){
 document.getElementById('redoAnalysis').onclick = A11Y_startAnalysis;
 A11Y_startAnalysis();
 });
-alert('a11y loaded');
+//alert('a11y loaded');

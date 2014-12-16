@@ -566,6 +566,31 @@ $this->itemFileNameMap[$info['fileName']] = $p;
 $this->saveOpf();
 }}
 
+function generateSinglePageDocument ($options) {
+if ($this->getOption('tocNeedRegen', false)) $this->updateTOC();
+$options = explode(',',$options);
+$gDoc = DOM::newDocument();
+$gHtml = $gDoc->appendElement('html');
+$gHead = $gHtml->appendElement('head');
+$gBody = $gHtml->appendElement('body');
+$gHead->appendElement('meta', array('charset'=>'utf-8'));
+$gHead->appendElement('title', null, $this->getTitle());
+$count=0;
+foreach($this->getSpine() as $spineId) {
+if ($count++>10) break;
+$item = $this->getItemById($spineId);
+$doc = $item->getDoc();
+$body = $doc->getFirstElementByTagName('body');
+$div = $gBody->appendElement('div', array('data-page-file'=>$item->fileName, 'id'=>"___{$item->id}__top"));
+foreach($body->childNodes as $child) {
+$child = $gDoc->importNode($child,true);
+$div->appendChild($child);
+}
+$item->closeDoc();
+}
+return $gDoc;
+}
+
 function getCustomFonts () {
 $fonts = array();
 $this->getItemById(null);
