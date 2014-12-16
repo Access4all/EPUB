@@ -44,6 +44,7 @@ static $MIMETYPES = array(
 'xhtml' => 'application/xhtml+xml',
 'html' => 'text/html',
 'htm' => 'text/html',
+'txt' => 'text/plain',
 'md' => 'text/markdown',
 'tex' => 'text/tex',
 'css' => 'text/css',

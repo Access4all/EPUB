@@ -107,6 +107,13 @@ if (p.textContent.trim().length>100) return; // More than 100 characters, defini
 _this.errors.push({msg:msgs.HnFalseBold, type:'info', target:p, 'zone':zone}); 
 });//each paragraph
 
+// Looking for headings that are entirely in bold. It should not occur, or it means that bold hasn't been defined in the appropriate style
+zone.$('h1, h2, h3, h4, h5, h6').each(function(hn){
+var b = hn.querySelector('strong, b');
+if (!b) return;
+if (b.textContent==hn.textContent) _this.errors.push({msg:msgs.HnBadBold, type:'info', target:hn, 'zone':zone}); 
+});//each heading
+
 // Let's handle boxes, asides, etc.
 zone.$('section, aside').each(function(box){
 var highestLevel = 7, highestLevelCount = 0, lastHeading=null;

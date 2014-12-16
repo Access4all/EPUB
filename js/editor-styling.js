@@ -229,7 +229,10 @@ if (!up || !up.files || up.files.length<=0 || !up.files[0] || !window.FormData) 
 var data = new FormData(), file = up.files[0];
 var url = window.actionUrl.replace('@@', 'importTemplate');
 data.append('upload', file, file.name);
-ajax('POST', url, data, function(text){ alert('Upload succeeded? '+text); }, function(){ alert('Upload failed'); });
+ajax('POST', url, data, function(text){ 
+if (text=='OK') window.location.reload();
+else debug('Upload succeeded? '+text); 
+},  function(){ alert('Upload failed'); });
 });//DialogBox
 }
 

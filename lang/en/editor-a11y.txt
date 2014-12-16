@@ -1,6 +1,6 @@
 AnalysisInProgress=Analysis in progress...
 RedoAnalysis=Relaunch analysis
-A11YNoLocalError=No problems were found in this document.
+A11YNoLocalError=No problems were found in this document. You should check indifidually other documents as well, and then try a global check of the whole book.
 MsgType_error=Error
 MsgType_warn=Warning
 MsgType_info=Info
@@ -20,6 +20,7 @@ HnNoHnInBox=A box should contain at least one heading
 HnDoubleHighestHnInBox=There can't be two top-level headings in a box
 HnBigRatio=The ratio of headings against normal paragraphs and text blocks is greater than 40%. It is very likely that paragraphs are incorrectly marked as headings
 HnFalseBold=Small paragraph entirely bolded. This might be an heading which isn't marked as such.
+HnBadBold=Heading entirely bolded abusively. You might define bold for this heading level in the template.
 TblNoTh=This table has no header cell
 TblBadTh=Header cells are usually only in the edges of a table; this cell should probably effectively not be an header cell
 TblTooManyTh=This table contains more than 50% of header cells; it might be the case that some of them aren't really header cells

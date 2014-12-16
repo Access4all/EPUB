@@ -55,7 +55,7 @@ $name = 'data/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
-if ($file && $b->importCssTemplate($file)) die('Template imported');
+if ($file && $b->importCssTemplate($file)) die('OK');
 else if ($file) die('importation failed');
 else die('No file received');
 }

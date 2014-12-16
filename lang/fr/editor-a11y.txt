@@ -1,7 +1,7 @@
 ﻿
 AnalysisInProgress=Analyse en cours...
 RedoAnalysis=Relancer l'analyse
-A11YNoLocalError=Aucun problème n'a été trouvé dans ce document.
+A11YNoLocalError=Aucun problème n'a été trouvé dans ce document. Vous devriez également vérifier individuellement les autres documents, puis ensuite exécuter une analyse globale du livre en entier.
 MsgType_error=Erreur
 MsgType_warn=Attention
 MsgType_info=Info
@@ -20,6 +20,7 @@ HnNoHnInBox=Une boîte devrait avoir au moins un titre
 HnDoubleHighestHnInBox=IL ne peut pas y avoir deux titres de plus haut niveau dans la même boîte.
 HnBigRatio=Le rapport entre le nombre de titres et le nombre de paragraphes et blocs de texte dépasse 40%. Il est fort probable que des paragraphes ordinaires soient incorrectement marqués comme étant des titres.
 HnFalseBold=Petit paragraphe entièrement mis en gras; il pourrait s'agir d'un titre qui n'est pas indiqué comme tel.
+HnBadBold=Titre entièrement mis en gras de manière abusive; vous devriez peut-être définir la mise en gras dans les styles.
 TblNoTh=Ce tableau n'a pas de cellules d'en-têtes.
 TblBadTh=Les cellules d'en-tête se trouvent généralement dans les bords d'un tableau; cette cellule n'est donc probablement pas effectivement une cellule d'en-tête.
 TblTooManyTh=Ce tableau contient plus de 50% de cellules d'en-tête; il est fort probable que certaines d'entre-elles ne soient pas effectivement des cellules d'en-têtes.

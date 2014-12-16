@@ -22,8 +22,11 @@ return false;
 function addFromString ($name, $data) {
 $fn = $this->dir .$name;
 if (false===@file_put_contents($fn, $data)) {
-if (@mkdir(dirname($fn), 0777, true)) @file_put_contents($fn, $data);
-}}
+if (@mkdir(dirname($fn), 0777, true)) return @file_put_contents($fn, $data);
+}
+else return true;
+return false;
+}
 
 function moveFile ($oldName, $newName) {
 if (@rename($this->dir .$oldName, $this->dir .$newName)) return true;
