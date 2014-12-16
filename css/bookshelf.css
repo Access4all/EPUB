@@ -14,6 +14,8 @@ background-color: #ededed;
 margin: 1em;
 }
 
+/* Some changes here... */
+
 h1 {
 margin: 1.2em 0 .5em 0em;
 }
@@ -30,6 +32,8 @@ border: solid 3px #86B918;
 thead {
 background-color: #86B918;
 }
+
+/* Some changes there... */
 
 th {
 border: solid 1px #86B918;
