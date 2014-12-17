@@ -230,6 +230,10 @@ if (substr($value,-1)=='/') $value = substr($value, 0, -1);
 if (strlen($value)>1) $this->setOption("defaultDirByType:$type", $value);
 else $this->removeOption("defaultDirByType:$type");
 }
+if (isset($info['cssMasterFile'])) {
+if (preg_match('/\.css/i', $info['cssMasterFile'])) $this->setOption('cssMasterFile', $info['cssMasterFile']);
+else $this->removeOption('cssMasterFile');
+}
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
 $this->setOption('tocNeedRegen', true);
@@ -539,7 +543,7 @@ return $re;
 
 function updateCSS ($contents = null) {
 if (!$contents) $contents = $this->getFromName('META-INF/template.css');
-$finalCssFile = 'EPUB/css/epub3.css';
+$finalCssFile = $this->getOption('cssMasterFile', 'EPUB/css/epub3.css');
 $_this = $this; // php 5.3 don't allow $this in closures
 $contents = str_replace('.editor {', 'body {', $contents);
 $contents = str_replace('.editor ', '', $contents);
@@ -554,9 +558,9 @@ $contents = preg_replace('@ {2,}@', ' ', $contents);
 $contents = preg_replace('@(?:\r\n){3,}@', "\r\n\r\n", $contents);
 $contents = trim($contents);
 $this->getFileSystem() ->addFromString($finalCssFile, $contents);
-$item = $this->getItemByFileName('EPUB/css/epub3.css');
+$item = $this->getItemByFileName($finalCssFile);
 if (!$item) {
-$p = new BookResource(array('id'=>'cssEpub3', 'mediaType'=>'text/css', 'fileName'=>'EPUB/css/epub3.css'));
+$p = new BookResource(array('id'=>'cssEpub3', 'mediaType'=>'text/css', 'fileName'=>$finalCssFile));
 $p->book = $this;
 $this->getItemById(null);
 $this->getItemByFileName(null);
@@ -575,9 +579,7 @@ $gHead = $gHtml->appendElement('head');
 $gBody = $gHtml->appendElement('body');
 $gHead->appendElement('meta', array('charset'=>'utf-8'));
 $gHead->appendElement('title', null, $this->getTitle());
-$count=0;
 foreach($this->getSpine() as $spineId) {
-if ($count++>10) break;
 $item = $this->getItemById($spineId);
 $doc = $item->getDoc();
 $body = $doc->getFirstElementByTagName('body');
@@ -588,6 +590,17 @@ $div->appendChild($child);
 }
 $item->closeDoc();
 }
+foreach($gBody->getElementsByTagName('*') as $el) {
+if ($el->hasAttribute('id')) $el->setAttribute('id', '___'.$item->id.'_'.$el->getAttribute('id'));
+if ($el->hasAttribute('for')) $el->setAttribute('for', '___'.$item->id.'_'.$el->getATtribute('for'));
+if ($el->hasAttribute('href')) {
+$href = explode('#', $el->getAttribute('href'), 2);
+if (preg_match('/\.xhtml$/i', $href[0]) && !preg_match('/^https?:/', $href[0])) {
+if (count($href)<=1) $href[1] = '___'.$item->id.'__top';
+else $href[1] = '___'.$item->id.'_'.$href[1];
+$el->setAttribute('href', '#'.$href[1]);
+}}//IF has attribute href
+}//Each element
 return $gDoc;
 }
 

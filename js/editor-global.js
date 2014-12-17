@@ -87,7 +87,7 @@ for (val in item.values) input.appendElement('option', {'value':val}).appendText
 if (item.value) input.value = item.value;
 }
 else {
-var exargs = ['min', 'max', 'step', 'pattern', 'maxlength', 'multiple'];
+var exargs = ['min', 'max', 'step', 'pattern', 'maxlength', 'multiple', 'checked', 'disabled', 'readonly'];
 var args = {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'};
 for (var j=0; j<exargs.length; j++) if (item[exargs[j]]) args[exargs[j]]=item[exargs[j]];
 input = p.appendElement('input', args);

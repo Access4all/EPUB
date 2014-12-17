@@ -4,7 +4,7 @@ loadTranslation('bookshelf');
 
 class BookshelfView {
 
-function index ($bookList) {
+function index ($bookList, $templateList) {
 global $root, $lang, $langs;
 $t = 'getTranslation';
 $pageTitle = getTranslation('Bookshelf');
@@ -70,8 +70,20 @@ echo <<<END
 <form action="$root/bookshelf/newBook" method="post">
 <p><label for="title">{$t('BookTitle')}: </label>
 <input type="text" name="title" id="title" />
-<button type="submit">{$t('BtnCreate')}</button></p>
-</form>
+</p><p>
+<label for="template">{$t('Template')}:</label>
+<select id="template" name="template">
+END;
+foreach($templateList as $tpl) {
+$name = $tpl->name;
+$label = $tpl->getTitle();
+echo "<option value=\"$name\">$label</option>";
+}
+echo <<<END
+</select>
+</p><p>
+<button type="submit">{$t('BtnCreate')}</button>
+</p></form>
 END;
 require('bsFooter.php');
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="uid" prefix="cc: http://creativecommons.org/ns#">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title id="title">New book</dc:title>
+    <dc:identifier id="uid">00000</dc:identifier>
+    <dc:language>en</dc:language>
+    <meta property="dcterms:modified">2013-03-16T02:21:00Z</meta>
+    <link rel="cc:license" href="http://creativecommons.org/licenses/by-nd/3.0/"/>
+    <dc:creator>New book</dc:creator>
+  </metadata>
+  <manifest>
+    <item id="css" media-type="text/css" href="css/epub3.css"/>
+    <item id="toc" media-type="application/xhtml+xml" href="xhtml/toc.xhtml" properties="nav"/>
+  </manifest>
+  <spine>
+    <itemref idref="toc"/>
+  </spine>
+</package>

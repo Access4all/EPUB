@@ -7,8 +7,9 @@ class BookshelfController {
 function index () {
 $bs = new Bookshelf();
 $books = $bs->getBookList();
+$tpls = $bs->getBookTemplateList();
 $bv = new BookshelfView();
-$bv->index($books);
+$bv->index($books, $tpls);
 }
 
 function changeLanguage () {
@@ -57,11 +58,12 @@ exit();
 
 function newBook () {
 global $root;
-if (empty($_POST['title'])) exit404();
+if (empty($_POST['title']) || empty($_POST['template'])) exit404();
 $title = trim($_POST['title']);
+$templateName = trim($_POST['template']);
 $failed = true;
 $bs = new Bookshelf();
-$tplFile = './data/template.epub';
+$tplFile = "./data/$templateName.epub";
 $book = $bs->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
 if ($book) {
 $bs->addBook($book);

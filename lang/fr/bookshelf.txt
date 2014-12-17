@@ -4,6 +4,7 @@ Language=Langue
 ChangeLanguage=Changer la langue
 BookTitle=Titre
 BookAuthors=Auteur(s)
+Template=Modèle
 Actions=Actions
 AddToBookshelf=Ajouter des livres
 CreateNewBook=Créer un nouveau livre

@@ -39,9 +39,11 @@ $factory = new $factoryClass();
 return $factory->createBookFromFile($bookshelf, $info, $file);
 }
 else if (method_exists($factoryClass, 'createResourcesFromFile')) {
-$tplFile = './data/template.epub';
+$templateName = (isset($info['template'])? $info['template'] : 'template');
+$tplFile = "./data/$templateName.epub";
 $title = 'UntitledBook'.date('Y.m.d.H.i.s');
 $book = $bookshelf->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
+if (!$book) return null;
 $book->extract();
 $book->updateBookSettings(array('title'=>$title));
 $book->addNewResource($info, $file);

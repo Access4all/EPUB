@@ -100,6 +100,12 @@ echo <<<END
 <option value="right">{$t('Right')}</option>
 <option value="justify">{$t('Justified')}</option>
 </select></p>
+<p><label for="lineHeight">{$t('LineHeight')}:</label>
+<input id="lineHeight" type="number" min="50" max="400" value="100" step="1" />&nbsp;%</p>
+<p><label for="letterSpacing">{$t('LetterSpacing')}:</label>
+<input type="number" id="letterSpacing" min="-30" max="30" value="0" step="1" /></p>
+<p><label for="wordSpacing">{$t('WordSpacing')}:</label>
+<input type="number" id="wordSpacing" min="-30" max="30" value="0" step="1" /></p>
 <h3>{$t('Background')}</h3>
 <p><label for="bgcolor">{$t('BgColor')}:</label>
 <input type="color" id="bgcolor" /></p>
@@ -151,7 +157,7 @@ echo <<<END
 <option value="right">{$t('Right')}</option>
 </select></p>
 <p><label for="width">{$t('Width')}:</label>
-<input type="range" id="width" min="0" max="100" step="1" /></p>
+<input type="number" id="width" min="0" max="100" step="1" />&nbsp;%</p>
 </form>
 </div><!--leftPanelTab-->
 <script type="text/javascript" src="$root/js/editor-styling.js?rnd=$rnd"></script>

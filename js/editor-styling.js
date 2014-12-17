@@ -66,6 +66,9 @@ this.form.elements.fontcolor.onchange = function(){ _this.updateValue('color', t
 this.form.elements.fontstyle.onclick = function() { _this.updateValue('fontStyle', this.checked?'italic':'normal', 'normal'); };
 this.form.elements.fontweight.onclick = function(){ _this.updateValue('fontWeight', this.checked?'bold':'normal', 'normal'); };
 this.form.elements.textalign.onchange = function(){ _this.updateValue('textAlign', this.value, 'initial'); };
+this.form.elements.lineHeight.onchange = function(){ _this.updateValue('lineHeight', ((parseInt(this.value)/100.0) || 1), 1); };
+this.form.elements.letterSpacing.onchange = function(){ _this.updateValue('letterSpacing', this.value+0==0? 'normal' : parseInt(this.value)+'px', 'normal'); };
+this.form.elements.wordSpacing.onchange = function(){ _this.updateValue('wordSpacing', this.value+0==0? 'normal' : parseInt(this.value)+'px', 'normal'); };
 this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundColor', this.value, 'transparent'); };
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
@@ -154,6 +157,9 @@ this.form.elements.fontcolor.value = style.color || cd.color || 'default';
 this.form.elements.fontweight.checked = style.fontWeight=='bold' || cd.fontWeight=='bold';
 this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cd.fontStyle=='italic';
 this.form.elements.textalign.value = style.textAlign || cd.textAlign || 'initial';
+this.form.elements.lineHeight.value = Math.round(100 * (parseFloat(style.lineHeight || cd.lineHeight) || 1)); // Supposed to be widthout unit
+this.form.elements.letterSpacing.value = parseInt(style.letterSpacing || cd.letterSpacing) || 'normal'; // Supposed to be in px
+this.form.elements.wordSpacing.value = parseInt(style.wordSpacing || cd.wordSpacing) || 'normal'; // Supposed to be in px
 this.form.elements.bgcolor.value = style.backgroundColor || cd.backgroundColor || 'transparent';
 this.form.elements.cssFloat.value = style.cssFloat || cd.cssFloat || 'none';
 this.form.elements.width.value = parseInt(style.width || cd.width) || 'auto'; // Supposed to be in %

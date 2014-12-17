@@ -69,15 +69,16 @@ $body = $doc->getFirstElementByTagName('body');
 $body->removeAllChilds();
 $body->appendHTML($contents);
 $cssFound = false;
+$cssMasterFile = $this->book->getOption('cssMasterFile', 'EPUB/css/epub3.css');
 foreach($doc->getElementsByTagName('link') as $link) {
 if ($link->getAttribute('rel')!='stylesheet') continue;
 $href = $link->getAttribute('href');
 $href = pathResolve($this->fileName, $href);
-if ($href=='EPUB/css/epub3.css') { $cssFound=true; break; }
+if ($href==$cssMasterFile) { $cssFound=true; break; }
 }
 if (!$cssFound) {
 $head = $doc->getFirstElementByTagName('head');
-$head->appendElement('link', array('rel'=>'stylesheet', 'href'=>pathRelativize($this->fileName, 'EPUB/css/epub3.css')));
+$head->appendElement('link', array('rel'=>'stylesheet', 'href'=>pathRelativize($this->fileName, $cssMasterFile)));
 }
 $this->saveDoc();
 }

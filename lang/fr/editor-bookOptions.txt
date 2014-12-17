@@ -15,3 +15,5 @@ DDBT_text=Documents
 DDBT_image=Images
 DDBT_javascript=Scripts
 DDBT_font=Polices d'écriture
+DDBT_css=Feuilles de styles
+cssMasterFile=Modèle CSS principal

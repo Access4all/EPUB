@@ -3,14 +3,19 @@ require_once('core/kernel.php');
 
 class Bookshelf {
 
+static function getInstance () {
+return new Bookshelf();
+}
+
 function getBookList () {
 global $db;
 return $db->query('select * from '.DB_TABLE_PREFIX.'Books')
 ->fetchAll(PDO::FETCH_CLASS, 'Book');
 }
 
-static function getInstance () {
-return new Bookshelf();
+function getBookTemplateList () {
+$b1 = new Book(array('name'=>'template', 'title'=>'Default'));
+return array($b1);
 }
 
 function getBookById ($id) {

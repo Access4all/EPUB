@@ -64,8 +64,8 @@ var inline = ['div', 'section', 'aside', 'header', 'footer'].indexOf(zone.tagNam
 
 // Check image alternate texts
 zone.$('img').each(function(img){ 
-var alt = img.getAttribute('alt');
-if (alt==='') _this.errors.push({msg:msgs.ImgEmptyAlt, type:'info', target:img, 'zone':zone}); 
+var alt = img.getAttribute('alt'), deco = img.hasAttribute('data-decorative');
+if (alt==='' && !deco) _this.errors.push({msg:msgs.ImgEmptyAlt, type:'error', target:img, 'zone':zone}); 
 else if (!alt) _this.errors.push({msg:msgs.ImgNoAlt, type:'error', target:img, 'zone':zone}); 
 else if (
 /^.*\.\w{2,4}$/i .test(alt) // ends like a file extension: typical from word/ppt defaults
@@ -117,7 +117,7 @@ if (!node.matches('h1, h2, h3, h4, h5, h6')) _this.errors.push({msg:msgs.HnStart
 var nHeadings = zone.$('h1, h2, h3, h4, h5, h6').length,
 nPara = zone.$('p, ul, ol, dl, table, pre').length,
 headingRatio = nHeadings / (nHeadings+nPara);
-if (headingRatio>=0.4) _this.errors.push({msg:msgs.HnBigRatio, type:'warn', target:zone.getFirstTextNode(), 'zone':zone}); 
+if (headingRatio>=0.55) _this.errors.push({msg:msgs.HnBigRatio, type:'warn', target:zone.getFirstTextNode(), 'zone':zone}); 
 }
 
 // Looking for short paragraphs that are entirely in bold; they might be false headings
@@ -170,14 +170,6 @@ cells.each(function(td){
 if (td==cells[0] || td==cells[cells.length -1]) return;
 if (!td.textContent.trim()) _this.errors.push({msg:msgs.TblEmptyTd, type:'warn', target:td, 'zone':zone}); 
 });//each cell
-trs.each(function(tr){
-if (tr==trs[0] || tr==trs[trs.length -1]) return;
-var cols = tr.$('th,td');
-tr.$('th').each(function(th){
-if (th==cols[0] || th==cols[cols.length -1]) return;
-_this.errors.push({msg:msgs.TblBadTh, type:'warn', target:th, 'zone':zone}); 
-});//each header cell of the row
-});//each row
 });//each table
 
 // Analysing lists

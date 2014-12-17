@@ -24,7 +24,7 @@ echo <<<END
 <fieldset><legend>{$t('DefaultDirs')}</legend>
 <p>{$t('DDBTTipp')}</p>
 END;
-foreach(array('text', 'image', 'font', 'javascript') as $x) {
+foreach(array('text', 'image', 'font', 'javascript', 'css') as $x) {
 echo <<<END
 <p><label for="defaultDirByType_$x">{$t("DDBT_$x")}:</label>
 <input type="text" id="defaultDirByType_$x" name="defaultDirByType[$x]" value="{$h($b->getOption("defaultDirByType:$x"))}" /></p>
@@ -32,6 +32,8 @@ END;
 }
 echo <<<END
 </fieldset>
+<p><label for="cssMasterFile">{$t('cssMasterFile')}:</label>
+<input type="text" id="cssMasterFile" name="cssMasterFile" value="{$h($b->getOption('cssMasterFile', 'EPUB/css/epub3.css'))}" /></p>
 </div><!--partOrg-->
 <h2 data-expands="partTOC">{$t('TOCOptions')}</h2>
 <div id="partTOC">

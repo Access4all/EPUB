@@ -1,6 +1,7 @@
 *.log
 *.tmp
 data/*
+!data/template
 cache/*
 *test*
 out*

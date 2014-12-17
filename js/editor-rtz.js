@@ -1212,9 +1212,10 @@ var _this = this;
 DialogBox(msgs.InsertIcon, [
 {label:msgs.IconURL, name:'url', value:imgUrl},
 {label:msgs.IconAlt, name:'alt'},
+{label:msgs.IconDeco, name:'deco', type:'checkbox'},
 ], function(){ 
 _this.select(sel);
-_this.insertIcon(this.elements.url.value, this.elements.alt.value);
+_this.insertIcon(this.elements.url.value, this.elements.alt.value, this.elements.deco.checked);
 _this.zone.focus();
 });//DialogBox
 }
@@ -1226,10 +1227,13 @@ var _this = this;
 DialogBox(msgs.Icon, [
 {label:msgs.IconURL, name:'url', value:src},
 {label:msgs.IconAlt, name:'alt', value:alt},
+{label:msgs.IconDeco, name:'deco', type:'checkbox', checked:img.hasAttribute('data-decorative')},
 ], function(){ 
 _this.pushUndoState2();
 img.setAttribute('alt', this.elements.alt.value);
 img.setAttribute('src', this.elements.url.value);
+if (this.elements.deco.checked) img.setAttribute('data-decorative', true);
+else img.removeAttribute('data-decorative');
 setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 _this.zone.focus();
 });//DialogBox
@@ -1246,9 +1250,10 @@ DialogBox(msgs.InsertIllu, [
 {label:msgs.IlluAlt, name:'alt'},
 {label:msgs.IlluCapt, name:'caption'},
 {label:msgs.IlluStyle, name:'istyle', type:'select', values:this.positionalStyles},
+{label:msgs.IconDeco, name:'deco', type:'checkbox'},
 ], function(){ 
 _this.select(sel);
-_this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.caption.value, this.elements.istyle.value);
+_this.insertIllustration(this.elements.url.value, this.elements.alt.value, this.elements.caption.value, this.elements.istyle.value, this.elements.deco.checked);
 _this.zone.focus();
 });//DialogBox
 }
@@ -1267,6 +1272,7 @@ DialogBox(msgs.Illustration, [
 {label:msgs.IlluAlt, name:'alt', value:altText},
 {label:msgs.IlluCapt, name:'caption', value:captionText},
 {label:msgs.IlluStyle, name:'istyle', type:'select', value:curclass, values:this.positionalStyles},
+{label:msgs.IconDeco, name:'deco', type:'checkbox', checked:img.hasAttribute('data-decorative')},
 ], function(){
 _this.pushUndoState2();
 var newCaptionText = this.elements.caption.value; 
@@ -1277,6 +1283,8 @@ if (newCaptionText!=captionText){
 caption.innerHTML = '';
 caption.appendElement('p').appendText(newCaptionText);
 }
+if (this.elements.deco.checked) img.setAttribute('data-decorative', true);
+else img.removeAttribute('data-decorative');
 setTimeout(function(){this.pushUndoState2()}.bind(_this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
 _this.zone.focus();
 });//DialogBox
@@ -1507,7 +1515,7 @@ var allowedAttrs = {
 a:['href', 'rel', 'rev', 'type', 'hreflang', 'title'],
 abbr:['title'],
 iframe:['src', 'width', 'height'],
-img:['src', 'width', 'height', 'alt'],
+img:['src', 'width', 'height', 'alt', 'data-decorative'],
 ol:['type', 'start'],
 source:['src', 'type'],
 video:['width', 'height', 'controls', 'src'],

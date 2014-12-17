@@ -10,6 +10,7 @@ InsertTable=Insert a table
 IconModify=Icon properties...
 IconURL=Icon URL
 IconAlt=Alternate text
+IconDeco=This is a purely decorative image
 InsertIllu=Insert illustration
 IlluModify=Illustration properties...
 IlluURL=Illustration URL
