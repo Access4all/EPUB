@@ -372,6 +372,22 @@ input.onchange = FormTrackChanges_changed;
 input.onkeydown = FormTrackChanges_keydown;
 });//each input
 f.virtualSubmit = FormTrackChanges_virtualSubmit;
+if (!window.formTrackChange1st) {
+window.formTrackChange1st=true;
+if (window.location.host!='localhost') 
+$('a[href]').each(function(a){
+var oldonclick  = a.onclick;
+a.onclick = function(e){
+if (f.onchange) return;
+MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
+if (btnIdx==0) f.virtualSubmit();
+if (oldonclick) oldonclick.call(a,e);
+window.location.href = a.href;
+});//MessageBox
+return false;
+};//onclick
+});//each link
+}//if formTrackChange1st
 }
 
 function FormTrackChanges_virtualSubmit () {

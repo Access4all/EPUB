@@ -123,10 +123,28 @@ o[key]=value;
 return o;
 }
 
+function STE_selectionChangedInRTZ (el) {
+var styleSelect = document.getElementById('styleSelect');
+if (!styleSelect) return;
+var options = styleSelect.$('option');
+if (!options || options.length<=0) return;
+while(el){
+if (el.hasAttribute('contenteditable')) return; // we have reached the main editor element
+for (var i=1; i<options.length; i++) {
+var selector = ('.editor ' + options[i].getAttribute('value')).trim();
+if (el.matches(selector)) {
+if (styleSelect.value==options[i].value) return;
+styleSelect.value = options[i].value;
+styleSelect.onchange(null);
+return;
+}}
+el = el.parentNode;
+}}
+
 function STE_updateValue (property, value, def) {
 if (!this.curStyle) return;
+this.curStyle.style[property] = value;
 if (value==def) this.curStyle.style.removeProperty(camelCaseNameToDashedName(property));
-else this.curStyle.style[property] = value;
 }
 
 function STE_getComputedStyle (el) {

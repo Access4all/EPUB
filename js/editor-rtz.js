@@ -269,6 +269,7 @@ else if (tgn=='ol') listCb.value = 'orderedList';
 else listCb.value = 'regular';
 }
 else listCb.value = 'regular';
+if (window.STE_selectionChangedInRTZ) window.STE_selectionChangedInRTZ(el);
 }
 
 function RTZ_domchanged (records) {
