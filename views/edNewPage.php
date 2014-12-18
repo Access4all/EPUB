@@ -13,18 +13,22 @@ echo <<<END
 <fieldset>
 <legend><h2 data-expands="partPageType">{$t('PageType')}</h2></legend>
 <div id="partPageType">
+<dl>
 END;
 $first=true;
 foreach (array('document', /*'freequestions',*/ 'qcm', 'truefalse', 'fillgaps', 'matching', 'ordering') as $type) {
 $checked = ((!isset($_POST['type'])&&$first) || (@$_POST['type']==$type) ? 'checked="checked" ':'');
 $first=false;
 echo <<<END
-<p><input type="radio" id="pagetype_$type" name="type" value="$type" $checked aria-labelledby="pagetypeLbl_$type" aria-describedby="pagetypeDesc_$type" />
-<label for="pagetype_$type" id="pagetypeLbl_$type">{$t("PageType_$type")}</label></p>
-<p id="pagetypeDesc_$type">{$t("PageTypeDesc_$type")}</p>
+<dt>
+<input type="radio" id="pagetype_$type" name="type" value="$type" $checked aria-labelledby="pagetypeLbl_$type" aria-describedby="pagetypeDesc_$type" />
+<label for="pagetype_$type" id="pagetypeLbl_$type">{$t("PageType_$type")}</label
+</dt>
+<dd id="pagetypeDesc_$type">{$t("PageTypeDesc_$type")}</dd>
 END;
 }
 echo <<<END
+</dl>
 </div><!--partPageType-->
 </fieldset>
 <h2 data-expands="partAdvanced">{$t('Advanced')}</h2>

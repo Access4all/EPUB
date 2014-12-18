@@ -10,16 +10,18 @@ echo <<<END
 <div id="partFTG">
 <fieldset>
 <legend>{$t('FTGType')}</legend>
+<dl>
 END;
 foreach(array('simple', 'indicative', 'strict') as $qt) {
 $checked = ($qt==$ftgType? ' checked="checked"' : '');
 echo <<<END
-<p><input type="radio" name="ftgType" id="ftgType_$qt" value="$qt"$checked aria-labelledby="ftgTypeLbl_$qt" aria-describedby="FTGTypeDesc_$qt" />
-<label for="ftgType_$qt" id="ftgTypeLbl_$qt">{$t("FTGType_$qt")}</label></p>
-<p id="ftgTypeDesc_$qt">{$t("FTGTypeDesc_$qt")}</p>
+<dt><input type="radio" name="ftgType" id="ftgType_$qt" value="$qt"$checked aria-labelledby="ftgTypeLbl_$qt" aria-describedby="FTGTypeDesc_$qt" />
+<label for="ftgType_$qt" id="ftgTypeLbl_$qt">{$t("FTGType_$qt")}</label></dt>
+<dd id="ftgTypeDesc_$qt">{$t("FTGTypeDesc_$qt")}</dd>
 END;
 }
 echo <<<END
+</dl>
 </fieldset>
 </div><!--partFTG-->
 END;
