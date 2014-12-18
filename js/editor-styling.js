@@ -72,6 +72,10 @@ this.form.elements.wordSpacing.onchange = function(){ _this.updateValue('wordSpa
 this.form.elements.bgcolor.onchange = function(){ _this.updateValue('backgroundColor', this.value, 'transparent'); };
 this.form.elements.width.onchange = function(){ _this.updateValue('width', this.value+0<=0? 'auto' : parseInt(this.value)+'%', 'auto'); };
 this.form.elements.cssFloat.onchange = function(){ _this.updateValue('cssFloat', this.value, 'none'); };
+this.form.elements.captionSide.onchange = function(){ _this.updateValue('captionSide', this.value, 'initial'); };
+this.form.elements.listStylePosition.onchange = function(){ _this.updateValue('listStylePosition', this.value, 'initial'); };
+this.form.elements.borderSpacing.onchange = function(){ _this.updateValue('borderSpacing', this.value+'px', 'initial'); };
+this.form.elements.borderCollapse.onclick = function(){ _this.updateValue('borderCollapse', this.checked?'collapse':'separate', 'separate'); };
 for (var i=0; i<sides.length; i++) {
 var prop = 'border' + sides[i], type = prop + 'Style', color = prop + 'Color', width = prop + 'Width';
 var corner = (!(i%2)? sides[i]+sides[i+1] : sides[(i+1)%4]+sides[i]), radius = 'border' + corner + 'Radius';
@@ -84,6 +88,7 @@ this.form.elements[margin].onchange = (function(w, _this){ return function(){ _t
 this.form.elements[padding].onchange = (function(w, _this){ return function(){ _this.updateValue(w, (parseFloat(this.value)/10.0)+'em', '0'); }; })(padding, this);
 }
 this.populateStyleSelect();
+STE_updateVisibleParts('#');
 var rule = $css('#StyleData');
 if (rule && rule.style.content) {
 var str = rule.style.content;
@@ -143,33 +148,71 @@ for (var i in styles) div.style[i]=styles[i];
 return elem;
 }
 
+function STE_shouldPartBeVisible (selection, part) {
+if (selection=='#') return false;
+var positionnal = selection.startsWith('.');
+var inline = ['a', 'b', 'i', 's', 'u', 'strong', 'em', 'ins', 'del', 'kbd', 'dfn', 'abbr'].indexOf(selection)>=0;
+switch(part){
+case 'text': case 'text2':
+return !positionnal;
+case 'textalign':
+return !positionnal && !inline;
+case 'border':
+return !positionnal && !inline;
+case 'background':
+return !positionnal;
+case 'marginpadding':
+return !positionnal && !inline;
+case 'positionning':
+return positionnal;
+case 'list':
+return selection=='ul' || selection=='ol';
+case 'table':
+return selection.startsWith('table');
+default:
+return false;
+}}
+
+function STE_updateVisibleParts (selection) {
+var fmts = ['fmtText', 'fmtText2', 'fmtTextAlign', 'fmtBorder', 'fmtBackground', 'fmtMarginPadding', 'fmtPositionning', 'fmtTable', 'fmtList'];
+for (var i=0; i<fmts.length; i++) {
+var div = document.getElementById(fmts[i]);
+if (!div) continue;
+div.style.display = STE_shouldPartBeVisible(selection.trim(), fmts[i].substring(3).toLowerCase())? 'block':'none';
+}}
+
 function STE_updateUI (selection) {
 var selector = ('.editor '+selection).trim();
 if (selection=='#') this.curStyle=null;
 else this.curStyle = $css(selector, $css.CREATE);
+STE_updateVisibleParts(selection);
 if (!this.curStyle) return;
 var style = this.curStyle; 
 var cd = this.parseCssText(style.cssText); //  will reflects the state of the style in the CSS code; more accurate than computed styles, but not always present, i.e. grouped properties like border/margin/padding
 var elem = document.querySelector(selector) || STE_createGhostElement(selector), cs = STE_getComputedStyle(elem); // Reflect the true computed style; is always present but is less accurate (the browser often make unit conversion and such)
 this.form.elements.font.value = style.fontFamily || cd.fontFamily || 'default';
 this.form.elements.fontsize.value = rem2pt(parseFloat(style.fontSize || cd.fontSize) || 1.0); // Supposed to be in rem or em
-this.form.elements.fontcolor.value = style.color || cd.color || 'default';
+this.form.elements.fontcolor.value = toHexColor(style.color || cd.color || 'default');
 this.form.elements.fontweight.checked = style.fontWeight=='bold' || cd.fontWeight=='bold';
 this.form.elements.fontstyle.checked = style.fontStyle=='italic' || cd.fontStyle=='italic';
 this.form.elements.textalign.value = style.textAlign || cd.textAlign || 'initial';
 this.form.elements.lineHeight.value = Math.round(100 * (parseFloat(style.lineHeight || cd.lineHeight) || 1)); // Supposed to be widthout unit
 this.form.elements.letterSpacing.value = parseInt(style.letterSpacing || cd.letterSpacing) || 'normal'; // Supposed to be in px
 this.form.elements.wordSpacing.value = parseInt(style.wordSpacing || cd.wordSpacing) || 'normal'; // Supposed to be in px
-this.form.elements.bgcolor.value = style.backgroundColor || cd.backgroundColor || 'transparent';
+this.form.elements.bgcolor.value = toHexColor(style.backgroundColor || cd.backgroundColor || 'transparent');
 this.form.elements.cssFloat.value = style.cssFloat || cd.cssFloat || 'none';
 this.form.elements.width.value = parseInt(style.width || cd.width) || 'auto'; // Supposed to be in %
+this.form.elements.captionSide.value = style.captionSide || cd.captionSide || 'initial';
+this.form.elements.borderSpacing.value = parseInt(style.borderSpacing || cd.borderSpacing) || 'initial'; // Supposed to be in px
+this.form.elements.borderCollapse.checked = style.borderCollapse=='collapse' || cd.borderCollapse=='collapse';
+this.form.elements.listStylePosition.value = style.listStylePosition || cd.listStylePosition|| 'initial';
 for (var i=0; i<sides.length; i++) {
 var prop = 'border' + sides[i], type = prop + 'Style', color = prop + 'Color', width = prop + 'Width';
 var corner = (!(i%2)? sides[i]+sides[i+1] : sides[(i+1)%4]+sides[i]), radius = 'border' + corner + 'Radius';
 var margin = 'margin' + sides[i], padding = 'padding' + sides[i];
 this.form.elements[radius].value = parseInt(style[radius] || cd[radius] || cs[radius]) || '0'; // Supposed to be in px
 this.form.elements[width].value = parseInt(style[width] || cd[width] || cs[width]) || '0'; // Supposed to be in px
-this.form.elements[color].value = style[color] || cd[color] || cs[color] || 'transparent';
+this.form.elements[color].value = toHexColor(style[color] || cd[color] || cs[color] || 'transparent');
 this.form.elements[type].value = style[type] || cd[type] || cs[type] || 'none';
 this.form.elements[margin].value = 10.0 * parseFloat(style[margin] || cd[margin] || cs[margin] || 0); // Supposed to be in em
 this.form.elements[padding].value = 10.0 * parseFloat(style[padding] || cd[padding] || cs[padding] || 0); // Supposed to be in em
@@ -248,6 +291,23 @@ return pt/12.0;
 
 function rem2pt (rem) {
 return Math.floor(rem * 12.0 + 0.25);
+}
+
+function toHexColor (color) {
+var m, orig=color;
+// rgb form: rgb(x,x,x) or rgba(x,x,x,x)
+if (m = color.match(/^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i)) {
+var r = parseInt(m[1]), g = parseInt(m[2]), b = parseInt(m[3]);
+color = '#' 
++ (r<16? '0':'') + r.toString(16)
++ (g<16? '0':'') + g.toString(16)
++ (b<16? '0':'') + b.toString(16);
+}
+// short form #rgb
+else if (/^#...$/.test(color)) {
+color = color.replace(/^#(.)(.)(.)$/, '#$1$1$2$2$3$3');
+}
+return color;
 }
 
 if (!window.onloads) window.onloads=[];

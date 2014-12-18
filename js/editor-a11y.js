@@ -75,9 +75,10 @@ else if (
 // Check that every figure has exactly one figcaption
 zone.$('figure').each(function(fig){
 var captions = fig.$('figcaption');
-if (captions.length==0) _this.errors.push({msg:msgs.FigNoCaption, type:'error', target:fig, 'zone':zone});
+var isDecorative = !!fig.querySelector('img[data-decorative]');
+if (captions.length==0 && !isDecorative) _this.errors.push({msg:msgs.FigNoCaption, type:'error', target:fig, 'zone':zone});
 else if (captions.length>=2) _this.errors.push({msg:msgs.FigDoubleCaption, type:'error', target:captions[1], 'zone':zone});
-else if (captions[0]!=fig.firstElementChild && captions[0]!=fig.lastElementChild) _this.errors.push({msg:msgs.FigBadPlacedCaption, type:'error', target:captions[0], 'zone':zone});
+else if (captions.length==1 && captions[0]!=fig.firstElementChild && captions[0]!=fig.lastElementChild) _this.errors.push({msg:msgs.FigBadPlacedCaption, type:'error', target:captions[0], 'zone':zone});
 if (captions.length>0 && !captions[0].textContent.trim()) _this.errors.push({msg:msgs.FigEmptyCaption, type:'warn', target:captions[0], 'zone':zone});
 });//each figure
 

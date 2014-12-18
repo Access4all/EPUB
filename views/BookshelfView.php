@@ -70,7 +70,6 @@ echo <<<END
 <form action="$root/bookshelf/newBook" method="post">
 <p><label for="title">{$t('BookTitle')}: </label>
 <input type="text" name="title" id="title" />
-</p><p>
 <label for="template">{$t('Template')}:</label>
 <select id="template" name="template">
 END;
@@ -81,7 +80,6 @@ echo "<option value=\"$name\">$label</option>";
 }
 echo <<<END
 </select>
-</p><p>
 <button type="submit">{$t('BtnCreate')}</button>
 </p></form>
 END;

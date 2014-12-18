@@ -1007,12 +1007,15 @@ if (this.inlineOnly) return false;
 this.pushUndoState2();
 var figure = this.createObservedElement('figure', {'class':style});
 var img = figure.appendElement('img', {'alt':alt, 'src':url, 'width':'100%', 'height':'auto'});
-var capt = figure.appendElement('figcaption');
-var captP = capt.appendElement('p').appendText(caption);
+var capt=null, captP=null;
+if (caption){
+capt = figure.appendElement('figcaption');
+captP = capt.appendElement('p').appendText(caption);
+}
 var sel = this.getSelection();
 var ancestor = sel.commonAncestorContainer.findAncestor(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'dl', 'pre']);
 ancestor.parentNode.insertBefore(figure, ancestor.nextSibling);
-sel.selectNodeContents(captP);
+sel.selectNodeContents(captP? captP : figure);
 sel.collapse(false);
 this.select(sel);
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made
@@ -1261,8 +1264,8 @@ _this.zone.focus();
 function RTZ_modifyIllustrationDialog (figure) {
 var img = figure.querySelector('img');
 if (!img) return;
-var caption = figure.querySelector('figcaption') || figure.appendElement('figcaption');
-var captionText = caption.textContent;
+var caption = figure.querySelector('figcaption');
+var captionText = caption? caption.textContent : '';
 var altText = img.getAttribute('alt') || '';
 var src = img.getAttribute('src') || '';
 var curclass = figure.getAttribute('class') || '';
@@ -1280,8 +1283,10 @@ img.setAttribute('src', this.elements.url.value);
 img.setAttribute('alt', this.elements.alt.value);
 figure.setAttribute('class', this.elements.istyle.value);
 if (newCaptionText!=captionText){
+if (!caption) caption = figure.appendElement('figcaption');
 caption.innerHTML = '';
-caption.appendElement('p').appendText(newCaptionText);
+if (newCaptionText) caption.appendElement('p').appendText(newCaptionText);
+else caption.parentNode.removeChild(caption);
 }
 if (this.elements.deco.checked) img.setAttribute('data-decorative', true);
 else img.removeAttribute('data-decorative');

@@ -28,11 +28,18 @@ echo <<<END
 <option value="pre">{$t('CodeListing')}</option>
 <option value="ol">{$t('OrderedList')}</option>
 <option value="ul">{$t('UnorderedList')}</option>
+<option value="dl">{$t('DefinitionList')}</option>
+<option value="dt">{$t('DefinitionListTerm')}</option>
+<option value="dd">{$t('DefinitionListDef')}</option>
 <option value="table">{$t('Table')}</option>
+<option value="th">{$t('TableHeaderCell')}</option>
+<option value="td">{$t('TableCell')}</option>
 <option value="a">{$t('Link')}</option>
+<option value="abbr">{$t('Abbreviation')}</option>
 <option value="aside">Aside</option>
 <option value="section">Section</option>
 </select></p>
+<div id="fmtText">
 <h3>{$t('BasicFormatting')}</h3>
 <p><label for="font">{$t('Font')}: </label>
 <select id="font">
@@ -91,6 +98,8 @@ echo <<<END
 <input type="checkbox" id="fontweight" /><label for="fontweight">{$t('Bold')}</label>
 <input type="checkbox" id="fontstyle" /><label for="fontstyle">{$t('Italic')}</label>
 </p>
+</div><!--fmtText-->
+<div id="fmtTextAlign">
 <h3>{$t('TextAlignmentH')}</h3>
 <p><label for="textalign">{$t('TextAlign')}:</label>
 <select id="textalign">
@@ -102,13 +111,20 @@ echo <<<END
 </select></p>
 <p><label for="lineHeight">{$t('LineHeight')}:</label>
 <input id="lineHeight" type="number" min="50" max="400" value="100" step="1" />&nbsp;%</p>
+</div><!--fmtTextAlign-->
+<div id="fmtText2">
+<h3>{$t('AdvTextFormatting')}</h3>
 <p><label for="letterSpacing">{$t('LetterSpacing')}:</label>
 <input type="number" id="letterSpacing" min="-30" max="30" value="0" step="1" /></p>
 <p><label for="wordSpacing">{$t('WordSpacing')}:</label>
 <input type="number" id="wordSpacing" min="-30" max="30" value="0" step="1" /></p>
+</div><!--fmtText2-->
+<div id="fmtBackground">
 <h3>{$t('Background')}</h3>
 <p><label for="bgcolor">{$t('BgColor')}:</label>
 <input type="color" id="bgcolor" /></p>
+</div><!--fmtBackground-->
+<div id="fmtBorder">
 <h3>{$t('Borders')}</h3>
 END;
 $sides = array('Top', 'Right', 'Bottom', 'Left');
@@ -131,6 +147,8 @@ echo <<<END
 END;
 }
 echo <<<END
+</div><!--fmtBorder-->
+<div id="fmtMarginPadding">
 <h3>{$t('Margins')}</h3>
 END;
 foreach($sides as $side) {
@@ -149,6 +167,29 @@ echo <<<END
 END;
 }
 echo <<<END
+</div><!--fmtMarginPadding-->
+<div id="fmtList">
+<h3>{$t('ListFormatting')}</h3>
+<p><label for="listStylePosition">{$t('ListStylePosition')}:</label>
+<select id="listStylePosition">
+<option value="initial">{$t('Default')}</option>
+<option value="inside">{$t('Inside')}</option>
+<option value="outside">{$t('Outside')}</option>
+</select></p>
+</div><!--fmtList-->
+<div id="fmtTable">
+<h3>{$t('TableFormatting')}</h3>
+<p><label for="borderSpacing">{$t('BorderSpacing')}:</label>
+<input id="borderSpacing" type="number" min="0" max="20" value="0" step="1" /></p>
+<p><input type="checkbox" id="borderCollapse" /><label for="borderCollapse">{$t('BorderCollapse')}</label></p>
+<p><label for="captionSide">{$t('CaptionSide')}:</label>
+<select id="captionSide">
+<option value="initial">{$t('Default')}</option>
+<option value="top">{$t('Top')}</option>
+<option value="bottom">{$t('Bottom')}</option>
+</select></p>
+</div><!--fmtTable-->
+<div id="fmtPositionning">
 <h3>{$t('PositionningAndSize')}</h3>
 <p><label for="cssFloat">{$t('Floating')}:</label>
 <select id="cssFloat">
@@ -158,6 +199,7 @@ echo <<<END
 </select></p>
 <p><label for="width">{$t('Width')}:</label>
 <input type="number" id="width" min="0" max="100" step="1" />&nbsp;%</p>
+</div><!--fmtPositionning-->
 </form>
 </div><!--leftPanelTab-->
 <script type="text/javascript" src="$root/js/editor-styling.js?rnd=$rnd"></script>
