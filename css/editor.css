@@ -10,7 +10,7 @@ body {
 font-family: Arial;
 font-size: 100%;
 color: black;
-background-color: #ededed;
+background-color: #f6f9ef; /*#ededed;*/
 margin: 1em;
 }
 
@@ -23,6 +23,14 @@ border-top: solid 2px #aaa;
 }
 
 #leftPanel {
+position: relative;
+left: 0px;
+top: 0px;
+width: auto;
+height: auto;
+overflow: scroll;
+max-height: 800px;
+min-height: 200px;
 float: left;
 width: 22%;
 max-width: 22%;
@@ -53,6 +61,11 @@ vertical-align: middle;
 text-align: center;
 }
 
+#leftPanel h2>a {
+display: block; /* Or maybe inline-block */
+width: 100%;
+}
+
 #leftPanel h2 a {
 text-decoration: none;
 color: black;
@@ -63,7 +76,6 @@ color: white;
 }
 
 .leftPanelTab {
-
 border-left: solid 3px #436200;
 border-right: solid 3px #436200;
 border-bottom: solid 3px #436200;
@@ -99,7 +111,9 @@ max-height: 800px;
 min-height: 200px;
 }
 
-/* Also some changes here... */
+#document {
+overflow: hidden;
+}
 
 .menul {
 list-style-type: none;
@@ -215,7 +229,27 @@ background-color: #86B918;
 color: #eee;						
 border-top: 3px solid #436200;
 border-left: 3px solid #436200;
-border-right: 3px solid #436200;*/
+border-right: 3px solid #436200;
+}
+
+#leftPanel h2>a:focus, #leftPanel h2>a:hover {
+background-image: radial-gradient(#436200 50%, #86B918 99%);
+border: solid 3px #436200;
+vertical-align: middle;
+text-align: center;
+text-decoration: none;
+border: 0px;
+color: #eee;
+}
+
+#leftPanel h2.active>a:focus, #leftPanel h2.active>a:hover {
+background-image: radial-gradient(#86B918 50%, #436200  99%);
+border: solid 3px #86B918;
+vertical-align: middle;
+text-align: center;
+text-decoration: none;
+border: 0px;
+color: #000;
 }
 
 a:active {
@@ -251,8 +285,11 @@ vertical-align: bottom;
 margin-top: .25em;
 }
 
-input[type=text], input[type=password], input[type=email], input[type=url], input[type=number] {
+input[type=text], input[type=password], input[type=email], input[type=url]{
 min-width: 12em;
+}
+input[type=number] {
+width: 4em;
 }
 
 input:hover, input:focus, input:active, select:hover, select:focus, select:active, textarea:hover, textarea:focus, textarea:active, button:hover, button:focus, button:active, div:focus, span:focus {
@@ -275,8 +312,26 @@ vertical-align: top;
 margin-right:  1em;
 }
 
-p>button, p>input[type=checkbox], p>input[type=radio], p>input[type=submit], p>input[type=reset], p>input[type=button]  { margin-left: 23em; }
-p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; margin-left: initial; }
+p>button, p>input[type=checkbox], p>input[type=radio], p>input[type=submit], p>input[type=reset], p>input[type=button]  { 
+margin-left: 23em; 
+}
+p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; 
+margin-left: initial; 
+}
+#partPageType label {
+margin-left: 2em;
+font-size: 125%;
+text-align: left;
+}
+#partPageType input {
+margin-left: -2em;
+}
+#partPageType p {
+max-width: 56em;
+margin-left: 18em;
+margin-bottom: 2em;
+font-size: 80%;
+}
 
 #styleEditor p {
 margin: 1em 0 1em 0;
