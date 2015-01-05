@@ -5,7 +5,7 @@ No documentation at the moment
 ## Developers
 
 - Quentin Cosendey
-- Anton Bolfing grüsst hiermit
+- Anton Bolfing
 - Joshua Muheim
 
 ## Copyright
