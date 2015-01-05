@@ -1,0 +1,21 @@
+# Installation notes
+
+* Create the directory data/uploads if it doesn't exist
+* Make sure that php is allowed to write files in data/
+* Create the database
+
+For a local installation, default credencials for the database are
+
+- Host: localhost
+- Username: root
+- Empty password
+
+Change them in core/config.php lines 4ss if needed
+
+## Creating the database
+
+Create a new database by using tools like phpmyadmin, or with the command `create database` in the command line interface
+Database name: epuba4all
+
+Then run or import the commands in the file models/install.sql
+
