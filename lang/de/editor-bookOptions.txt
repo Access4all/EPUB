@@ -1,0 +1,17 @@
+﻿		
+BookTitle=Buchtitel
+Authors=Autor(en)
+BookIdentifier=Buchidentifikation
+BookLanguage=Sprache
+TOCOptions=Inhaltsverzeichnis
+TOCNoGen=Automatische Generierung des Inhaltsverzeichnis deaktivieren.
+TOCHeadingText=Überschrift des Inhaltsverzeichnis
+TOCMaxDepth= Maximale Verzeichnistiefe 
+levels=Ebenen 
+BookOrganisation=Organisation
+DefaultDirs=Standard-Verzeichnisse 
+DDBTTipp=Beim Importieren der Dateien in Ihr Buch, können Sie den Standardablageordner festlegen. Dies vereinfacht wesentlich die Organisation Ihres Buches wenn es aus vielen Dokumenten, Bildern und anderen Dateien besteht. Sie können diese Felder leer lassen wenn Sie keine benutzerdefinierte  Einstellungen vornehmen wollen.
+DDBT_text=Dokumente
+DDBT_image=Bilder
+DDBT_javascript=Skripts
+DDBT_font=Schriftarten

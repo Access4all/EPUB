@@ -1,0 +1,3 @@
+﻿
+IntroText=Einleitungstext
+TheItem=Objekt%1

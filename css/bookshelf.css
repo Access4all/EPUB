@@ -62,3 +62,7 @@ a[role=button] {
 display: inline-block;
 margin-left: 7px;
 }
+
+#alert {
+color: red;
+}
