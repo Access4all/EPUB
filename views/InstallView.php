@@ -31,7 +31,7 @@ require('instFooter.php');
 
 function main ($ok, $detail) {
 global $root, $lang;
-$pageTitle = getTranslation('InstallTitle') . ' - ' .getTranslation('ChecksTitle');
+$pageTitle = getTranslation('ChecksTitle');
 require('instHeader.php');
 $t = 'getTranslation';
 echo <<<END

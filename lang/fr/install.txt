@@ -14,3 +14,4 @@ okmsg1=La configuration semble en ordre, vous pouvez continuer.
 nokmsg1=Un ou plusieurs paramètres ne semblent pas en ordre. Vous devez changer la configuration du serveur avant de continuer.
 
 checkPhpVersion=Version de PHP 5.3+
+checkModRewrite=Module de réécriture d'URL apache (mod_rewrite)

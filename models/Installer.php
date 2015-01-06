@@ -5,14 +5,11 @@ loadTranslation('install');
 class Installer {
 
 function checkAll () {
-ob_start();
-phpinfo();
-$this->phpinfo = ob_get_contents();
-ob_end_clean();
 $checks = array();
 $ok=true;
 foreach(array(
 'checkPhpVersion',
+'checkModRewrite',
 ) as $c) {
 $msg='';
 $result = $this->$c($msg);
@@ -29,6 +26,11 @@ list($major, $minor, $build) = explode('.', $msg);
 define('PHP_VERSION_ID', $major*10000+$minor*100+$build);
 }
 return PHP_VERSION_ID>=50300;
+}
+
+function checkModRewrite (&$msg) {
+$mods = apache_get_modules();
+return in_array('mod_rewrite', $mods);
 }
 
 
