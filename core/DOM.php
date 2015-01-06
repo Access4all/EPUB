@@ -36,7 +36,7 @@ return $doc;
 
 static function decodeEntities ($str) {
 global $entities;
-if (!@$entities) $entities = unserialize(file_get_contents('./core/entities.dat'));
+if (!@$entities) $entities = unserialize(base64_decode(file_get_contents('./core/entities.dat')));
 return str_replace(array_keys($entities), array_values($entities), $str);
 }
 
