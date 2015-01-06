@@ -1,0 +1,16 @@
+﻿
+InstallTitle=Installation
+ChecksTitle=Vérification de la configuration
+Back=&larr; Précédent
+Next=Suivant &rarr;
+Refresh=Actualiser
+SelectLanguage=Sélectionnez la langue
+VerifPoint=Vérification
+VerifFound=Valeur trouvée
+OKQ=OK?
+OK=OK
+Failed=Échoué
+okmsg1=La configuration semble en ordre, vous pouvez continuer.
+nokmsg1=Un ou plusieurs paramètres ne semblent pas en ordre. Vous devez changer la configuration du serveur avant de continuer.
+
+checkPhpVersion=Version de PHP 5.3+
