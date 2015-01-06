@@ -47,7 +47,6 @@ return $b;
 }
 
 function createBookFromFile ($file, $info=null) {
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 global $booksdir;
 if ($info==null) $info = array();
 $bf = new BookFactory();

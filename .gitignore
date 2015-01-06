@@ -2,6 +2,7 @@
 *.tmp
 data/*
 !data/template
+!data/template.epub
 cache/*
 *test*
 out*

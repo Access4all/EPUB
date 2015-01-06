@@ -31,19 +31,14 @@ return array(array(new BookResource($info), $file));
 }
 
 function createBookFromFile ($bookshelf, &$info, $file) {
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $mediaType = $file->getMediaType();
 if (isset(BookFactory::$CLASSMAPPING[$mediaType])) {
 $factoryClass = BookFactory::$CLASSMAPPING[$mediaType];
 if (method_exists($factoryClass, 'createBookFromFile')) {
-echo "$factoryClass found, ";
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $factory = new $factoryClass();
 return $factory->createBookFromFile($bookshelf, $info, $file);
 }
 else if (method_exists($factoryClass, 'createResourcesFromFile')) {
-echo "$factoryClass found, ";
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $templateName = (isset($info['template'])? $info['template'] : 'template');
 $tplFile = "./data/$templateName.epub";
 $title = 'UntitledBook'.date('Y.m.d.H.i.s');
@@ -103,7 +98,6 @@ return array(array(new BookPage($info), new MemoryFile($info)));
 
 class EPUBBookFactory {
 function createBookFromFile ($bookshelf, &$info, $file) {
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 global $booksdir;
 $fs = new ZipFileSystem($file->getRealFileName());
 $b = new Book(array('fs'=>$fs));

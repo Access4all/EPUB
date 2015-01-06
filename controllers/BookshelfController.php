@@ -31,7 +31,7 @@ $b = Bookshelf::getBookById($id);
 if ($b && $bs->deleteBook($b)) $failed=false;
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'DeleteFailed' : 'DeleteSuccess');
-if (!DEBUG) header("Location:$root/bookshelf/index#alert");
+header("Location:$root/bookshelf/index#alert");
 exit();
 }
 
@@ -41,8 +41,6 @@ $failed = true;
 $bs = new Bookshelf();
 if (isset($_FILES['upload'])) {
 $tmp = './data/uploads/'.basename($_FILES['upload']['name']);
-echo "Move from {$_FILES['upload']['tmp_name']} to $tmp, ";
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 if (move_uploaded_file($_FILES['upload']['tmp_name'], $tmp)) {
 echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $book = $bs->createBookFromFile(new UploadedFile($tmp));
@@ -52,12 +50,12 @@ $bs->addBook($book);
 }
 @unlink($tmp);
 }
-else echo 'move_uploaded_file returned false<br />';
+else $_SESSION['alertmsg'] = getTranslation('uploadFailed3');
 }
-else echo 'No file were uplooaded<br />';
+else $_SESSION['alertmsg'] = getTranslation('uploadFailed3');
 $_SESSION['failed'] = $failed;
-$_SESSION['alertmsg'] = getTranslation($failed? 'UploadFailed' : 'UploadSuccess');
-if (!DEBUG) header("Location:$root/bookshelf/index#alert");
+if (!isset($_SESSION['alertmsg'])) $_SESSION['alertmsg'] = getTranslation($failed? 'UploadFailed' : 'UploadSuccess');
+header("Location:$root/bookshelf/index#alert");
 exit();
 }
 
@@ -70,17 +68,20 @@ $templateName = trim($_POST['template']);
 $failed = true;
 $bs = new Bookshelf();
 $tplFile = "./data/$templateName.epub";
+if (file_exists($tplFile)) {
 $book = $bs->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
-if ($book) {
+if ($book &&is_object($book)) {
 $bs->addBook($book);
 $book->extract();
 $book->updateBookSettings(array('title'=>$title));
 $failed=false;
 }
+}
+else $_SESSION['alertmsg'] = getTranslation('createNewFailed2');
 if ($failed) {
 $_SESSION['failed'] = $failed;
-$_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
-if (!DEBUG) header("Location:$root/bookshelf/index#alert");
+if (!isset($_SESSION['alertmsg'])) $_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
+header("Location:$root/bookshelf/index#alert");
 }
 else header("Location: $root/editor/{$book->name}/index/");
 exit();
