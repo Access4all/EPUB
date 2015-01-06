@@ -1,0 +1,25 @@
+﻿
+Bookshelf=Bibliothek
+Language=Sprache
+ChangeLanguage=Sprache ändern
+BookTitle=Titel
+BookAuthors=Autor(en)
+Template=Styling Vorlage
+Actions=Aktionen
+AddToBookshelf=Bücher hinzufügen
+CreateNewBook=Neues Buch erstellen
+UploadFile=Datei hochladen
+UploadFailed=Das Buch konnte nicht hochgeladen werden.
+UploadSuccess=Das Buch wurde erfolgreich zur Bibliothek hinzugefügt.
+DeleteFailed=Das Buch konnte nicht aus der Bibliothek entfernt werden.
+DeleteSuccess=Das Buch wurde erfolgreich aus der Bibliothek entfernt.
+CreateNewFailed=Das Buch konnte nicht erstellt werden.
+CreateNewSuccess=Ein neues Buch wurde erstellt.
+ExportFailed=Das Buch konnte nicht exportiert werden.
+Send=Absenden
+btnDelete=Löschen
+btnEdit=Bearbeiten
+btnView=Ansicht
+btnExport=Exportieren
+BtnCreate=Erstellen
+BtnAdd=Hinzufügen
