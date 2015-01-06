@@ -43,7 +43,7 @@ exit();
 }
 
 public function importTemplate ($bookName) {
-global $root;
+global $root, $booksdir;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 $file = null;
@@ -51,7 +51,7 @@ if (isset($_FILES['upload'])) {
 $f = &$_FILES['upload'];
 $ext = strrchr($f['name'], '.');
 $name = Misc::toValidName(basename($f['name'], $ext));
-$name = 'data/uploads/'.$name .$ext;
+$name = $booksdir.'/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'], $name);
 $file = new UploadedFile($name);
 }
@@ -141,7 +141,7 @@ $this->editorMain($left, $right, $bn, $pn);
 }
 
 private function editorMain ($leftViewMethod, $rightViewMethod, $bookName, $pageName) {
-global $root;
+global $root, $booksdir;
 if (!$leftViewMethod || !$rightViewMethod) exit404();
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
@@ -162,7 +162,7 @@ for($uIdx=$nFiles -1; $uIdx>=0; $uIdx--) {
 $f = &$_FILES['uploads'];
 $ext = strrchr($f['name'][$uIdx], '.');
 $name = Misc::toValidName(basename($f['name'][$uIdx], $ext));
-$name = 'data/uploads/'.$name .$ext;
+$name = $booksdir.'/uploads/'.$name .$ext;
 move_uploaded_file($f['tmp_name'][$uIdx], $name);
 $file = new UploadedFile($name);
 $info = array_merge($_POST, array()); // This makes a copy of the original $_POST array

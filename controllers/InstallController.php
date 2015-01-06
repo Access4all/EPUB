@@ -14,7 +14,7 @@ $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['RE
 header("Location:{$_SERVER['REQUEST_URI']}");
 exit();
 }
-$a = array('indexPage', 'checks');
+$a = array('indexPage', 'checks', 'cfgform');
 $f = $a[$step];
 $this->$f($iv);
 }
@@ -30,9 +30,37 @@ $iv->index();
 }
 
 function checks ($iv) {
+if (isset($_POST['next'])) {
+$_SESSION['istep']=2;
+header("Location:{$_SERVER['REQUEST_URI']}");
+exit();
+}
 $inst = new Installer();
 list($ok, $detail) = $inst->checkAll();
-$iv->main($ok, $detail);
+$iv->checksPage($ok, $detail);
+}
+
+function cfgform ($iv) {
+global $root;
+if ($_POST && count($_POST)>0) {
+$inst = new Installer();
+$result = $inst->install($_POST);
+if ($result===true){
+header("Location:$root/install/success");
+exit();
+}
+else {
+$_SESSION['installdata'] = $_POST;
+$_SESSION['alertmsg'] = $result;
+header("Location:{$_SERVER['REQUEST_URI']}");
+exit();
+}}
+$iv->configForm();
+}
+
+function success () {
+$iv = new InstallView();
+$iv->success();
 }
 
 }

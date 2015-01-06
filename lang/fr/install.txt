@@ -4,6 +4,7 @@ ChecksTitle=Vérification de la configuration
 Back=&larr; Précédent
 Next=Suivant &rarr;
 Refresh=Actualiser
+Reset=Réinitialiser
 SelectLanguage=Sélectionnez la langue
 VerifPoint=Vérification
 VerifFound=Valeur trouvée
@@ -15,3 +16,29 @@ nokmsg1=Un ou plusieurs paramètres ne semblent pas en ordre. Vous devez changer
 
 checkPhpVersion=Version de PHP 5.3+
 checkModRewrite=Module de réécriture d'URL apache (mod_rewrite)
+checkPDO=PHP Data Objects (PDO)
+checkPDOMySQL=Driver MySQL pour PDO
+checkDOM=Extension DOM
+checkUploadMaxFilesize=Taille maximale autorisée des fichiers uploadés (upload_max_filesize) &gt;=8M
+checkPostMaxSize=Taille maximale autorisée des donnés POST (post_max_size) &gt;=8M
+checkRGlobals=Register_globals=Off
+checkSafeMode=SafeMode=Off
+checkMagicQuotes=magic_quotes_gpc=Off
+checkDataWritable=Dossier data existant et autorisé en écriture
+checkConfigWritable=Fichiers que l'installeur va modifier (config.php et index.php) autorisés en écriture
+Database=Base de données
+Dbhost=Serveur
+Dbname=Nom de la base de données
+Dbuser=Nom d'utilisateur
+Dbpassword=Mot de passe
+Dbtableprefix=Préfixe à utiliser dans le nom des tables
+OtherConfig=Autres paramètres
+RootDir=Dossier racine de l'application
+Booksdir=Dossier de stockage des livres
+DbNotes=Vous devez créer la base de donnée avec le nom indiqué au préalable dans votre panel d'administration, elle n'est pas crée automatiquement pour des raisons de sécurité.<br />Pour une installation sur serveur local tel que WAMP ou XAMPP, en général, vous n'avez pas besoin de changer ces paramètres.
+O2Notes=En cas de doute, laisser ces paramètres tels quels; en général vous n'avez pas besoin de les modifier.
+InstallFinished=Installation terminée
+InstallSuccess=L'installation s'est terminée avec succès ! Vous pouvez dès à présent commencer à utiliser l'application.
+GoToBookshelf=Aller à la bibliothèque
+dbCreationFailed=La base de donnée n'a pas pu être crée; soit les identifiants ne sont pas corrects, soit il y a un problème d'autorisation
+folederCreationFailed=Les dossiers d'upload n'ont pas pu être créé; vérifier les droits d'accès aux fichiers

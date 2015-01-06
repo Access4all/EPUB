@@ -1,4 +1,5 @@
 <?php
+define('NODB',true); //tbr
 require_once('core/kernel.php');
 
 $controller = 'Bookshelf';
@@ -9,7 +10,7 @@ if (isset($_GET['controller']) && ctype_alnum($_GET['controller'])) $controller 
 if (isset($_GET['action']) && preg_match('/^[a-zA-Z_0-9]+$/', $_GET['action'])) $action = $_GET['action'];
 if (isset($_GET['param'])) $param = $_GET['param'];
 if (isset($_GET['param2'])) $param2 = $_GET['param2'];
-if (!INSTALLED) $controller = 'Install';
+$controller = 'Install'; //tbr
 try {
 $controller = ucfirst("{$controller}Controller");
 $instance = new $controller ();
