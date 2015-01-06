@@ -47,10 +47,12 @@ return $b;
 }
 
 function createBookFromFile ($file, $info=null) {
+echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 global $booksdir;
 if ($info==null) $info = array();
 $bf = new BookFactory();
 $b = $bf->createBookFromFile($this, $info, $file);
+echo 'Result, b=', (is_object($b)?1:0), '<br />';
 if (!$b || !$b->exists()) return false;
 return $b;
 }
