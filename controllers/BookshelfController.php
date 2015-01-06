@@ -31,7 +31,7 @@ $b = Bookshelf::getBookById($id);
 if ($b && $bs->deleteBook($b)) $failed=false;
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'DeleteFailed' : 'DeleteSuccess');
-header("Location:$root/bookshelf/index#alert");
+if (!DEBUG) header("Location:$root/bookshelf/index#alert");
 exit();
 }
 
@@ -51,7 +51,7 @@ $bs->addBook($book);
 }}
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'UploadFailed' : 'UploadSuccess');
-header("Location:$root/bookshelf/index#alert");
+if (!DEBUG) header("Location:$root/bookshelf/index#alert");
 exit();
 }
 
@@ -74,7 +74,7 @@ $failed=false;
 if ($failed) {
 $_SESSION['failed'] = $failed;
 $_SESSION['alertmsg'] = getTranslation($failed? 'CreateNewFailed' : 'CreateNewSuccess');
-header("Location:$root/bookshelf/index#alert");
+if (!DEBUG) header("Location:$root/bookshelf/index#alert");
 }
 else header("Location: $root/editor/{$book->name}/index/");
 exit();
