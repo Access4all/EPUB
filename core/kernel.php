@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once('core/config.php');
 
 error_reporting(E_ALL&~E_STRICT);
 function exceptionHandler ($e) {
