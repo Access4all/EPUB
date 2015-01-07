@@ -42,7 +42,6 @@ $bs = new Bookshelf();
 if (isset($_FILES['upload'])) {
 $tmp = $booksdir.'/uploads/'.basename($_FILES['upload']['name']);
 if (move_uploaded_file($_FILES['upload']['tmp_name'], $tmp)) {
-echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $book = $bs->createBookFromFile(new UploadedFile($tmp));
 if ($book) {
 $failed=false;
