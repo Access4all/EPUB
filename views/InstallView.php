@@ -103,6 +103,12 @@ echo <<<END
 <p><label for="dbtableprefix">{$t('Dbtableprefix')}:</label>
 <input type="text" id="dbtableprefix" name="dbtableprefix" value="{$_(DB_TABLE_PREFIX)}" /></p>
 <p>{$t('DbNotes')}</p>
+<h2>{$t('AdminAccount')}</h2>
+<p><label for="adminName">{$t('AdminName')}:</label>
+<input type="text" id="adminName" name="adminName" value="admin" /></p>
+<p><label for=2adminPwd">{$t('AdminPwd')}:</label>
+<input type="password" name="adminPwd" id="adminPwd" value="admin" /></p>
+<p>{$t('AdmNote')}</p>
 <h2>{$t('OtherConfig')}</h2>
 <p><label for="root">{$t('RootDir')}:</label>
 <input type="text" id=2root" name="root" value="$root" /></p>

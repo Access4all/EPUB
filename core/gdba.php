@@ -20,7 +20,7 @@ public function __construct ($a,$b=null,$c=null) { parent::__construct($a,$b,$c)
 public static function MySQL ($host, $dbname, $user, $pass) {
 return new GDBA("mysql:host=$host;dbname=$dbname", $user, $pass);
 }
-public static function SQLite ($filename) {
+public static function SQLite ($filename, $_1=null, $_2=null, $_3=null) {
 return new GDBA("sqlite:$filename");
 }
 

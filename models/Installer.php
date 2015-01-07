@@ -121,13 +121,7 @@ if ($root==$info['root']) $newroot = 'dirname($_SERVER[\'PHP_SELF\'])';
 else $newroot = '\''.addslashes($info['root']).'\'';
 $newbooksdir = addslashes($info['booksdir']);
 if (substr($newbooksdir, -1)=='/') $newbooksdir = substr($newbooksdir, 0, strlen($newbooksdir) -1);
-foreach(array('dbname', 'dbhost', 'dbuser', 'dbpassword', 'dbtableprefix') as $x) $$x = addslashes($info[$x]);
-$newlangs = array();
-foreach($langs as $name=>$value) {
-$value = addslashes($value);
-$newlangs[] = "'$name'=>'$value'";
-}
-$newlangs = 'array(' .implode(', ', $newlangs) .')';
+foreach(array('dbname', 'dbhost', 'dbuser', 'dbpassword', 'dbtableprefix', 'adminName', 'adminPwd') as $x) $$x = addslashes($info[$x]);
 if (!is_dir($booksdir) && !mkdir($booksdir)) return getTranslation('folderCreationFailed');
 if (!is_dir("$booksdir/uploads") && !mkdir("$booksdir/uploads")) return getTranslation('folderCreationFailed');
 try {
@@ -138,6 +132,11 @@ if (!$sql) return false;
 $sql = str_replace('%', $dbtableprefix, $sql);
 $sql = preg_split('/;$/m', $sql);
 foreach($sql as $x) $db->exec($x);
+$u = new User();
+$u->name = $adminName;
+$u->password = sha1("$adminName$adminPwd$adminName");
+$u->uflags = 3;
+$u->save();
 } catch (Exception $e) { 
 return getTranslation('dbCreationFailed');
 }
@@ -151,7 +150,6 @@ define('DB_NAME', '$dbname');
 define('DB_USER', '$dbuser');
 define('DB_PASSWORD', '$dbpassword');
 define('DB_TABLE_PREFIX', '$dbtableprefix');
-\$langs = $newlangs;
 \$root = $newroot;
 \$booksdir = '$newbooksdir';
 ?>

@@ -42,7 +42,7 @@ $db->exec('update '.DB_TABLE_PREFIX.'Books set title = %s, authors = %s where na
 
 function addBook ($b) {
 global $db;
-$db->exec('replace into '.DB_TABLE_PREFIX.'Books (name, title, authors, lastUpdate) values (%s, %s, %s, UNIX_TIMESTAMP())', $b->name, $b->getTitle(), $b->getAuthors() );
+$db->exec('replace into '.DB_TABLE_PREFIX.'Books (name, title, authors, lastUpdate) values (%s, %s, %s, %d)', $b->name, $b->getTitle(), $b->getAuthors(), time()  );
 return $b;
 }
 

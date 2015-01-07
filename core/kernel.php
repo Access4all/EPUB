@@ -1,5 +1,6 @@
 <?php
 require_once('core/config.php');
+define('STANDALONE', PHP_SAPI=='cli-server');
 
 error_reporting(E_ALL&~E_STRICT);
 function exceptionHandler ($e) {
@@ -53,14 +54,15 @@ if (($errno&error_reporting())) die('Exit due to error');
 }
 //set_error_handler('errorHandler', E_ALL &~ E_STRICT);
 
+$langs = array('en'=>'English', 'fr'=>utf8_encode('Français'), 'de'=>'Deutsch');
 $db = null; 
-try {
+//try {
 if (!defined('NODB')) {
 require_once('gdba.php');
 $db = GDBA::MySQL(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD);
 $db->exec('set names utf8');
 }
-} catch (Exception $e) { exit503(); }
+//} catch (Exception $e) { exit503(); }
 
 session_start();
 $lang = 'en';
