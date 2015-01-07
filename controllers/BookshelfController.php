@@ -36,11 +36,11 @@ exit();
 }
 
 function upload () {
-global $root;
+global $root, $booksdir;
 $failed = true;
 $bs = new Bookshelf();
 if (isset($_FILES['upload'])) {
-$tmp = './data/uploads/'.basename($_FILES['upload']['name']);
+$tmp = $booksdir.'/uploads/'.basename($_FILES['upload']['name']);
 if (move_uploaded_file($_FILES['upload']['tmp_name'], $tmp)) {
 echo __CLASS__, '::', __FUNCTION__, ': ', basename(__FILE__), ':', __LINE__, '<br />';
 $book = $bs->createBookFromFile(new UploadedFile($tmp));

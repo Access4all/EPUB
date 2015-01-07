@@ -55,9 +55,11 @@ if (($errno&error_reporting())) die('Exit due to error');
 
 $db = null; 
 try {
-if (!defined('NODB')) require_once('gdba.php');
+if (!defined('NODB')) {
+require_once('gdba.php');
 $db = GDBA::MySQL(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD);
 $db->exec('set names utf8');
+}
 } catch (Exception $e) { exit503(); }
 
 session_start();
