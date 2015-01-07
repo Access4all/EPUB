@@ -1,0 +1,17 @@
+﻿
+IntroText=Einleitungstext
+GapText=Lückentext
+MarkGap=Lücke markieren
+GapList=Liste der Vorschläge
+GapListTipp=Tipp: Wenn Sie diesen Bereich leer lassen, wird automatisch eine neue Lücke erstellt. Basierend auf bereits bestehenden Lücken.
+SelectAGap=          
+FillTheGaps=Lückentext
+FTGType=Vordefinierte Vorschläge als Ausklappliste.
+FTGType_simple=Manuelle Texteingabe
+FTGType_indicative=Manuelle Texteingabe mit Vorschlägen
+FTGType_strict=Vordefinierte Liste mit Hinweisen
+FTGTypeDesc_simple=Es werden keine Lösungsvorschläge für die Lücken vorgegeben. Die Antworten sind offen.
+FTGTypeDesc_indicative=Die Antworten sind grundsätzlich offen. Zusätzlich kann eine Liste von Hinweisen erstellt werden. Diese hinweise sollten bei der Beantwortung nicht direkt verwendet. Die Hinweise sollen genutzt werden um die korrekten anwroten abzuleiten und manuell ein zu geben. <br />Zum Beispiel können Verben oder Adjektive in ihren Grundformen angegeben werden. Diese sollten dann in der korrekten Form manuell eingegeben werden.
+FTGTypeDesc_strict=Eine vordefinierte Vorschlagsliste ist gegeben. Alle Lücken werden mit den Antwortemöglichkeiten aus dieser Liste ausgefüllt. Manuelle Eingaben sind nicht möglich.
+Es bleibt offen, ob jeder Vorschlag nur einmal oder mehrere Male verwendet werden darf.
+QuizResult=1%/2%*100 "%" korrekt. <br /> Sie haben auf %1 von %2 Fragen richtig geantwortet.

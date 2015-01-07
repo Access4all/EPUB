@@ -1,0 +1,14 @@
+IntroText=Introductory Text
+Question=Question
+Answer=Answer
+True=True
+False=False
+AddColumn=Add column
+RemoveColumn=Remove column
+TFQLong=True/false questionnaire
+QuizType=Quiz type
+QuizType_simple=Simple
+QuizTypeDesc_simple=In a simple quiz, there is always exactly a single correct answer for each question.
+QuizType_complex=Complex
+QuizTypeDesc_complex=In a complex quiz, each question can allow any number of correct answers, possibly including none or all.
+QuizResult=You answered correctly to %1 questions out of %2.

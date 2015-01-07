@@ -1,0 +1,33 @@
+﻿
+DirectUpload=Direktes Hochladen
+FileName=Dateipfad
+PageIdentifier=Kennzeichnung
+PageTitle=Seitentitel
+CbLinear=Verberge diese Seite vom Inhaltsverzeichnis und von der seriellen Navigation.
+PageType=Art der Seite
+PageType_document=Standard dokument
+PageTypeDesc_document=Ein Standard Dokument welches text, Bilder, und Multimedia Objekte enthält. Benutzen Sie diese Vorlage, um den aktuellen Inhalt Ihres Kurses oder presentation zu schreiben.
+PageType_freequestions=Einfacher Fragebogen
+PageTypeDesc_freequestions=Eine Serie von Fragen bei denen willkürlicher freier Text als Antwort erwartet wird. Benutzen Sie diese für offene Fragen.
+PageType_truefalse=Auswertungsspiel
+PageTypeDesc_truefalse=Eine Serie von Fragen bei denen jede einzelne immer die gleiche Gruppe von 2-5 Antworten erlaubt. Sie können diese benutzen um Fragen zu erstellen bei denen richtig/falsch Antworten erwartet werden.
+PageType_qcm=Mehrfachauswahl Spiel
+PageTypeDesc_qcm=Eine Serie von Fragen bei denen jede einzelne eine vordefinierte Gruppe von möglichen Antworten ausgewählt werden kann. 
+Einfache Mehrfachauswahl Spiele haben immer eine einzelne korrekte Antwort oder geeignete Auswahl für jede Frage, 
+während fortgeschrittenere Spiele erlauben eine grössere Anzahl korrekter Antworten (including alle oder keine).
+PageType_fillgaps=Fülle die Lücken aus.
+PageTypeDesc_fillgaps=Eine Aufgabenstellung bei der ein Lückentextausgefüllt werden soll, mit 1 oder mehreren Wörter. Sie können optional eine festgelegte Auswahlliste definieren, eine hinweisende Liste mit Vorschlägen angeben oder keine Vorschläge zur Verfügung stellen.PageType_matching=Matching
+PageTypeDesc_matching=A type of activity where you have to map items from a first list to items contained in a second list. Matches are always 1:1 but there could be additional unused items that are unmatched.
+PageType_ordering=Ordering
+PageTypeDesc_ordering=An activity where you have to arrange a serie of items so that it appears in the correct order.
+AddFiles=Import files
+Language=Language
+GeneralActivity=Activity
+SubmitMode=Submission mode
+SubmitMode_local=Local self-checking
+SubmitMode_file=Download file
+SubmitMode_url=Submit to URL
+SubmitModeDesc_local=When the user submits the completed activity, answers are immediately checked, a score is calculated and corrections are shown. As answers are present inside the book, this mode is especially relevant for self-assessment exercises, but not at all for exams.
+SubmitModeDesc_file=When the user submits the completed activity, he's invited to download a file containing his answers in CSV format, which he can send for example by e-mail or using an USB stick to his tutor. This is relevant for exams that have to be manually checked, or if network connection isn't available at exam time. Answers aren't present inside the book.
+SubmitModeDesc_url=When the user submits his completed activity, his answers are sent to an online service at the specified URL. Use this for exams if you have the opportunity to checd them automatically, or if you want the correction be made by systems like moodle. Look at the documentation to see what kind of service you might use and/or what is the format of the data sent. Answers aren't present inside the book.
+SubmitURL=Submission URL
