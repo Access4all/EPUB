@@ -5,6 +5,7 @@ loadTranslation('install');
 class InstallController {
 
 function index ($name) {
+if (INSTALLED) return;
 $iv = new InstallView();
 $step = @floor($_SESSION['istep']);
 if (isset($_GET['prev'])) {

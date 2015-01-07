@@ -1,1 +1,44 @@
+﻿
 InstallTitle=Installation
+ChecksTitle=Configuration check
+Back=&larr; Back
+Next=Next &rarr;
+Refresh=Refresh
+Reset=Reset
+SelectLanguage=Select language
+VerifPoint=Check
+VerifFound=Found
+OKQ=OK?
+OK=OK
+Failed=Failed
+okmsg1=Your configuration seems to be in order, you can continue
+nokmsg1=One or more parameters seems not to be in order. You must update your configuration before going further.
+
+checkPhpVersion=PHP Version 5.3+
+checkModRewrite=URL rewriting apache module (mod_rewrite)
+checkPDO=PHP Data Objects (PDO)
+checkPDOMySQL=Driver PDO for MySQL
+checkDOM=Extension DOM
+checkUploadMaxFilesize=Maximum allowed upload size (upload_max_filesize) &gt;=8M
+checkPostMaxSize=Maximal POST data size (post_max_size) &gt;=8M
+checkRGlobals=Register_globals=Off
+checkSafeMode=SafeMode=Off
+checkMagicQuotes=magic_quotes_gpc=Off
+checkDataWritable=Existing and writable data directory
+checkConfigWritable=Configuration file (config.php) writable
+Database=Database
+Dbhost=Server
+Dbname=Database name
+Dbuser=Username
+Dbpassword=Password
+Dbtableprefix=Prefix to use in table names
+OtherConfig=Other settings
+RootDir=Root directory of the application
+Booksdir=Book storing directory
+DbNotes=You must create the database with the given name above yourself using your administration panel, it isn't created automatically due to security restrictions.<br />For a local server installation e.g. WAMP, XAMPP, etc. except database name, you normally don't have to change these parameters.
+O2Notes=In case of doubt, leave these parameters as they are. In general, you don't ahve to change them.
+InstallFinished=Installation finished
+InstallSuccess=The installation has successfully been finished ! You can now start using the application.
+GoToBookshelf=Go to your bookshelf
+dbCreationFailed=The database couldn't be created. Wheither credencials are incorrect, or there is an authorization problem.
+folederCreationFailed=Upload directories couldn't have been created. Please check file access rights.
