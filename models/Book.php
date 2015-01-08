@@ -5,6 +5,14 @@ define('NS_XHTML', 'http://www.w3.org/1999/xhtml');
 define('NS_EPUB', 'http://www.idpf.org/2007/ops');
 define('NS_DC', 'http://purl.org/dc/elements/1.1/');
 
+// Book user flags
+define('BF_READ', 1);
+define('BF_WRITE', 2);
+define('BF_ADMIN', 4);
+
+// Book flags
+define('BF_TEMPLATE', 1);
+
 function zipaddDir ($z, $archivePath, $dir) {
 foreach(glob("$dir*") as $path) {
 $file = basename($path);
@@ -18,7 +26,10 @@ class Book{
 
 static function getWorkingBook ($bookName) {
 if (isset($_SESSION['curBookName'], $_SESSION['curBook']) && $_SESSION['curBookName']==$bookName) $b = $_SESSION['curBook'];
-else  $b = new Book(array('name'=>$bookName));
+else  {
+$bs = Bookshelf::getInstance();
+$b = $bs->getBookByName($bookName);
+}
 $_SESSION['curBook'] = $b;
 $_SESSION['curBookName'] = $bookName;
 return $b;
@@ -233,6 +244,10 @@ else $this->removeOption("defaultDirByType:$type");
 if (isset($info['cssMasterFile'])) {
 if (preg_match('/\.css/i', $info['cssMasterFile'])) $this->setOption('cssMasterFile', $info['cssMasterFile']);
 else $this->removeOption('cssMasterFile');
+}
+if (isset($info['share'], $info['shareNew']) && ($this->eflags&BF_ADMIN)) {
+$bs = Bookshelf::getInstance();
+$bs->updateBookRightsTable($this->id, $info);
 }
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
@@ -703,6 +718,12 @@ $it->fileName = $newFileName;
 $this->saveOpf();
 //todo: update all files where the file is referenced
 return true;
+}
+
+
+public function getRightsTable () {
+$bs = Bookshelf::getInstance();
+return $bs->getBookRightsTable($this->id);
 }
 
 

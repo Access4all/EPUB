@@ -1,5 +1,6 @@
 <?php
 require_once('core/kernel.php');
+checkLogged();
 loadTranslation('bookshelf');
 
 class BookshelfController {

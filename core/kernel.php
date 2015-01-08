@@ -65,8 +65,10 @@ $db->exec('set names utf8');
 //} catch (Exception $e) { exit503(); }
 
 session_start();
+$user = isset($_SESSION['user'])? $_SESSION['user'] : null;
 $lang = 'en';
-if (isset($_GET['language'])) $lang = $_GET['language'];
+if (isset($_POST['language'])) $lang = $_POST['language'];
+else if (isset($_GET['language'])) $lang = $_GET['language'];
 else if (isset($_SESSION['language'])) $lang = $_SESSION['language'];
 else if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -75,6 +77,18 @@ if (!array_key_exists($lang, $langs)) $lang='en';
 $_SESSION['language'] = $lang;
 ob_start();
 if ($root=='/') $root='';
+
+function checkLogged () {
+global $user;
+if (!$user || !$user->isEnabled() ) {
+$lp = LoginProvider::getInstance();
+$user = $lp->getDefaultUser();
+if (!$user) {
+$url = $lp->getLoginFormURL();
+if (!$url) exit500();
+header("Location:$url");
+exit();
+}}}
 
 function parse_ini_file_2 ($filename) {
 $t = array();

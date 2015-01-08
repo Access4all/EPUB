@@ -1,0 +1,8 @@
+
+LoginTitle=Connexion
+Login=Nom d'utilisateur
+Password=Mot de passe
+Language=Langue
+LoginBtn=Connexion
+PleaseLogin=Veuillez vous identifier:
+InvalidLogin=Vos identifiants sont incorrects.

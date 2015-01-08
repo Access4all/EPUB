@@ -1,0 +1,8 @@
+
+LoginTitle=Sign in
+Login=Username
+Password=Password
+Language=Language
+LoginBtn=Sign in
+PleaseLogin=Please sign in below:
+InvalidLogin=Your credencials are incorrect.

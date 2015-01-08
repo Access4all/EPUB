@@ -56,6 +56,47 @@ echo <<<END
 </select>
 </p>
 </div><!--partTOC-->
+END;
+if (@$b->eflags&BF_ADMIN) {
+echo <<<END
+<h2 data-expands="partUsers">{$t('SharedEdition')}</h2>
+<div id="partUsers">
+<table id="rightstable">
+<thead><tr>
+<th id="lblUser" scope="col">{$t('User')}</th>
+<th id="lblRead" scope="col">{$t('RReading')}</th>
+<th id="lblWrite" scope="col">{$t('RWrite')}</th>
+<th id="lblAdmin" scope="col">{$t('RAdmin')}</th>
+</tr></thead><tbody>
+END;
+foreach($b->getRightsTable() as $entry) {
+$uid = $entry->id;
+$rsel = ($entry->flags&BF_READ? 'checked="checked"  ':'');
+$wsel = ($entry->flags&BF_WRITE? 'checked="checked" ':'');
+$asel = ($entry->flags&BF_ADMIN? 'checked="checked" ':'');
+echo <<<END
+<tr>
+<th scope="row"><input type="hidden" name="share[$uid][]" value="0" />
+<span id="lblUsr$uid">{$entry->displayName}</span></th>
+<td><input type="checkbox" name="share[$uid][]" value="1" aria-labelledby="lblUsr$uid lblRead" title="{$entry->displayName} {$t('RReading')}" $rsel/></td>
+<td><input type="checkbox" name="share[$uid][]" value="2" aria-labelledby="lblUsr$uid lblWrite" title="{$entry->displayName} {$t('RWrite')}" $wsel/></td>
+<td><input type="checkbox" name="share[$uid][]" value="4" aria-labelledby="lblUsr$uid lblAdmin" title="{$entry->displayName} {$t('RAdmin')}" $asel/></td>
+</tr>
+END;
+}
+echo <<<END
+<tr>
+<th scope="row"><input type="text" name="shareNew[0][user]" aria-labelledby="lblUser" title="{$t('User')}" /></th>
+<td><input type="checkbox" name="shareNew[0][read]" value="1" aria-labelledby="lblRead" /></td>
+<td><input type="checkbox" name="shareNew[0][write]" value="2" aria-labelledby="lblWrite" /></td>
+<td><input type="checkbox" name="shareNew[0][admin]" value="4" aria-labelledby="lblAdmin" /></td>
+</tr>
+</tbody></table>
+<script type="text/javascript" src="$root/js/editor-bookoptions-rightstable.js"></script>
+</div><!--partUsers-->
+END;
+}
+echo <<<END
 <p>
 <button type="submit">{$t('Save')}</button>
 <button type="reset">{$t('Reset')}</button>	

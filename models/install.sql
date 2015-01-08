@@ -14,6 +14,7 @@ primary key(id) );
 create table %Users (
 id int unsigned not null auto_increment,
 name varchar(32) not null unique,
+displayName varchar(255) not null,
 password char(40) not null,
 uflags int unsigned not null default 1,
 primary key(id) );

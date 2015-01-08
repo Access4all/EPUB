@@ -98,7 +98,8 @@ return array(array(new BookPage($info), new MemoryFile($info)));
 
 class EPUBBookFactory {
 function createBookFromFile ($bookshelf, &$info, $file) {
-global $booksdir;
+global $booksdir, $user;
+$uprefix = ($user? $user->name : '');
 $fs = new ZipFileSystem($file->getRealFileName());
 $b = new Book(array('fs'=>$fs));
 $title = @$info['title'];
@@ -108,7 +109,7 @@ $title = $b->getItemByFileName($b->getFirstNonTOCPageFileName() ) ->getTitle();
 if ($title=='Untitled document') $title=null;
 }
 if (!$title) $title = substr($file->getRealFileName(), 0, -4);
-$name = Misc::toValidName($title);
+$name = Misc::toValidName("{$uprefix}__{$title}");
 $epubFile = "$booksdir/$name.epub";
 $info['title'] = $title;
 copy($file->getRealFileName(), $epubFile);
