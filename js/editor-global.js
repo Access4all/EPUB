@@ -193,7 +193,6 @@ a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;
 li.insertBefore(a, li.firstChild);
-o.style.display='none';
 });
 e.$('.directory').each(function(o){
 o.ondragenter = FileTree_folderLink_dragEnter;
@@ -274,8 +273,8 @@ window.folderLinkTimer=null;
 
 function FileTree_expandLinkClick () {
 var ul = this.parentNode.querySelector('ul,ol');
-ul.style.display = (ul.style.display=='block'? 'none' : 'block');
-this.firstChild.nodeValue = (ul.style.display=='block'? '-' : '+');
+var collapsed = ul.toggleClass('collapsed');
+this.firstChild.nodeValue = (!collapsed? '-' : '+');
 }
 
 function FileTree_CtxMenuItemList_file (items, link) {
@@ -425,8 +424,10 @@ return true;
 function Accordion_init (toggleContainer) {
 var sel = document.createRange();
 var regionId = toggleContainer.getAttribute('data-expands');
+var region = document.getElementById(regionId);
+var expanded = !region||!region.hasClass('collapsed');
 sel.selectNodeContents(toggleContainer);
-var toggle = document.createElement2('a', {href:'#', 'aria-expanded':true, role:'button'});
+var toggle = document.createElement2('a', {href:'#', 'aria-expanded':expanded, role:'button'});
 sel.surroundContents(toggle);
 toggle.onclick = Accordion_click.bind(toggle, regionId);
 }
@@ -434,8 +435,8 @@ toggle.onclick = Accordion_click.bind(toggle, regionId);
 function Accordion_click (regionId) {
 var region = document.getElementById(regionId);
 if (!region) return false;
-region.style.display = (region.style.display=='none'? 'block' : 'none');
-this.setAttribute('aria-expanded', region.style.display!='none');
+var collapsed = region.toggleClass('collapsed');
+this.setAttribute('aria-expanded', !collapsed);
 return false;
 }
 

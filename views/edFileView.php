@@ -20,7 +20,7 @@ natsort($dirs);
 natsort($files);
 $a = array_merge($dirs,$files);
 if ($first) echo '<ul class="fileTree" data-ctxtype="file">';
-else echo '<ul>';
+else echo '<ul class="collapsed">';
 foreach ($a as $fn) {
 if (is_dir("$base/$dir$fn")) {
 echo "<li><span class=\"directory\">$fn</span>";

@@ -98,6 +98,8 @@ margin-top: -2.4em;
 border-bottom: 3px solid #aaa;
 }
 
+.collapsed { display: none; }
+
 .edWrapper {
 position: relative;
 left: 0px;

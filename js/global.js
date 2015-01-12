@@ -116,6 +116,11 @@ args.shift();
 args.shift();
 }}
 
+HTMLElement.prototype.hasClass = function (className) {
+var t = this.className.toString().split(' ');
+return t.indexOf(className)>=0;
+}
+
 HTMLElement.prototype.addClass = function(name) {
 var t = this.className.toString().split(' ');
 if (t.indexOf(name)>=0) return;
@@ -131,6 +136,13 @@ if (i<0) return;
 t.splice(i,1);
 var s = t.join(' ');
 this.className = s;
+}
+
+HTMLElement.prototype.toggleClass = function (className) {
+var b = this.hasClass(className);
+if (b) this.removeClass(className);
+else this.addClass(className);
+return !b;
 }
 
 HTMLElement.prototype.hide = function() {
