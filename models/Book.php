@@ -30,6 +30,7 @@ else  {
 $bs = Bookshelf::getInstance();
 $b = $bs->getBookByName($bookName);
 }
+if (isset($b->opfLastChange) && $b->isExtracted()) $b->checkOpfCache();
 $_SESSION['curBook'] = $b;
 $_SESSION['curBookName'] = $bookName;
 return $b;
@@ -49,6 +50,11 @@ if (@$this->fs) $this->fs->close();
 $this->fs = null;
 return array_keys(get_object_vars($this));
 }
+
+function canRead () { return $this->eflags&BF_READ; }
+function canWrite () { return $this->eflags&BF_WRITE; }
+function canAdministrate () { return $this->eflags&BF_ADMIN; }
+
 
 function getFileSystem () {
 if (!@$this->fs) {
@@ -134,8 +140,18 @@ $this->opfFileName = urldecode($rootfile->getAttribute('full-path'));
 return $this->opfFileName;
 }
 
+private function checkOpfCache () {
+if (isset($this->opfLastChange) && $this->opfLastChange < $this->getFileSystem() ->getLastModified( $this->getOpfFileName()) ) {
+$this->readOpf();
+}
+if (isset($this->boLastChange) && $this->boLastChange < $this->getFileSystem() ->getLastModified($this->getBOFileName()) ) {
+$this->readBO();
+}}
+
 private function readOpf () {
+$this->opfLastChange = time();
 $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($this->getOpfFileName()));
+
 
 // read book metadata
 $metas = $opf->getFirstElementByTagName('metadata');
@@ -207,6 +223,7 @@ unset($this->options[$name]);
 }
 
 private function readBO () {
+$this->boLastChange = time();
 $this->options = array();
 foreach(@preg_split('/\r\n|\n|\r/', $this->getFileSystem()->getFromName($this->getBOFileName())) as $line) {
 if (preg_match('/^\s*([-a-zA-Z_0-9:]+)\s*=\s*(.*?)\s*$/', $line, $m)) $this->options[$m[1]]=$m[2];
@@ -245,7 +262,7 @@ if (isset($info['cssMasterFile'])) {
 if (preg_match('/\.css/i', $info['cssMasterFile'])) $this->setOption('cssMasterFile', $info['cssMasterFile']);
 else $this->removeOption('cssMasterFile');
 }
-if (isset($info['share'], $info['shareNew']) && ($this->eflags&BF_ADMIN)) {
+if (isset($info['share'], $info['shareNew']) && $this->canAdministrate() ) {
 $bs = Bookshelf::getInstance();
 $bs->updateBookRightsTable($this->id, $info);
 }
@@ -259,6 +276,7 @@ $this->saveBO();
 }
 
 function saveOpf () {
+$this->opfLastChange = time();
 $opfFile = $this->getOpfFileName();
 $opf = DOM::loadXMLString($this->getFileSystem()->getFromName($opfFile));
 if ($opf->documentElement->getAttribute('version')!='3.0') $opf->documentElement->setAttribute('version', '3.0');
@@ -304,6 +322,7 @@ $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() )
 
 function saveBO () {
 if (!@$this->options) return;
+$this->boLastChange = time();
 $optar = array();
 ksort($this->options);
 foreach($this->options as $key=>$value) {

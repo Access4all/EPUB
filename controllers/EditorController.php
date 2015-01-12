@@ -12,6 +12,7 @@ $this->editorMain('sv', 'editor', $bookName, $pageName);
 public function save ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
 $p = $b->getItemByFileName($pageName);
 if (!$p) exit404();
 if (empty($_POST['content'])) exit500();
@@ -24,6 +25,7 @@ die('saved');
 public function saveTemplate ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
 if (empty($_POST['content'])) exit500();
 $b->updateCssTemplate(array('main'=>$_POST['content']));
 die('saved');
@@ -37,6 +39,7 @@ public function getTemplate ($bookName, $pageName=null, $forceDownload=false) {
 global $root;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 header('Content-type: text/css');
 if ($forceDownload) header('Content-Disposition: attachment; filename="template.css"');
 $b->directEchoFile('META-INF/template.css');
@@ -47,6 +50,7 @@ public function importTemplate ($bookName) {
 global $root, $booksdir;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
 $file = null;
 if (isset($_FILES['upload'])) {
 $f = &$_FILES['upload'];
@@ -65,6 +69,7 @@ public function preview ($bookName, $pageName) {
 global $root;
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 $p = $b->getItemByFileName($pageName);
 if (!$p) exit404();
 sleep(2); // Wait a bit so that AJAX save has time to finish
@@ -82,6 +87,7 @@ public function deleteFile ($bookName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
 if (empty($_GET['file'])) exit404();
+if (!$b->canWrite()) exit403();
 $item = $b->getItemByFileName( $_GET['file'] );
 if (!$item) exit404();
 $b->deleteFile($item);
@@ -115,6 +121,7 @@ $this->moveOperation($bookName, __FUNCTION__);
 public function renameFile ($bookName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
 if (empty($_GET['src']) || empty($_GET['ref'])) die('die empty params');
 $moveItem = $b->getItemByFileName( $_GET['src'] );
 $newName = $_GET['ref'];
@@ -127,6 +134,7 @@ die('OK');
 private function moveOperation ($bookName, $actionName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
 if (empty($_GET['src']) || empty($_GET['ref'])) exit404();
 $moveItem = $b->getItemByFileName( $_GET['src'] );
 $refItem = $b->getItemByFileName( $_GET['ref'] );
@@ -146,6 +154,7 @@ global $root, $booksdir;
 if (!$leftViewMethod || !$rightViewMethod) exit404();
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 $p = $b->getItemByFileName($pageName);
 if (isset($_POST['newpage'], $_POST['fileName'], $_POST['id'], $_POST['title'], $_POST['type'])) {
 $p = $b->addNewEmptyPage($_POST, $p);

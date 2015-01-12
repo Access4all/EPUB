@@ -12,6 +12,7 @@ $this->view($name);
 function export ($bookName, $format) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 @list($contentType, $fileName) = $b->export($format);
 if (!$fileName || !$contentType) {
 global $root;
@@ -31,6 +32,7 @@ exit();
 function view ($bookName, $fileName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 if (!$fileName) {
 $fileName = $b->getNavFileName();
 if (!$fileName) $fileName =  $b->getFirstPageFileName();
@@ -59,6 +61,7 @@ exit();
 function onepage ($bookName, $optName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->exists()) exit404();
+if (!$b->canRead()) exit403();
 $doc = $b->generateSinglePageDocument($optName);
 header("Content-Type: text/html; charset=utf-8");
 echo $doc->saveXML();

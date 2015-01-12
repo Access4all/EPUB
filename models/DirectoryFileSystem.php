@@ -10,6 +10,10 @@ function getFromName ($name) {
 return @file_get_contents($this->dir .$name);
 }
 
+function getLastModified ($name) {
+return @filemtime($this->dir .$name);
+}
+
 function addFromFile ($name, $orig) {
 $fn = $this->dir .$name;
 if (false === @copy($orig, $fn)) {

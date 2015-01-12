@@ -1,4 +1,4 @@
-
+﻿
 LoginTitle=Connexion
 Login=Nom d'utilisateur
 Password=Mot de passe
@@ -6,3 +6,20 @@ Language=Langue
 LoginBtn=Connexion
 PleaseLogin=Veuillez vous identifier:
 InvalidLogin=Vos identifiants sont incorrects.
+UserProfileTitle=Édition du profil utilisateur
+UpdPrfBtn=Mettre à jour
+CurrentPassword=Mot de passe actuel
+NewPassword=Nouveau mot de passe (laissez vide pour conserver l'actuel)
+NewPassword2=Confirmation du nouveau mot de passe
+DisplayName=Nom complet
+DisplayNameHelp=Le nom complet est le nom que les autres utilisateurs du système voient; il peut être différent du nom d'utilisateur que vous utilisez pour vous identifier.
+WrongPassword=Mot de passe incorrect.
+PasswordDifferent=Les nouveaux mots de passe ne correspondent pas.
+UserChangedOK=Mise à jour effectuée.
+AddNewUser=Ajouter un nouvel utilisateur
+UsersList=Liste des utilisateurs
+Administrator=Administrateur
+AddBtn=Ajouter
+AdminAUTitle=Gestion des utilisateurs
+UserAdded=L'utilisateur %1 a été ajouté avec le mot de passe %2.
+UserAddedE=L'utilisateur n'a pas pu être ajouté; un autre utilisateur existe déjà avec ce nom ou bien vous na'vez pas les permissions nécessaires pour effectuer cette action.
