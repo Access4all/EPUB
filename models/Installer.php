@@ -34,9 +34,14 @@ return PHP_VERSION_ID>=50300;
 }
 
 function checkModRewrite (&$msg) {
+// Tipp taken from http://christian.roy.name/blog/detecting-modrewrite-using-php
+if (function_exists('apache_get_modules')) {
 $mods = apache_get_modules();
 return in_array('mod_rewrite', $mods);
-}
+} 
+else {
+return getenv('HTTP_MOD_REWRITE') == 'On';
+}}
 
 function checkDOM () {
 $msg = phpversion('DOM');
@@ -124,22 +129,27 @@ if (substr($newbooksdir, -1)=='/') $newbooksdir = substr($newbooksdir, 0, strlen
 foreach(array('dbname', 'dbhost', 'dbuser', 'dbpassword', 'dbtableprefix', 'adminName', 'adminPwd') as $x) $$x = addslashes($info[$x]);
 if (!is_dir($booksdir) && !mkdir($booksdir)) return getTranslation('folderCreationFailed');
 if (!is_dir("$booksdir/uploads") && !mkdir("$booksdir/uploads")) return getTranslation('folderCreationFailed');
-try {
+//try {
 require_once('core/gdba.php');
 $db = GDBA::MySQL($dbhost, $dbname, $dbuser, $dbpassword);
 $sql = @file_get_contents('models/install.sql');
 if (!$sql) return false;
 $sql = str_replace('%', $dbtableprefix, $sql);
 $sql = preg_split('/;$/m', $sql);
-foreach($sql as $x) $db->exec($x);
+foreach($sql as $x) {
+$x = trim($x);
+if ($x) $db->exec($x);
+}
+$lp = LoginProvider::getInstance();
 $u = new User();
 $u->name = $adminName;
+$u->displayName = $adminName;
 $u->password = sha1("$adminName$adminPwd$adminName");
 $u->uflags = 3;
-$u->save();
-} catch (Exception $e) { 
-return getTranslation('dbCreationFailed');
-}
+$lp->saveUser($u);
+//} catch (Exception $e) { 
+//return getTranslation('dbCreationFailed');
+//}
 @file_put_contents('core/config.php', <<<END
 <?php
 define('DEBUG', false);
