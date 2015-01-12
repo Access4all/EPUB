@@ -98,6 +98,8 @@ margin-top: -2.4em;
 border-bottom: 3px solid #aaa;
 }
 
+.fileTree ul { margin-left: 4em; }
+
 .collapsed { display: none; }
 
 .edWrapper {
