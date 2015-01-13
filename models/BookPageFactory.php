@@ -1,26 +1,35 @@
 <?php
+loadTranslation('editor');
+
 class BookPageFactory {
 
 function createEmptyPage ($b, &$info) {
 switch($info['type']){
 case 'qcm':
 $info['className'] = 'BookPageMCQ';
+$info['introText'] = 'autoIntro2';
 break;
 case 'fillgaps':
 $info['className'] = 'BookPageFillGaps';
+$info['introText'] = 'autoIntro2';
 break;
 case 'truefalse':
 $info['className'] = 'BookPageTrueFalse';
+$info['introText'] = 'autoIntro2';
 break;
 case 'matching':
 $info['className'] = 'BookPageMatching';
+$info['introText'] = 'autoIntro2';
 break;
 case 'ordering':
 $info['className'] = 'BookPageSequenceOrdering';
+$info['introText'] = 'autoIntro2';
 break;
 case 'document':
+$info['introText'] = 'autoIntro1';
 break;
 }
+$info['introText'] = getTranslation($info['introText']);
 return <<<END
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML>
@@ -28,7 +37,8 @@ return <<<END
 <head>
 <title>{$info['title']}</title>
 </head><body>
-<p>&nbsp;</p>
+<h2>{$info['title']}</h2>
+<p>{$info['introText']}</p>
 </body></html>
 END;
 }

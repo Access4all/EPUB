@@ -7,7 +7,9 @@ function getAdditionalPageOptions() { return 'Matching'; }
 function createDataDoc ($doc) {
 loadTranslation('editor-matching');
 $quiz = $doc->appendElement('listmatching', array('submission'=>'local'));
-$quiz->appendElement('intro');
+$intro = $quiz->appendElement('intro');
+$intro->appendElement('h2')->appendText($this->title);
+$intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
 for ($i=0; $i<2; $i++) {
 $lst = $quiz->appendElement('list');
 $lst->appendElement('h')->appendText(getTranslation("hList$i"));

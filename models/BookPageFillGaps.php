@@ -6,7 +6,9 @@ function getAdditionalPageOptions() { return 'FillGaps'; }
 
 function createDataDoc ($doc) {
 $ftg = $doc->appendElement('fillthegaps', array('type'=>'simple', 'submission'=>'local'));
-$ftg->appendElement('intro');
+$intro = $ftg->appendElement('intro');
+$intro->appendElement('h2')->appendText($this->title);
+$intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
 $ftg->appendElement('gaptext');
 }
 

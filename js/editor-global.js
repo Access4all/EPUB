@@ -363,6 +363,7 @@ else alert('No copy method');
 }
 
 function FormTrackChanges_init (f) {
+f.changed = false;
 f.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=true;
 });//each command button
@@ -377,7 +378,7 @@ if (window.location.host!='localhost')
 $('a[href]').each(function(a){
 var oldonclick  = a.onclick;
 a.onclick = function(e){
-if (f.onchange) return;
+if (!f.changed) return true;
 MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
 if (btnIdx==0) f.virtualSubmit();
 if (oldonclick) oldonclick.call(a,e);
@@ -404,6 +405,7 @@ ajax(this.method, url, params, function(re){if(re=='OK') FormTrackChanges_init(f
 
 function FormTrackChanges_changed () {
 this.onchange=null;
+this.form.changed = true;
 this.form.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=false;
 });//each command button

@@ -7,7 +7,9 @@ function getAdditionalPageOptions() { return 'TrueFalse'; }
 function createDataDoc ($doc) {
 loadTranslation('editor-truefalse');
 $quiz = $doc->appendElement('quiz', array('type'=>'simple', 'submission'=>'local'));
-$quiz->appendElement('intro');
+$intro = $quiz->appendElement('intro');
+$intro->appendElement('h2')->appendText($this->title);
+$intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
 $choices = $quiz->appendElement('choices');
 $choices->appendElement('c')->appendText(getTranslation('True'));
 $choices->appendElement('c')->appendText(getTranslation('False'));

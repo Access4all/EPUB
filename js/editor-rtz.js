@@ -239,7 +239,7 @@ if (!re){
 if (e.preventDefault) e.preventDefault();
 if (e.stopPropagation) e.stopPropagation();
 }
-if (!changed && k>=48) changed=true;
+if (!changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) changed=true;
 return re;
 }
 
