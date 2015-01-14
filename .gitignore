@@ -9,4 +9,4 @@ out*
 *tmp*
 *old*
 upload_ftp.txt
-config.php
+core/config.php
