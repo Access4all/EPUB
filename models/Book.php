@@ -55,6 +55,20 @@ function canRead () { return $this->eflags&BF_READ; }
 function canWrite () { return $this->eflags&BF_WRITE; }
 function canAdministrate () { return $this->eflags&BF_ADMIN; }
 
+function getParticipatingUsers () {
+$a = array();
+if (isset($this->pusers, $this->pusersflags)) {
+$ux = explode(',', $this->pusers);
+$uf = explode(',', $this->pusersflags);
+for ($i=0; $i<count($ux); $i++) {
+$o = new stdClass();
+$o->displayName = $ux[$i];
+$o->eflags = floor($uf[$i]);
+$a[] = $o;
+}}
+return $a;
+}
+
 
 function getFileSystem () {
 if (!@$this->fs) {

@@ -5,7 +5,7 @@ loadTranslation('bookshelf');
 class BookshelfView {
 
 function index ($bookList, $templateList) {
-global $root, $lang, $langs;
+global $root, $lang, $langs, $user;
 $t = 'getTranslation';
 $pageTitle = getTranslation('Bookshelf');
 require('bsHeader.php');
@@ -33,10 +33,17 @@ echo <<<END
 </select>
 <button type="submit">{$t('ChangeLanguage')}</button>
 </p></form>
+<ul>
+<li><a href="$root/user">{$t('GoToUserProfile')}</a></li>
+END;
+if ($user&&$user->isAdmin()) echo "<li><a href=\"$root/admin\">{$t('GoToAdminPanel')}</a></li>";
+echo <<<END
+</ul>
 <table>
 <thead><tr>
 <th scope="col">{$t('BookTitle')}</th>
 <th scope="col">{$t('BookAuthors')}</th>
+<th scope="col">{$t('ParticipatingUsers')}</th>
 <th scope="col">{$t('Actions')}</th>
 </tr></thead><tbody>
 END;
@@ -50,6 +57,18 @@ echo <<<END
 <th scope="row"><a href="$viewUrl">{$b->title}</a></th>
 <td>{$b->authors}</td>
 <td>
+END;
+{
+$a = array();
+$rightsnames = array('nothing', 'reading', 'writing', 'writing', 'administrate', 'administrate', 'administrate', 'administrate');
+foreach($b->getParticipatingUsers() as $u) {
+$rights = getTranslation($rightsnames[($u->eflags)]);
+$a[] = "{$u->displayName} ({$rights})";
+}
+echo implode(',<br />', $a);
+}
+echo <<<END
+</td><td>
 <a href="$viewUrl" role="button">{$t('btnView')}</a>
 <a href="$editUrl" role="button">{$t('btnEdit')}</a>
 <a href="$exportUrl" role="button">{$t('btnExport')}</a>

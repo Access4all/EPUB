@@ -2,10 +2,16 @@
 Bookshelf=Bibliothèque
 Language=Langue
 ChangeLanguage=Changer la langue
+GoToUserProfile=Paramètres de votre compte
+GoToAdminPanel=Administrer les utilisateurs
 BookTitle=Titre
 BookAuthors=Auteur(s)
+ParticipatingUsers=Utilisateurs participants
 Template=Modèle
 Actions=Actions
+administrate=administration
+writing=écriture
+reading=lecture
 AddToBookshelf=Ajouter des livres
 CreateNewBook=Créer un nouveau livre
 UploadFile=Envoyer un fichier

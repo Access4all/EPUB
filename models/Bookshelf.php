@@ -11,11 +11,17 @@ return new Bookshelf();
 function getBookList () {
 global $db, $user;
 if (!$db || !$user) return array();
-return $db->query('select b.*, l.flags as eflags  
-from '.DB_TABLE_PREFIX.'BookUsers l
-join '.DB_TABLE_PREFIX.'Books b on b.id = l.book
+$BOOKS = DB_TABLE_PREFIX.'Books';
+$BOOKUSERS = DB_TABLE_PREFIX.'BookUsers';
+$USERS = DB_TABLE_PREFIX.'Users';
+return $db->query("select b.*, l.flags as eflags, group_concat(u.displayName) as pusers, group_concat(z.flags) as pusersflags
+from $BOOKUSERS l
+join $BOOKS b on b.id = l.book
+join $BOOKUSERS z on b.id = z.book
+join $USERS u on u.id = z.user
 where l.user = %d
-', floor($user->id) )
+group by b.id asc
+", floor($user->id) )
 ->fetchAll(PDO::FETCH_CLASS, 'Book');
 }
 
