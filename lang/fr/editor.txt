@@ -3,6 +3,7 @@ ErrFileAccess=Impossible d'accéder à <em>%1</em>; Veuillez vérifier les autor
 ErrBodyFail=Impossible d'ouvrir le document; il est peut-être endommagé, syntaxiquement invalide, ou alors ce n'est pas vraiment une page HTML.
 ErrTocNotAvail=La table des matières n'a pas pu être récupérée.
 ErrTocEmpty=La table des matières est actuellement vierge.
+readOnlyTitle=Lecture seule
 autoIntro1=Vous pouvez saisir du texte dans cette zone, de même qu'y incorporer images, sons et vidéos à votre convenance.
 autoIntro2=Vous pouvez saisir du texte libre ici. Profitez-en pour introduire l'activité qui suit !
 SaveChangesDlg=Enregistrer les changements ?

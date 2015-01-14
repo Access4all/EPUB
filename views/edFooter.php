@@ -2,6 +2,7 @@
 global $otherStringTable;
 $rnd = md5(time());
 if (!isset($otherStringTable)) $otherStringTable='';
+$readOnlyFlag = ($b->canWrite()? 'false' : 'true' );
 echo <<<END
 </div><!-- right panel -->
 </div><!--leftRightWrapper-->
@@ -12,6 +13,7 @@ window.rootUrl = "http://{$_SERVER['HTTP_HOST']}$root/editor/{$b->name}/{$leftVi
 window.rootUrl2 = "$root/editor/{$b->name}/";
 window.lang = "$lang";
 window.actionUrl = "$root/editor/{$b->name}/@@/$pn";
+window.readOnly = $readOnlyFlag;
 </script>
 <script type="text/javascript" src="$root/js/global.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/stringTable.php?modules=editor,editor-rtz,editor-styling$otherStringTable&amp;lang=$lang&amp;rnd=$rnd"></script>

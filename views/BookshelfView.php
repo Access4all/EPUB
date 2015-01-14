@@ -38,6 +38,7 @@ echo <<<END
 END;
 if ($user&&$user->isAdmin()) echo "<li><a href=\"$root/admin\">{$t('GoToAdminPanel')}</a></li>";
 echo <<<END
+<li><a href="$root/user/signoff">{$t('Signoff')}</a></li>
 </ul>
 <table>
 <thead><tr>

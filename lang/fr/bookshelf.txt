@@ -4,6 +4,7 @@ Language=Langue
 ChangeLanguage=Changer la langue
 GoToUserProfile=Paramètres de votre compte
 GoToAdminPanel=Administrer les utilisateurs
+Signoff=Déconnexion
 BookTitle=Titre
 BookAuthors=Auteur(s)
 ParticipatingUsers=Utilisateurs participants

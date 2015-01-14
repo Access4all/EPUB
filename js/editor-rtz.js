@@ -319,8 +319,8 @@ var result = this.onkeydown(k,simulated);
 if (result===true || result===false) return result;
 }
 if (this.saveBtn && ((k>=vk.n0&&k<=vk.n9)||k>=vk.a) ) {
-this.saveBtn.removeClass('disabled');
-this.saveBtn.removeAttribute('aria-disabled');
+if (!window.readOnly) this.saveBtn.removeClass('disabled');
+if (!window.readOnly) this.saveBtn.removeAttribute('aria-disabled');
 this.saveBtn=null;
 }
 switch(k){
@@ -1702,6 +1702,7 @@ return true; // the default paste behavior will occur
 }
 
 function RTZ_save () {
+if (window.readOnly) return;
 this.cleanHTML();
 if (this.onsave) this.onsave();
 var saveBtn = document.querySelector('button[data-action=save]');

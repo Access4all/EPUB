@@ -4,6 +4,7 @@ ChangeLanguage=Change language
 GoToUserProfile=Settings of your account
 GoToAdminPanel=Users administration
 BookTitle=Title
+Signoff=Sign off
 BookAuthors=Author(s)
 ParticipatingUsers=Participating users
 Template=Template

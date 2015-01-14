@@ -3,6 +3,7 @@ ErrFileAccess=Couldn't access <em>%1</em>; please check authorizations and acces
 ErrBodyFail=Unable to open the document. It may be corrupted, syntactically invalid, or not a real HTML page.
 ErrTocNotAvail=The table of contents couldn't be generated or retrived.
 ErrTocEmpty=The table of contents is currently empty.
+readOnlyTitle=Read only
 autoIntro1=You can enter text in this area, as well as add images, sounds and videos as you wish.
 autoIntro2=You can type in free text here. Use this zone to introduce the following activity !
 SaveChangesDlg=Dou you want to save changes ?

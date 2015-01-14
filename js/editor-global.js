@@ -391,6 +391,7 @@ return false;
 }
 
 function FormTrackChanges_virtualSubmit () {
+if (window.readOnly) return;
 if (this.onsubmit && !this.onsubmit()) return;
 var params = ['ajax=1'];
 this.$('input, textarea, select').each(function(input){
@@ -406,6 +407,7 @@ ajax(this.method, url, params, function(re){if(re=='OK') FormTrackChanges_init(f
 function FormTrackChanges_changed () {
 this.onchange=null;
 this.form.changed = true;
+if (window.readOnly) return;
 this.form.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=false;
 });//each command button

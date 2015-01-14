@@ -5,6 +5,13 @@ loadTranslation('users');
 
 class UserController {
 
+function signoff () {
+global $root;
+session_destroy();
+header("Location:$root");
+exit();
+}
+
 function index () {
 $this->profileForm();
 }
