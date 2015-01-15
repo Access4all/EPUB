@@ -4,8 +4,9 @@ loadTranslation('bookshelf');
 
 class BookshelfView {
 
-function index ($bookList, $templateList) {
+function index ($bookList, $templateList, $templates) {
 global $root, $lang, $langs, $user;
+$templates = $templates?'index':'templates';
 $t = 'getTranslation';
 $pageTitle = getTranslation('Bookshelf');
 require('bsHeader.php');
@@ -80,6 +81,7 @@ END;
 }
 echo <<<END
 </tbody></table>
+<p><a href="$root/bookshelf/$templates">{$t("showTemplates_$templates")}</a></p>
 <h2>{$t('AddToBookshelf')}</h2>
 <form action="$root/bookshelf/upload" method="post" enctype="multipart/form-data">
 <p><label for="upload">{$t('UploadFile')} : </label>

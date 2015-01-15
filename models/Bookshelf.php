@@ -8,7 +8,7 @@ static function getInstance () {
 return new Bookshelf();
 }
 
-function getBookList () {
+function getBookList ($template = false) {
 global $db, $user;
 if (!$db || !$user) return array();
 $BOOKS = DB_TABLE_PREFIX.'Books';
@@ -18,16 +18,16 @@ return $db->query("select b.*, l.flags as eflags, group_concat(u.displayName) as
 from $BOOKUSERS l
 join $BOOKS b on b.id = l.book
 join $BOOKUSERS z on b.id = z.book
-join $USERS u on u.id = z.user
-where l.user = %d
+left join $USERS u on u.id = z.user
+where l.user in(%d,0)
+and b.bflags=%d
 group by b.id asc
-", floor($user->id) )
+", floor($user->id), floor($template) )
 ->fetchAll(PDO::FETCH_CLASS, 'Book');
 }
 
 function getBookTemplateList () {
-$b1 = new Book(array('name'=>'template', 'title'=>'Default'));
-return array($b1);
+return $this->getBookList(true);
 }
 
 function getBookById ($id) {
@@ -65,7 +65,7 @@ return  $b
 function updateBook ($b) {
 global $db, $user;
 if (!$db||!$user) return false;
-$db->exec('update '.DB_TABLE_PREFIX.'Books set title = %s, authors = %s where name = %s', $b->getTitle(), $b->getAuthors(), $b->name);
+$db->exec('update '.DB_TABLE_PREFIX.'Books set title = %s, authors = %s, bflags = %d  where name = %s', $b->getTitle(), $b->getAuthors(), floor($b->bflags), $b->name);
 }
 
 function addBook ($b) {

@@ -280,6 +280,13 @@ if (isset($info['share'], $info['shareNew']) && $this->canAdministrate() ) {
 $bs = Bookshelf::getInstance();
 $bs->updateBookRightsTable($this->id, $info);
 }
+$newBflags = $this->bflags;
+if (isset($info['template'])) $newBflags |=BF_TEMPLATE;
+else $newBflags&=~BF_TEMPLATE;
+if ($newBflags!=$this->bflags) {
+$this->bflags = $newBflags;
+$needBsUpdate=true;
+}
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);
 $this->setOption('tocNeedRegen', true);

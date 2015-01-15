@@ -4,6 +4,7 @@ $h = 'htmlspecialchars';
 $authors = htmlspecialchars( implode("\r\n", preg_split('/\s*[,;]\s*/', $b->getAuthors()) ));
 $checked = function($x){ return $x? 'checked' : ''; };
 $b->getOption('dummy');
+$istemplate = !!($b->bflags&BF_TEMPLATE)? 'checked="checked" ':'';
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('BookOptions')}</h1>
@@ -97,6 +98,11 @@ echo <<<END
 END;
 }
 echo <<<END
+<h2 data-expands="partAdvanced">{$t('Advanced')}</h2>
+<div id="partAdvanced">
+<p><input type="checkbox" id="template" name="template" value="1" $istemplate/>
+<label for="template">{$t('DefineAsTemplate')}</label></p>
+</div><!--partAdvanced-->
 <p>
 <button type="submit">{$t('Save')}</button>
 <button type="reset">{$t('Reset')}</button>	

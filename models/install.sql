@@ -25,3 +25,11 @@ book int unsigned not null,
 flags int unsigned not null default 3,
 index invertedPK(book,user),
 primary key(user,book) );
+
+insert into %Books 
+(name, title, authors, bflags) values
+('template', 'Default template', 'Default template', 1);
+
+insert into %BookUsers
+(book, user, flags) values
+(1, 0, 7);
