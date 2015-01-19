@@ -4,7 +4,7 @@ var ul = document.createElement2('ul', {'class':'contextmenu', role:'menu'});
 var firstA = null;
 for (var i=0; i<items.length; i+=2) {
 var label = items[i], action = items[i+1];
-if (typeof(label)=='string') label = {text:label, type:'menuitem'};
+if (typeof(label)!='object') label = {text:label, type:'menuitem'};
 var a = ul.appendElement('li').appendElement('a', {role:label.type}).appendText(label.text);
 a.href = (typeof(action)=='string'? action : '#');
 a.onkeydown = Menu_keydown.bind(a, ul, originator);

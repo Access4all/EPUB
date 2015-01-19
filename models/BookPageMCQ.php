@@ -60,6 +60,7 @@ $html .= <<<END
 <legend epub:type="question">{$t('Question')} $qnum: {$jq->q}</legend>
 END;
 for ($i=0; $i<count($jq->c); $i++) {
+if (!$jq->c[$i]) { array_splice($jq->c, $i--, 1); continue; }
 $id = "q{$num}_$i";
 $itype = ($xml->getAttribute('type')=='simple'? 'radio' : 'checkbox');
 $opthtml = '';
