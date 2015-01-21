@@ -188,7 +188,7 @@ o.draggable=true;
 });
 e.$('ul,ol').each(function(o){
 var li = o.parentNode;
-var a = document.createElement2('a', {'href':'#'}, '+');
+var a = document.createElement2('a', {'href':'#'}, o.hasClass('collapsed')?'+':'-');
 a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;

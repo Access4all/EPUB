@@ -78,12 +78,16 @@ END;
 $html.='</fieldset>';
 }
 $html.=<<<END
-<p><button type="submit">{$t('Submit')}</button></p>
+<p>
+<button type="submit">{$t('Submit')}</button>
+<button type="reset">{$t('Clear')}</button>
+</p>
 END;
 
 $form->appendHTML($html);
 $this->addJsResource('global', $doc);
 $this->addJsResource('book-mcq', $doc);
+$this->ensureCssMasterFileLinked($doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }

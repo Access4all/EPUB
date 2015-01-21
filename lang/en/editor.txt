@@ -46,6 +46,7 @@ Save=Save
 Undo=Undo
 Redo=Redo
 Submit=Submit
+Clear=Clear
 Reset=Reset
 Unspecified=Unspecified
 Ctrl=Ctrl

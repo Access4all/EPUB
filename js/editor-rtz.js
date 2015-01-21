@@ -1973,6 +1973,25 @@ node = node.childNodes[idx];
 return node;
 }
 
+function LeftPanelAJAXLoad (url) {
+window.onloads ={push:function(f){ try { f(); } catch(e){alert(e.message);} }}; // Catch functions that normally have to be called when the page loads (window.onload) and call them immediately
+ajax('POST', url, '', function(html){
+// Take only the part we are interested in, the left panel
+var begin = '<div id="leftPanel">', end = '</div><!--leftPanel-->';
+begin = html.indexOf(begin) + begin.length;
+end = html.indexOf(end);
+var html2 = html.substring(begin,end);
+var lp = document.getElementById('leftPanel');
+lp.innerHTML = html2;
+// IE: scripts inclueded within the HTML code don't seem to be properly loaded, so we (re)load them explicitely
+//document.body.appendElement('script', {type:'text/javascript', src:window.root + '/js/editor-global.js?rnd='+Math.random()});
+//document.body.appendElement('script', {type:'text/javascript', src:window.root + '/js/editor-rtz.js?rnd='+Math.random()});
+html.replace(/<scrip.*src="(.*?)".*script>/g, function(_,src2){ document.body.appendElement('script', {type:'text/javascript', src:src2});   debug('Reloading '+src2); });
+debug('AJAX done!'+new Date());
+}, function(e){ alert('Failed!10'); });//ajax
+return false;
+}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
 $('.editor, *[contenteditable=true]').each(function(e){
@@ -1984,9 +2003,14 @@ rtz.debug = DEBUG && e.tagName.toLowerCase()=='div';
 rtz.init();
 if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
-if (window.location.host!='localhost') $('a[href]').each(function(a){
+//if (window.location.host!='localhost') 
+$('a[href]').each(function(a){
 var oldonclick  = a.onclick;
-a.onclick = function(e){
+if (a.hasAttribute('data-ajax')) a.onclick = function(e){
+if (oldonclick) oldonclick.call(a,e);
+return LeftPanelAJAXLoad(this.href);
+};
+else a.onclick = function(e){
 if (!changed) return true;
 MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
 if (btnIdx==0) window.rtzs[0].onsave(null,true);

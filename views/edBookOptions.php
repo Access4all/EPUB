@@ -33,8 +33,10 @@ END;
 }
 echo <<<END
 </fieldset>
+<fieldset>
 <p><label for="cssMasterFile">{$t('cssMasterFile')}:</label>
 <input type="text" id="cssMasterFile" name="cssMasterFile" value="{$h($b->getOption('cssMasterFile', 'EPUB/css/epub3.css'))}" /></p>
+</fieldset>
 </div><!--partOrg-->
 <h2 data-expands="partTOC">{$t('TOCOptions')}</h2>
 <div id="partTOC">

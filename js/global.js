@@ -23,7 +23,7 @@ else if (window.ActiveXObject) xhr = new ActiveXObject('Microsoft.XMLHTTP');
 if (!xhr) return null;
 xhr.onreadystatechange = function () {
 if (xhr.readyState==4) {
-if (xhr.status==200) success(xhr.responseText, xhr.responseXML, xhr);
+if (xhr.status==200) success(xhr.responseText, {}, xhr);
 else failure(xhr.status, xhr);
 }};
 xhr.onerror = xhr.onabort = function () { 

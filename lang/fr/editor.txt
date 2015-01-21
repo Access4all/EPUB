@@ -46,6 +46,7 @@ Save=Enregistrer
 Undo=Annuler
 Redo=Refaire
 Submit=Soumettre
+Clear=Effacer
 Reset=Réinitialiser
 Unspecified=Non spécifié
 Ctrl=Ctrl

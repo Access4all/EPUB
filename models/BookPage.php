@@ -61,13 +61,7 @@ $this->closeDoc();
 
 function getEditorType () { return 'HTML'; }
 
-function updateContents ($contents) {
-if ($this->mediaType!='application/xhtml+xml') return parent::updateContents($contents);
-$contents = preg_replace('@epub:\w+=@', 'xmlns:epub="'.NS_EPUB.'" $0', $contents); // Empyrically solve the appendXML/HTML DOM function when having attributes from other namespaces
-$doc = $this->getDoc();
-$body = $doc->getFirstElementByTagName('body');
-$body->removeAllChilds();
-$body->appendHTML($contents);
+function ensureCssMasterFileLinked ($doc) {
 $cssFound = false;
 $cssMasterFile = $this->book->getOption('cssMasterFile', 'EPUB/css/epub3.css');
 foreach($doc->getElementsByTagName('link') as $link) {
@@ -77,9 +71,18 @@ $href = pathResolve($this->fileName, $href);
 if ($href==$cssMasterFile) { $cssFound=true; break; }
 }
 if (!$cssFound) {
-$head = $doc->getFirstElementByTagName('head');
+$head = $doc->ownerDocument->documentElement->getFirstElementByTagName('head');
 $head->appendElement('link', array('rel'=>'stylesheet', 'href'=>pathRelativize($this->fileName, $cssMasterFile)));
-}
+}}
+
+function updateContents ($contents) {
+if ($this->mediaType!='application/xhtml+xml') return parent::updateContents($contents);
+$contents = preg_replace('@epub:\w+=@', 'xmlns:epub="'.NS_EPUB.'" $0', $contents); // Empyrically solve the appendXML/HTML DOM function when having attributes from other namespaces
+$doc = $this->getDoc();
+$body = $doc->getFirstElementByTagName('body');
+$body->removeAllChilds();
+$body->appendHTML($contents);
+$this->ensureCssMasterFileLinked($doc);
 $this->saveDoc();
 }
 
