@@ -8,11 +8,14 @@ if (clear)  div.innerHTML = text + '<br />\r\n';
 else  div.insertAdjacentHTML('beforeEnd', text + '<br />\r\n');
 }
 
-function include (url) {
+function include (url, lh) {
+if (window.loadedScripts.indexOf(url)>=0) return false;
 var s = document.createElement('script');
 s.setAttribute('type', 'text/javascript');
+s.onload = function(){ window.loadedScripts.push(url); if (lh) lh(url); };
 s.setAttribute('src', url);
 document.getElementsByTagName('head')[0].appendChild(s);
+return true;
 }
 
 function ajax (method, url, data, success, failure, async) {
@@ -254,11 +257,11 @@ if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.we
 
 window.onload = function () {
 if (window.onloads) {
-for (var i=0; i<window.onloads.length; i++) 
-//try { 
-window.onloads[i](); 
-//} catch (e) { log(e.message); }
-}}
+for (var i=0; i<window.onloads.length; i++)  window.onloads[i](); 
+}
+window.loadedScripts = [];
+$('script').each(function(s){ var src = s.getAttribute(src); if (src) loadedScripts.push(src); });
+}
 
 window.vk = {
 'shift': 256, 'ctrl': 512, 'alt': 1024, 'impossible':2048,

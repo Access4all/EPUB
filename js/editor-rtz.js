@@ -1,5 +1,5 @@
 var undoStack = [], undoPos = 0;
-var changed = false;
+
 
 Node.prototype.getFirstTextNode =  function () {
 if (this.nodeType==3) return this;
@@ -239,7 +239,7 @@ if (!re){
 if (e.preventDefault) e.preventDefault();
 if (e.stopPropagation) e.stopPropagation();
 }
-if (!changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) changed=true;
+if (!window.changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) window.changed=true;
 return re;
 }
 
@@ -293,6 +293,7 @@ var fUndo = RTZ_undoMutationList.bind(this, this.mutationList);
 var fRedo = RTZ_redoMutationList.bind(this, this.mutationList);
 this.pushUndoState(fUndo, fRedo);
 this.mutationList = [];
+window.changed=true;
 }
 
 function RTZ_undo () {
@@ -1984,12 +1985,20 @@ var html2 = html.substring(begin,end);
 var lp = document.getElementById('leftPanel');
 lp.innerHTML = html2;
 // IE: scripts inclueded within the HTML code don't seem to be properly loaded, so we (re)load them explicitely
-//document.body.appendElement('script', {type:'text/javascript', src:window.root + '/js/editor-global.js?rnd='+Math.random()});
-//document.body.appendElement('script', {type:'text/javascript', src:window.root + '/js/editor-rtz.js?rnd='+Math.random()});
-html.replace(/<scrip.*src="(.*?)".*script>/g, function(_,src2){ document.body.appendElement('script', {type:'text/javascript', src:src2});   debug('Reloading '+src2); });
+{
+window.onloads = [];
+var count = 0, lh = function(url){ if(--count<0) window.onload(null); debug('loaded '+url); };
+html.replace(/<scrip.*src="(.*?)".*script>/g, function(_,src){ count+= include(src, lh)?1:0; debug('Reloading '+src); });
+lh();
+if (window.history&&history.pushState) history.pushState(url, url, url);
+}
 debug('AJAX done!'+new Date());
 }, function(e){ alert('Failed!10'); });//ajax
 return false;
+}
+
+window.onpopstate = function (e) {
+if (e&&e.state) LeftPanelAJAXLoad(e.state);
 }
 
 if (!window.onloads) window.onloads = [];
@@ -2011,7 +2020,7 @@ if (oldonclick) oldonclick.call(a,e);
 return LeftPanelAJAXLoad(this.href);
 };
 else a.onclick = function(e){
-if (!changed) return true;
+if (!window.changed) return true;
 MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
 if (btnIdx==0) window.rtzs[0].onsave(null,true);
 if (oldonclick) oldonclick.call(a,e);
