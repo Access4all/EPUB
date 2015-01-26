@@ -1,15 +1,15 @@
 if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
-quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
-quiz.onreset = QuizReset;
+quiz.onsubmit = window['MPB_QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
+quiz.onreset = MPB_QuizReset;
 quiz.$('select').each(function(select){ select.onchange = MPB_selectOnChange; });
 var btnsa = document.getElementById('btnShowAnswers');
-btnsa.onclick = Quiz_LocalShowAnswers.bind(null, quiz);
+btnsa.onclick = MPB_Quiz_LocalShowAnswers.bind(null, quiz);
 if (quiz.getAttribute('data-submissionMode')!='local') btsa.disabled=true;
 });
 
-function QuizReset () {
+function MPB_QuizReset () {
 this.$('input, select').each(function(f){ 
 f.value='-';
 f.removeAttribute('aria-invalid'); 
@@ -17,8 +17,7 @@ f.removeClass('wrong');
 f.removeClass('correct');
 }); }
 
-
-function QuizSubmit_local () {
+function MPB_QuizSubmit_local () {
 var count=0, total=0, fields = this.querySelectorAll('select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
@@ -34,7 +33,7 @@ alert("@QuizResult".replace('%1',count).replace('%2',total));
 return false;
 }
 
-function Quiz_LocalShowAnswers (form) {
+function MPB_Quiz_LocalShowAnswers (form) {
 try {
 var fields = form.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
@@ -45,8 +44,7 @@ input.value=answer;
 } catch(e) { alert(e.message); }
 }
 
-
-function QuizSubmit_file () {
+function MPB_QuizSubmit_file () {
 var csv = '', fields = this.querySelector('ol.matchingActivity_leftList').querySelectorAll('select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
@@ -62,7 +60,7 @@ a.parentNode.removeChild(a);
 return false;
 }
 
-function QuizSubmit_url () {
+function MPB_QuizSubmit_url () {
 this.target = '_blank';
 return true;
 }

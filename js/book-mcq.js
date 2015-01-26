@@ -1,11 +1,11 @@
 if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
-quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
-quiz.onreset = QuizReset;
+quiz.onsubmit = window['MCQ_QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
+quiz.onreset = MCQ_QuizReset;
 });
 
-function QuizReset () {
+function MCQ_QuizReset () {
 this.$('input').each(function(f){ 
 f.removeClass('correct');
 f.removeClass('wrong');
@@ -16,7 +16,7 @@ f.checked=false;
 return true;
 }
 
-function QuizSubmit_local () {
+function MCQ_QuizSubmit_local () {
 var count=0, total=0, fieldsets = this.querySelectorAll('fieldset');
 for (var j=0; j<fieldsets.length; j++) {
 var fields = fieldsets[j].querySelectorAll('input');
@@ -39,7 +39,7 @@ alert("@QuizResult".replace('%1',count).replace('%2',total));
 return false;
 }
 
-function QuizSubmit_file () {
+function MCQ_QuizSubmit_file () {
 var csv = '', fieldsets = this.querySelectorAll('fieldset');
 for (var j=0; j<fieldsets.length; j++) {
 var fields = fieldsets[j].querySelectorAll('input');
@@ -61,7 +61,7 @@ a.parentNode.removeChild(a);
 return false;
 }
 
-function QuizSubmit_url () {
+function MCQ_QuizSubmit_url () {
 this.target = '_blank';
 return true;
 }

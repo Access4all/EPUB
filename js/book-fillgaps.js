@@ -1,14 +1,14 @@
 if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
-quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
-quiz.onreset = QuizReset;
+quiz.onsubmit = window['FTG_QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
+quiz.onreset = FTG_QuizReset;
 var btnsa = document.getElementById('btnShowAnswers');
-btnsa.onclick = Quiz_LocalShowAnswers.bind(null, quiz);
+btnsa.onclick = FTG_Quiz_LocalShowAnswers.bind(null, quiz);
 if (quiz.getAttribute('data-submissionMode')!='local') btsa.disabled=true;
 });
 
-function QuizReset () {
+function FTG_QuizReset () {
 this.$('input, select').each(function(f){ 
 f.value='-';
 f.value=''; 
@@ -17,7 +17,7 @@ f.removeClass('wrong');
 f.removeClass('correct');
 }); }
 
-function QuizSubmit_local () {
+function FTG_QuizSubmit_local () {
 try {
 var count=0, total=0, fields = this.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
@@ -34,7 +34,7 @@ alert("@QuizResult".replace('%1',count).replace('%2',total));
 return false;
 }
 
-function Quiz_LocalShowAnswers (form) {
+function FTG_Quiz_LocalShowAnswers (form) {
 try {
 var fields = form.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
@@ -45,7 +45,7 @@ input.value=answer.trim();
 } catch(e) { alert(e.message); }
 }
 
-function QuizSubmit_file () {
+function FTG_QuizSubmit_file () {
 var csv = '', fields = this.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
@@ -60,7 +60,7 @@ a.parentNode.removeChild(a);
 return false;
 }
 
-function QuizSubmit_url () {
+function FTG_QuizSubmit_url () {
 this.target = '_blank';
 return true;
 }

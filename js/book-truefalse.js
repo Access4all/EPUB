@@ -1,11 +1,11 @@
 if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
-quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
-quiz.onreset = QuizReset;
+quiz.onsubmit = window['TFQ_QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
+quiz.onreset = TFQ_QuizReset;
 });
 
-function QuizReset () {
+function TFQ_QuizReset () {
 this.$('input').each(function(f){ 
 f.removeClass('correct');
 f.removeClass('wrong');
@@ -16,8 +16,7 @@ f.checked=false;
 return true;
 }
 
-
-function QuizSubmit_local () {
+function TFQ_QuizSubmit_local () {
 var count=0, total=0, fieldsets = this.querySelector('tbody').querySelectorAll('tr');
 for (var j=0; j<fieldsets.length; j++) {
 var fields = fieldsets[j].querySelectorAll('input');
@@ -40,7 +39,7 @@ alert("@QuizResult".replace('%1',count).replace('%2',total));
 return false;
 }
 
-function QuizSubmit_file () {
+function TFQ_QuizSubmit_file () {
 var csv = '', fieldsets = this.querySelector('tbody').querySelectorAll('tr');
 for (var j=0; j<fieldsets.length; j++) {
 var fields = fieldsets[j].querySelectorAll('input');
@@ -62,7 +61,7 @@ a.parentNode.removeChild(a);
 return false;
 }
 
-function QuizSubmit_url () {
+function TFQ_QuizSubmit_url () {
 this.target = '_blank';
 return true;
 }
