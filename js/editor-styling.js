@@ -84,8 +84,8 @@ this.form.elements[type].onchange = (function(t, _this){ return function(){ _thi
 this.form.elements[color].onchange = (function(c, _this){ return function(){ _this.updateValue(c, this.value, 'transparent'); }; })(color, this);
 this.form.elements[width].onchange = (function(w, _this){ return function(){ _this.updateValue(w, parseInt(this.value)+'px', '0'); }; })(width, this);
 this.form.elements[radius].onchange = (function(r, _this){ return function(){ _this.updateValue(r, parseInt(this.value)+'px', '0'); }; })(radius, this);
-this.form.elements[margin].onchange = (function(w, _this){ return function(){ _this.updateValue(w, (parseFloat(this.value)/10.0)+'em', '0'); }; })(margin, this);
-this.form.elements[padding].onchange = (function(w, _this){ return function(){ _this.updateValue(w, (parseFloat(this.value)/10.0)+'em', '0'); }; })(padding, this);
+this.form.elements[margin].onchange = (function(w, _this){ return function(){ _this.updateValue(w, parseFloat(this.value)+'px', '0'); }; })(margin, this);
+this.form.elements[padding].onchange = (function(w, _this){ return function(){ _this.updateValue(w, parseFloat(this.value)+'px', '0'); }; })(padding, this);
 }
 this.populateStyleSelect();
 STE_updateVisibleParts('#');
@@ -232,8 +232,8 @@ this.form.elements[radius].value = parseInt(style[radius] || cd[radius] || cs[ra
 this.form.elements[width].value = parseInt(style[width] || cd[width] || cs[width]) || '0'; // Supposed to be in px
 this.form.elements[color].value = toHexColor(style[color] || cd[color] || cs[color] || 'transparent');
 this.form.elements[type].value = style[type] || cd[type] || cs[type] || 'none';
-this.form.elements[margin].value = 10.0 * parseFloat(style[margin] || cd[margin] || cs[margin] || 0); // Supposed to be in em
-this.form.elements[padding].value = 10.0 * parseFloat(style[padding] || cd[padding] || cs[padding] || 0); // Supposed to be in em
+this.form.elements[margin].value = parseFloat(style[margin] || cd[margin] || cs[margin] || 0); // Supposed to be in px
+this.form.elements[padding].value = parseFloat(style[padding] || cd[padding] || cs[padding] || 0); // Supposed to be in px
 }
 if (elem && elem.hasAttribute('data-ghost')) elem.parentNode.parentNode.removeChild(elem.parentNode);
 }

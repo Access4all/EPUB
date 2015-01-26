@@ -55,6 +55,20 @@ function canRead () { return $this->eflags&BF_READ; }
 function canWrite () { return $this->eflags&BF_WRITE; }
 function canAdministrate () { return $this->eflags&BF_ADMIN; }
 
+function getParticipatingUsers () {
+$a = array();
+if (isset($this->pusers, $this->pusersflags)) {
+$ux = explode(',', $this->pusers);
+$uf = explode(',', $this->pusersflags);
+for ($i=0; $i<count($ux); $i++) {
+$o = new stdClass();
+$o->displayName = $ux[$i];
+$o->eflags = floor($uf[$i]);
+$a[] = $o;
+}}
+return $a;
+}
+
 
 function getFileSystem () {
 if (!@$this->fs) {
@@ -265,6 +279,13 @@ else $this->removeOption('cssMasterFile');
 if (isset($info['share'], $info['shareNew']) && $this->canAdministrate() ) {
 $bs = Bookshelf::getInstance();
 $bs->updateBookRightsTable($this->id, $info);
+}
+$newBflags = $this->bflags;
+if (isset($info['template'])) $newBflags |=BF_TEMPLATE;
+else $newBflags&=~BF_TEMPLATE;
+if ($newBflags!=$this->bflags) {
+$this->bflags = $newBflags;
+$needBsUpdate=true;
 }
 foreach(array( 'tocNoGen' ) as $opt) $this->setOption($opt, isset($info[$opt]));
 foreach( array( 'tocMaxDepth', 'tocHeadingText'  ) as $opt) if (isset($info[$opt]) && preg_match('/^[^\r\n\t\f\b]+$/', $info[$opt])) $this->setOption($opt, $info[$opt]);

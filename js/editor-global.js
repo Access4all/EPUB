@@ -4,7 +4,7 @@ var ul = document.createElement2('ul', {'class':'contextmenu', role:'menu'});
 var firstA = null;
 for (var i=0; i<items.length; i+=2) {
 var label = items[i], action = items[i+1];
-if (typeof(label)=='string') label = {text:label, type:'menuitem'};
+if (typeof(label)!='object') label = {text:label, type:'menuitem'};
 var a = ul.appendElement('li').appendElement('a', {role:label.type}).appendText(label.text);
 a.href = (typeof(action)=='string'? action : '#');
 a.onkeydown = Menu_keydown.bind(a, ul, originator);
@@ -188,7 +188,7 @@ o.draggable=true;
 });
 e.$('ul,ol').each(function(o){
 var li = o.parentNode;
-var a = document.createElement2('a', {'href':'#'}, '+');
+var a = document.createElement2('a', {'href':'#'}, o.hasClass('collapsed')?'+':'-');
 a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;
@@ -363,7 +363,7 @@ else alert('No copy method');
 }
 
 function FormTrackChanges_init (f) {
-f.changed = false;
+if (!f.changed) {
 f.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=true;
 });//each command button
@@ -371,13 +371,16 @@ f.$('input, textarea, select').each(function(input){
 input.onchange = FormTrackChanges_changed;
 input.onkeydown = FormTrackChanges_keydown;
 });//each input
+}
 f.virtualSubmit = FormTrackChanges_virtualSubmit;
-if (!window.formTrackChange1st) {
-window.formTrackChange1st=true;
-if (window.location.host!='localhost') 
-$('a[href]').each(function(a){
+$('#topPanel a[href], #leftPanel a[href], #pageTabs a[href]').each(function(a){
+if (a.textContent.trim().length<=1) return;
 var oldonclick  = a.onclick;
-a.onclick = function(e){
+if (a.hasAttribute('data-ajax')) a.onclick = function(e){
+if (oldonclick) oldonclick.call(a,e);
+return LeftPanelAJAXLoad(this.href);
+};
+else  a.onclick = function(e){
 if (!f.changed) return true;
 MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
 if (btnIdx==0) f.virtualSubmit();
@@ -387,10 +390,10 @@ window.location.href = a.href;
 return false;
 };//onclick
 });//each link
-}//if formTrackChange1st
 }
 
 function FormTrackChanges_virtualSubmit () {
+if (window.readOnly) return;
 if (this.onsubmit && !this.onsubmit()) return;
 var params = ['ajax=1'];
 this.$('input, textarea, select').each(function(input){
@@ -406,6 +409,7 @@ ajax(this.method, url, params, function(re){if(re=='OK') FormTrackChanges_init(f
 function FormTrackChanges_changed () {
 this.onchange=null;
 this.form.changed = true;
+if (window.readOnly) return;
 this.form.$('button[type=submit], input[type=submit], button[type=reset], input[type=reset]').each(function(b){ 
 b.disabled=false;
 });//each command button
@@ -442,6 +446,33 @@ this.setAttribute('aria-expanded', !collapsed);
 return false;
 }
 
+function LeftPanelAJAXLoad (url) {
+window.onloads ={push:function(f){ try { f(); } catch(e){alert(e.message);} }}; // Catch functions that normally have to be called when the page loads (window.onload) and call them immediately
+ajax('POST', url, '', function(html){
+// Take only the part we are interested in, the left panel
+var begin = '<div id="leftPanel">', end = '</div><!--leftPanel-->';
+begin = html.indexOf(begin) + begin.length;
+end = html.indexOf(end);
+var html2 = html.substring(begin,end);
+var lp = document.getElementById('leftPanel');
+lp.innerHTML = html2;
+// IE: scripts inclueded within the HTML code don't seem to be properly loaded, so we (re)load them explicitely
+{
+window.onloads = [];
+var count = 0, lh = function(url){ if(--count<0) window.onload(null); debug('loaded '+url); };
+html.replace(/<scrip.*src="(.*?)".*script>/g, function(_,src){ count+= include(src, lh)?1:0; debug('Reloading '+src); });
+lh();
+if (window.history&&history.pushState) history.pushState(url, url, url);
+}
+debug('AJAX done!'+new Date());
+}, function(e){ alert('Failed!10'); });//ajax
+return false;
+}
+
+window.onpopstate = function (e) {
+if (e&&e.state) LeftPanelAJAXLoad(e.state);
+}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
 $('.fileTree').each(FileTree_init);
@@ -449,4 +480,4 @@ $('form[data-track-changes]').each(FormTrackChanges_init);
 $('*[data-expands]').each(Accordion_init);
 });
 
-//alert('editor loaded');
+alert('editor loaded');

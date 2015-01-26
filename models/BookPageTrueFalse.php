@@ -88,11 +88,15 @@ $html.='</tr>';
 }
 $tbody->appendHTML($html);
 $form->appendHTML(<<<END
-<p><button type="submit">{$t('Submit')}</button></p>
+<p>
+<button type="submit">{$t('Submit')}</button>
+<button type="reset">{$t('Clear')}</button>
+</p>
 END
 );//
 $this->addJsResource('global', $doc);
 $this->addJsResource('book-truefalse', $doc);
+$this->ensureCssMasterFileLinked($doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }

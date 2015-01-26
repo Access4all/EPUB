@@ -10,6 +10,8 @@ $gapType = $ftg->getAttribute('type');
 $pageTitle = $simpleFileName;
 require('edRightHeader.php');
 require('edToolbar.php');
+global $otherStringTable;
+$otherStringTable = ',editor-fillgaps';
 echo <<<END
 <div class="edWrapper">
 <div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">

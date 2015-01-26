@@ -1,7 +1,7 @@
 <?php
 if (!$b->ensureExtracted()) exit500();
 
-function listFiles ($base, $dir, $b, $p, $leftView, $rightView, $first=false) {
+function listFiles ($base, $dir, $b, $p, $leftView, $rightView, $level=0, $first=false) {
 global $root;
 $files  = array();
 $dirs = array();
@@ -20,11 +20,12 @@ natsort($dirs);
 natsort($files);
 $a = array_merge($dirs,$files);
 if ($first) echo '<ul class="fileTree" data-ctxtype="file">';
-else echo '<ul class="collapsed">';
+else if ($level>1) echo '<ul class="collapsed">';
+else echo '<ul>';
 foreach ($a as $fn) {
 if (is_dir("$base/$dir$fn")) {
 echo "<li><span class=\"directory\">$fn</span>";
-listFiles($base, "$dir$fn/", $b, $p, $leftView, $rightView);
+listFiles($base, "$dir$fn/", $b, $p, $leftView, $rightView, $level+1);
 echo '</li>';
 } else {
 $url = "$root/editor/{$b->name}/{$leftView}_{$rightView}/$dir$fn";
@@ -40,7 +41,7 @@ echo '<div class="leftPanelTab">';
 
 global $booksdir;
 $base = "$booksdir/{$b->name}";
-listFiles($base, '', $b, $p, $leftView, $rightView, true);
+listFiles($base, '', $b, $p, $leftView, $rightView, 0, true);
 
 echo '</div><!--leftPanelTab-->';
 ?>

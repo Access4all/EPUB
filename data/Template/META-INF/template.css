@@ -141,4 +141,7 @@ page-break-inside: avoid;
 .editor a:visited { color: purple; }
 .editor a:focus, .editor a:hover, .editor a:active { background-color: #cccccc; }
 
+.editor .correct { background-color: green; }
+.editor .wrong { background-color: red; }
+
 /*</main>*/

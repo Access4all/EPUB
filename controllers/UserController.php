@@ -5,6 +5,13 @@ loadTranslation('users');
 
 class UserController {
 
+function signoff () {
+global $root;
+session_destroy();
+header("Location:$root");
+exit();
+}
+
 function index () {
 $this->profileForm();
 }
@@ -15,6 +22,7 @@ if (!$user->isADmin()) exit403();
 $lp = LoginProvider::getInstance();
 $u = $lp->getUserByName($userId);
 if (!$u) exit404();
+if ($u->isAdmin()) exit403();
 if (isset($_POST['curpass'])) {
 $error = null;
 if ($_POST['newpass']!=$_POST['newpass2']) $error = 'PasswordDifferent';

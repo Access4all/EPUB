@@ -21,3 +21,4 @@ User=User
 RReading=Read
 RWrite=Write
 RAdmin=Manage sharing
+DefineAsTemplate=Define as template

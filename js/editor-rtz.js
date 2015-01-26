@@ -1,5 +1,5 @@
 var undoStack = [], undoPos = 0;
-var changed = false;
+
 
 Node.prototype.getFirstTextNode =  function () {
 if (this.nodeType==3) return this;
@@ -239,7 +239,7 @@ if (!re){
 if (e.preventDefault) e.preventDefault();
 if (e.stopPropagation) e.stopPropagation();
 }
-if (!changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) changed=true;
+if (!window.changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) window.changed=true;
 return re;
 }
 
@@ -293,6 +293,7 @@ var fUndo = RTZ_undoMutationList.bind(this, this.mutationList);
 var fRedo = RTZ_redoMutationList.bind(this, this.mutationList);
 this.pushUndoState(fUndo, fRedo);
 this.mutationList = [];
+window.changed=true;
 }
 
 function RTZ_undo () {
@@ -319,8 +320,8 @@ var result = this.onkeydown(k,simulated);
 if (result===true || result===false) return result;
 }
 if (this.saveBtn && ((k>=vk.n0&&k<=vk.n9)||k>=vk.a) ) {
-this.saveBtn.removeClass('disabled');
-this.saveBtn.removeAttribute('aria-disabled');
+if (!window.readOnly) this.saveBtn.removeClass('disabled');
+if (!window.readOnly) this.saveBtn.removeAttribute('aria-disabled');
 this.saveBtn=null;
 }
 switch(k){
@@ -1702,6 +1703,7 @@ return true; // the default paste behavior will occur
 }
 
 function RTZ_save () {
+if (window.readOnly) return;
 this.cleanHTML();
 if (this.onsave) this.onsave();
 var saveBtn = document.querySelector('button[data-action=save]');
@@ -1983,10 +1985,15 @@ rtz.debug = DEBUG && e.tagName.toLowerCase()=='div';
 rtz.init();
 if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
-if (window.location.host!='localhost') $('a[href]').each(function(a){
+$('#topPanel a[href], #leftPanel a[href], #pageTabs a[href]').each(function(a){
+if (a.textContent.trim().length<=1) return;
 var oldonclick  = a.onclick;
-a.onclick = function(e){
-if (!changed) return true;
+if (a.hasAttribute('data-ajax')) a.onclick = function(e){
+if (oldonclick) oldonclick.call(a,e);
+return LeftPanelAJAXLoad(this.href);
+};
+else a.onclick = function(e){
+if (!window.changed) return true;
 MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
 if (btnIdx==0) window.rtzs[0].onsave(null,true);
 if (oldonclick) oldonclick.call(a,e);

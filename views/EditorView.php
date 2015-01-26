@@ -28,23 +28,23 @@ ${$vt.'LinkVN'} = ($leftView==$vt? '00' : $vt );
 }
 
 echo <<<END
-<h2$tvActive><a role="button" aria-expanded="$tvPressed" href="$root/editor/{$b->name}/{$tvLinkVN}_{$rightView}/$pn">{$t('TocView')}</a></h2>
+<h2$tvActive><a data-ajax role="button" aria-expanded="$tvPressed" href="$root/editor/{$b->name}/{$tvLinkVN}_{$rightView}/$pn">{$t('TocView')}</a></h2>
 END;
 if ($leftView=='tv') { require('edTocView.php'); }
 echo <<<END
-<h2$svActive><a role="button" aria-expanded="$svPressed" href="$root/editor/{$b->name}/{$svLinkVN}_{$rightView}/$pn">{$t('SpineView')}</a></h2>
+<h2$svActive><a data-ajax role="button" aria-expanded="$svPressed" href="$root/editor/{$b->name}/{$svLinkVN}_{$rightView}/$pn">{$t('SpineView')}</a></h2>
 END;
 if ($leftView=='sv') { require('edSpineView.php'); }
 echo <<<END
-<h2$fvActive><a role="button" aria-expanded="$fvPressed" href="$root/editor/{$b->name}/{$fvLinkVN}_{$rightView}/$pn">{$t('FileView')}</a></h2>
+<h2$fvActive><a data-ajax role="button" aria-expanded="$fvPressed" href="$root/editor/{$b->name}/{$fvLinkVN}_{$rightView}/$pn">{$t('FileView')}</a></h2>
 END;
 if ($leftView=='fv') { require('edFileView.php'); }
 echo <<<END
-<h2$zvActive><a role="button" aria-expanded="$zvPressed" href="$root/editor/{$b->name}/{$zvLinkVN}_{$rightView}/$pn">{$t('TemplateEditorView')}</a></h2>
+<h2$zvActive><a data-ajax role="button" aria-expanded="$zvPressed" href="$root/editor/{$b->name}/{$zvLinkVN}_{$rightView}/$pn">{$t('TemplateEditorView')}</a></h2>
 END;
 if ($leftView=='zv') { require('edTemplateEditor.php'); }
 echo <<<END
-<h2$axActive><a role="button" aria-expanded="$axPressed" href="$root/editor/{$b->name}/{$axLinkVN}_{$rightView}/$pn">{$t('AccessibilityCheckerView')}</a></h2>
+<h2$axActive><a data-ajax role="button" aria-expanded="$axPressed" href="$root/editor/{$b->name}/{$axLinkVN}_{$rightView}/$pn">{$t('AccessibilityCheckerView')}</a></h2>
 END;
 if ($leftView=='ax') { require('edAccessibilityCheckerView.php'); }
 }

@@ -5,12 +5,16 @@ loadTranslation('bookshelf');
 
 class BookshelfController {
 
-function index () {
+function index ($showTemplates=false) {
 $bs = new Bookshelf();
-$books = $bs->getBookList();
-$tpls = $bs->getBookTemplateList();
+$books = $bs->getBookList($showTemplates);
+$templateList = $bs->getBookTemplateList();
 $bv = new BookshelfView();
-$bv->index($books, $tpls);
+$bv->index($books, $templateList, $showTemplates);
+}
+
+function templates () {
+$this->index(true);
 }
 
 function changeLanguage () {

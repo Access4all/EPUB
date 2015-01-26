@@ -1,4 +1,5 @@
 ﻿
+ShowAnswers=Afficher les réponses
 IntroText=Texte d'introduction
 GapText=Texte à trous
 MarkGap=Ajouter un trou

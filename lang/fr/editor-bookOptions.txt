@@ -22,3 +22,4 @@ User=Utilisateur
 RReading=Lecture
 RWrite=Écriture
 RAdmin=Gérer le partage
+DefineAsTemplate=Définir comme modèle

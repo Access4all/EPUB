@@ -2,21 +2,45 @@ if (!window.onloads) window.onloads=[];
 window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
 quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
+quiz.onreset = QuizReset;
+document.getElementById('btnShowAnswers').onclick = Quiz_LocalShowAnswers.bind(null, quiz);
 });
+
+function QuizReset () {
+this.$('input, select').each(function(f){ 
+f.value='-';
+f.value=''; 
+f.removeAttribute('aria-invalid'); 
+f.removeClass('wrong'); 
+f.removeClass('correct');
+}); }
 
 function QuizSubmit_local () {
 try {
 var count=0, total=0, fields = this.querySelectorAll('input,select');
 for (var i=0; i<fields.length; i++) {
 var input = fields[i];
-var answer = input.getAttribute('data-answer');
+var answer = input.getAttribute('data-answer').trim();
+var orig = input.value.trim();
 total++;
-if (input.value==answer) count++;
-input.value = answer;
+if (orig==answer) count++;
+else input.setAttribute('aria-invalid',true);
+input.addClass(orig==answer?'correct':'wrong');
 }
 alert("@QuizResult".replace('%1',count).replace('%2',total));
 } catch(e) { alert(e.message); }
 return false;
+}
+
+function Quiz_LocalShowAnswers (form) {
+try {
+var fields = form.querySelectorAll('input,select');
+for (var i=0; i<fields.length; i++) {
+var input = fields[i];
+var answer = input.getAttribute('data-answer');
+input.value=answer.trim();
+}
+} catch(e) { alert(e.message); }
 }
 
 function QuizSubmit_file () {

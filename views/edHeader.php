@@ -12,6 +12,9 @@ $afActive = ($rightView=='addfiles'? ' class="active"' : '');
 foreach(array('sv', 'tv', 'fv', 'zv') as $vt) {
 ${$vt.'Active'} = ($leftView==$vt? ' class="active"' : '');
 }
+if (!$b->canWrite()) {
+$pageTitle .= ' (' .getTranslation('readOnlyTitle') .')';
+}
 
 echo <<<END
 <!DOCTYPE HTML>

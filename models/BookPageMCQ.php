@@ -60,6 +60,7 @@ $html .= <<<END
 <legend epub:type="question">{$t('Question')} $qnum: {$jq->q}</legend>
 END;
 for ($i=0; $i<count($jq->c); $i++) {
+if (!$jq->c[$i]) { array_splice($jq->c, $i--, 1); continue; }
 $id = "q{$num}_$i";
 $itype = ($xml->getAttribute('type')=='simple'? 'radio' : 'checkbox');
 $opthtml = '';
@@ -77,12 +78,16 @@ END;
 $html.='</fieldset>';
 }
 $html.=<<<END
-<p><button type="submit">{$t('Submit')}</button></p>
+<p>
+<button type="submit">{$t('Submit')}</button>
+<button type="reset">{$t('Clear')}</button>
+</p>
 END;
 
 $form->appendHTML($html);
 $this->addJsResource('global', $doc);
 $this->addJsResource('book-mcq', $doc);
+$this->ensureCssMasterFileLinked($doc);
 $this->saveDoc();
 $this->saveDataDoc();
 }
