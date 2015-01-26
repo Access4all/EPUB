@@ -14,6 +14,36 @@ background-color: #f6f9ef; /*#ededed;*/
 margin: 1em;
 }
 
+dl {
+margin: 1em 1em 1em 1em;
+}
+
+dt {
+font-size: 1em;
+}
+
+dd{
+font-size: .8em;
+margin: .3em 3em 1.2em 1.6em;
+}
+/*
+#partPageType input {
+margin-left: -2em;
+}
+
+#partPageType label {
+margin-left: 2em;
+font-size: 125%;
+text-align: left;
+}
+
+#partPageType p {
+max-width: 56em;
+margin-left: 18em;
+margin-bottom: 2em;
+font-size: 80%;
+}*/
+
 #topPanel {
 border-bottom: solid 4px #ccc;
 }
@@ -289,6 +319,10 @@ vertical-align: bottom;
 margin-top: .25em;
 }
 
+dt input {
+vertical-align: text-top;
+}
+
 input[type=text], input[type=password], input[type=email], input[type=url]{
 min-width: 12em;
 }
@@ -321,20 +355,6 @@ margin-left: 23em;
 }
 p>input+button, p>input+input[type=submit], p>input+input[type=reset], p>input+input[type=button], p>input+input[type=radio], p>input+input[type=checkbox] { margin-left: 3px; 
 margin-left: initial; 
-}
-#partPageType label {
-margin-left: 2em;
-font-size: 125%;
-text-align: left;
-}
-#partPageType input {
-margin-left: -2em;
-}
-#partPageType p {
-max-width: 56em;
-margin-left: 18em;
-margin-bottom: 2em;
-font-size: 80%;
 }
 
 #styleEditor p {
@@ -405,3 +425,7 @@ font-size: 100%;
 margin-top: 2em;
 }
 
+div#partGeneral, div#partOrg, div#partTOC, div#partUsers {
+	margin-bottom: 3.2em;
+	border: 1px solid #86b918;
+}

@@ -1,4 +1,0 @@
-﻿
-btnNav=Inhaltsverzeichnis
-btnNext=Weiter
-btnPrev=Zurück
