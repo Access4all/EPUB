@@ -1,0 +1,25 @@
+﻿
+LoginTitle=Anmelden
+Login=Benutzername	
+Password=Passwort
+Language=Sprache
+LoginBtn=Anmelden
+PleaseLogin=Bitte melden Sie sich an:
+InvalidLogin=Ihre Eingaben waren falsch.
+UserProfileTitle=Benutzerprofil bearbeiten
+UpdPrfBtn=Update
+CurrentPassword=Altes Passwort
+NewPassword=Neues Passwort (leer lassen um altes Passwort zu behalten)
+NewPassword2=Bestätigen Sie Ihr neues Passwort
+DisplayName=Vollständiger Name
+DisplayNameHelp=Dieser vollständige Name wird anderen Benutzern im System angezeigt; Er kann sich vom Benutzernamen unterscheiden.
+WrongPassword=Falsches Passwort.
+PasswordDifferent=Es wurden unterschiedliche neue Passwörter eingegeben.
+UserChangedOK=Ihr Profil wurde aktualisiert.
+AddNewUser=Benutzer hinzufügen
+UsersList=Benutzerliste
+Administrator=Administrator
+AddBtn=Add
+AdminAUTitle=Benutzermanagement
+UserAdded=Benutzer %1 mit Passwort %2 wurde hinzugefügt.
+UserAddedE=Benutzer konnte nicht erstellt werden. Womöglich exisitiert schon ein Benutzer mit demselben Namen oder Sie verfügen nicht über die entspredchenden Rechte.
