@@ -103,7 +103,11 @@ $processList($json->list1, $json->list2, $xmlList1, $ltr, $html, $f1, $f2, 'left
 $processList($json->list2, $json->list1, $xmlList2, $rtl, $html, $f2, $f1, 'right', $submission, $json->list2h);
 $html.=<<<END
 </div><!--question-->
-<p><button type="submit">{$t('Submit')}</button></p>
+<p>
+<button type="submit">{$t('Submit')}</button>
+<button type="button" id="btnShowAnswers">{$t('ShowAnswers')}</button>
+<button type="reset">{$t('Clear')}</button>
+</p>
 END;
 $form->appendHTML($html);
 $this->addJsResource('global', $doc);

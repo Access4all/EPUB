@@ -1,3 +1,5 @@
+
+ShowAnswers=Show answers
 IntroText=Introductory Text
 leftELbl=Left item
 rightELbl=Right item

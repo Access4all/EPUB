@@ -480,4 +480,4 @@ $('form[data-track-changes]').each(FormTrackChanges_init);
 $('*[data-expands]').each(Accordion_init);
 });
 
-alert('editor loaded');
+//alert('editor loaded');

@@ -3,7 +3,9 @@ window.onloads.push(function(){
 var quiz = document.getElementById('quiz');
 quiz.onsubmit = window['QuizSubmit_'+quiz.getAttribute('data-submissionMode')];
 quiz.onreset = QuizReset;
-document.getElementById('btnShowAnswers').onclick = Quiz_LocalShowAnswers.bind(null, quiz);
+var btnsa = document.getElementById('btnShowAnswers');
+btnsa.onclick = Quiz_LocalShowAnswers.bind(null, quiz);
+if (quiz.getAttribute('data-submissionMode')!='local') btsa.disabled=true;
 });
 
 function QuizReset () {
