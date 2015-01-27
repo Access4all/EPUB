@@ -18,7 +18,7 @@ echo <<<END
 <p><label for="identifier">{$t('BookIdentifier')}: </label>
 <input type="text" id="identifier" name="identifier" value="{$h($b->identifier)}" /></p>
 <p><label for="language">{$t('BookLanguage')}: </label>
-<input type="text" id="language" name="language" value="{$h($b->language)}" required aria-required="true" /></p>
+<input type="text" id="language" name="bookLanguage" value="{$h($b->language)}" required aria-required="true" /></p>
 </div><!--partGeneral-->
 <h2 data-expands="partOrg">{$t('BookOrganisation')}</h2>
 <div id="partOrg">

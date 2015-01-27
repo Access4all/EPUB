@@ -94,8 +94,8 @@ if (isset($info['title'])) {
 $title = $doc->getFirstElementByTagName('title');
 $title->nodeValue = trim($info['title']);
 }
-if (isset($info['language'])) {
-$lng = $info['language'];
+if (isset($info['bookLanguage'])) {
+$lng = $info['bookLanguage'];
 $html = $doc->documentElement;
 $html->setAttribute('lang', $lng);
 $html->setAttribute('xml:lang', $lng);

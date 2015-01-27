@@ -16,7 +16,7 @@ echo <<<END
 <p><label for="title">{$t('PageTitle')}: </label>
 <input type="text" id="title" name="title" value="{$h($p->getTitle())}" required aria-required="true" /></p>
 <p><label for="language">{$t('Language')}:</label>
-<input type="text" id="language" name="language" value="{$h($p->getLanguage())}" required aria-required="true" /></p>
+<input type="text" id="language" name="bookLanguage" value="{$h($p->getLanguage())}" required aria-required="true" /></p>
 <p><input type="checkbox" id="linear" name="linear"$cbIsLinear />
 <label for="linear">{$t('CbLinear')}</label></p>
 </div><!--partGeneral-->

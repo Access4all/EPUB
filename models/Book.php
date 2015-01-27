@@ -262,7 +262,7 @@ function updateBookSettings ($info) {
 $needBsUpdate=false;
 if (isset($info['title'])) { $this->title = trim($info['title']); $needBsUpdate=true; }
 if (isset($info['identifier'])) $this->identifier = trim($info['identifier']);
-if (isset($info['language'])) $this->language = trim($info['language']);
+if (isset($info['bookLanguage'])) $this->language = trim($info['bookLanguage']);
 if (isset($info['authors'])) {
 $needBsUpdate=true;
 $this->authors = preg_split("/\r\n|\n|\r|\s*[,;]\s*/", $info['authors'], -1, PREG_SPLIT_NO_EMPTY);
