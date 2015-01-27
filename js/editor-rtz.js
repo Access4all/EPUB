@@ -119,6 +119,7 @@ cleanHTML: vk.f9,
 function RTZ_init () {
 this.inlineOnly = ['div', 'section', 'aside', 'header', 'footer'].indexOf(this.zone.tagName.toLowerCase())<0;
 this.zone.onkeydown = RTZ_keyDown.bind(this);
+this.zone.onkeypress = RTZ_keyPress.bind(this);
 this.zone.onpaste = RTZ_paste.bind(this);
 this.zone.oncut = RTZ_cut.bind(this);
 this.zone.ondragover = RTZ_onDragOver;
@@ -126,6 +127,7 @@ this.zone.ondrop = RTZ_onDrop.bind(this);
 this.zone.onfocus = RTZ_onfocus.bind(this);
 this.zone.onblur = RTZ_onblur.bind(this);
 this.zone.oncontextmenu = RTZ_contextmenu.bind(this);
+this.isAtNonEditablePoint = RTZ_isAtNonEditablePoint;
 if (window.MutationObserver || window.WebKitMutationObserver) {
 if (!window.MutationObserver) window.MutationObserver = window.WebKitMutationObserver;
 this.mutationList = [];
@@ -243,6 +245,14 @@ if (!window.changed && (k==13 || (k>=48&&k<=57) || (k>=65&&k<=90) || k==32) ) wi
 return re;
 }
 
+function RTZ_keyPress (e) {
+e = e || window.event;
+if (this.isAtNonEditablePoint()) {
+if (e.preventDefault) e.preventDefault();
+if (e.stopPropagation) e.stopPropagation();
+return false;
+}}
+
 function RTZ_onSelChanged (sel) {
 var structCb = document.getElementById('structureDropDown');
 var listCb = document.getElementById('listsDropDown');
@@ -314,7 +324,15 @@ var state = undoStack[undoPos++];
 state.redo(state);
 }
 
+function RTZ_isAtNonEditablePoint () {
+return false;
+}
+
 function RTZ_implKeyDown (k, simulated) {
+var editablePoint = this.isAtNonEditablePoint(), kk=k&0xFF;
+if (editablePoint && (
+kk==10 || kk==13 || kk==32 || (kk>=65 && kk<=90) || (kk>=48 && kk<=57) || kk==vk.backspace
+)) return false;
 if (this.onkeydown) {
 var result = this.onkeydown(k,simulated);
 if (result===true || result===false) return result;
@@ -2003,4 +2021,4 @@ return false;
 };});//each link
 });
 
-//alert('RTZ13 loaded');
+alert('RTZ13 loaded');
