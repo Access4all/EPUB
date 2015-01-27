@@ -73,10 +73,11 @@ echo <<<END
 </tr></thead><tbody>
 END;
 foreach($b->getRightsTable() as $entry) {
-$uid = $entry->id;
+$uid = floor($entry->id);
 $rsel = ($entry->flags&BF_READ? 'checked="checked"  ':'');
 $wsel = ($entry->flags&BF_WRITE? 'checked="checked" ':'');
 $asel = ($entry->flags&BF_ADMIN? 'checked="checked" ':'');
+if ($uid==0) $entry->displayName='*';
 echo <<<END
 <tr>
 <th scope="row"><input type="hidden" name="share[$uid][]" value="0" />

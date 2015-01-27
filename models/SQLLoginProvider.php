@@ -20,8 +20,14 @@ $re->setFetchMode(PDO::FETCH_CLASS, 'User');
 return $re->fetch();
 }
 
-public function getUserByName ($name) {
+public function getUserByName ($name, $allowStar=false) {
 global $db;
+if ($name=='*'&&$allowStar) {
+$u = new User();
+$u->displayName='*';
+$u->id=0;
+return $u;
+}
 $re = $db->query('select * from '.DB_TABLE_PREFIX.'Users where name = %s or displayName = %s', $name, $name);
 if (!$re || $re->rowCount()<1) return null;
 $re->setFetchMode(PDO::FETCH_CLASS, 'User');

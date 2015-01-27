@@ -97,7 +97,7 @@ function getBookRightsTable ($bookId) {
 global $db;
 return $db->query('select l.flags, u.id, u.name, u.displayName
 from '.DB_TABLE_PREFIX.'BookUsers l
-join '.DB_TABLE_PREFIX.'Users u on u.id=l.user
+left join '.DB_TABLE_PREFIX.'Users u on u.id=l.user
 where l.book=%d
 ', floor($bookId) )
 ->fetchAll(PDO::FETCH_OBJ);
@@ -115,13 +115,14 @@ if (isset($info['shareNew'])) foreach($info['shareNew'] as $t) {
 $names = array('read', 'write', 'admin');
 $lp = LoginProvider::getInstance();
 $userName = $t['user'];
-$userObj = $lp->getUserByName($userName);
+$userObj = $lp->getUserByName($userName, true);
 if (!$userObj) continue; // Entered user doesn't exist, simply skip
 $userId = floor($userObj->id);
 $flags=0;
 for ($i=0; $i<count($names); $i++) if (isset($t[$names[$i]])) $flags|=(1<<$i);
 $this->addBookUser($bookId, $userId, $flags);
-}}
+}
+}
 
 function createBookFromFile ($file, $info=null) {
 global $booksdir;
