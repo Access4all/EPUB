@@ -6,7 +6,7 @@ loadTranslation('editor');
 class EditorController {
 
 function index ($bookName, $pageName) {
-$this->editorMain('sv', 'editor', $bookName, $pageName);
+$this->editorMain('tv', 'editor', $bookName, $pageName);
 }
 
 public function save ($bookName, $pageName) {
