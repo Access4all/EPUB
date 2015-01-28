@@ -7,7 +7,7 @@ function getAdditionalPageOptions() { return 'SequenceOrdering'; }
 function createDataDoc ($doc) {
 $quiz = $doc->appendElement('sequenceordering', array('submission'=>'local'));
 $intro = $quiz->appendElement('intro');
-$intro->appendElement('h2')->appendText($this->title);
+$intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
 $quiz->appendElement('item');
 }

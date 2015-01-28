@@ -7,7 +7,7 @@ function getAdditionalPageOptions() { return 'MCQ'; }
 function createDataDoc ($doc) {
 $quiz = $doc->appendElement('quiz', array('type'=>'simple', 'submission'=>'local'));
 $intro = $quiz->appendElement('intro');
-$intro->appendElement('h2')->appendText($this->title);
+$intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
 $q = $quiz->appendElement('question');
 $q->appendElement('q');
