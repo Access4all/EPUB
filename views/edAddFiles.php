@@ -9,6 +9,7 @@ echo <<<END
 <div id="partUpload">
 <p><label for="uploads">{$t('DirectUpload')}: </label>
 <input type="file" id="uploads" name="uploads[]" multiple="multiple" /></p>
+<p>{$t('ImportFilesExpl')}</p>
 </div>
 <h2 data-expands="partAdvanced">{$t('Advanced')}</h2>
 <div id="partAdvanced">

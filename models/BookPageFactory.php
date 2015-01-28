@@ -37,7 +37,7 @@ return <<<END
 <head>
 <title>{$info['title']}</title>
 </head><body>
-<h2>{$info['title']}</h2>
+<h1>{$info['title']}</h1>
 <p>{$info['introText']}</p>
 </body></html>
 END;

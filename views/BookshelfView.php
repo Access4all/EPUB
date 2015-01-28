@@ -22,18 +22,6 @@ echo <<<END
 END;
 }
 echo <<<END
-<form action="$root/bookshelf/changeLanguage" method="post">
-<p><label for="lang">{$t('Language')}: </label>
-<select id="lang" name="lang">
-END;
-foreach ($langs as $code=>$name) {
-$selected = ($lang==$code? ' selected="selected"': '');
-echo "<option value=\"$code\"$selected>$name</option>";
-}
-echo <<<END
-</select>
-<button type="submit">{$t('ChangeLanguage')}</button>
-</p></form>
 <ul>
 <li><a href="$root/user">{$t('GoToUserProfile')}</a></li>
 END;
