@@ -695,7 +695,7 @@ if (!@$this->spine) $this->readOpf();
 return $this->spine;
 }
 
-function moveSpineBefore ($it, $ref) {
+function moveSpineBefore ($it, $ref, $_=null, $__=null) {
 $this->getSpine();
 $insertPos = array_search($ref->id, $this->spine);
 $removePos = array_search($it->id, $this->spine);
@@ -706,7 +706,7 @@ $this->spineModified=true;
 $this->saveOpf();
 }
 
-function moveSpineAFter  ($it, $ref) {
+function moveSpineAFter  ($it, $ref, $_=null, $__=null) {
 $this->getSpine();
 $insertPos = 1+array_search($ref->id, $this->spine);
 $removePos = array_search($it->id, $this->spine);
@@ -717,7 +717,19 @@ $this->spineModified=true;
 $this->saveOpf();
 }
 
-function moveFile ($it, $ref) {
+function moveTocAfter ($src, $ref, $srcHash, $refHash) {
+die("srcH=$srcHash, refH=$refHash");
+}
+
+function moveTocBefore ($src, $ref, $srcHash, $refHash) {
+die("srcH=$srcHash, refH=$refHash");
+}
+
+function moveTocUnder ($src, $ref, $srcHash, $refHash) {
+die("srcH=$srcHash, refH=$refHash");
+}
+
+function moveFile ($it, $ref, $_=null, $__=null) {
 $newFileName = dirname($ref->fileName) .'/' .basename($it->fileName);
 $this->implMoveFile($it, $newFileName);
 }

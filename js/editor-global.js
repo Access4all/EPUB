@@ -135,7 +135,7 @@ function MessageBox (title, msg, btns, okFunc, readyFunc) {
 var lastFocus = document.activeElement;
 var first=null, overlay = document.createElement2('div', {'class':'overlay'}), form = document.createElement2('div', {'role':'alertdialog', 'class':'dialogBox'});
 form.appendElement('h1').appendText(title);
-var p = form.appendElement('p', {id:'MessageBoxLabel', 'aria-live':'assertive'});
+var p = form.appendElement(msg.indexOf('<p>')>0?'div':'p', {id:'MessageBoxLabel', 'aria-live':'assertive'});
 p.innerHTML = msg;
 p = form.appendElement('p');
 var btnClick = function(btnIndex, btnLabel){ 
@@ -173,6 +173,12 @@ if (e.stopPropagation) e.stopPropagation();
 if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 e.returnValue = e.ReturnValue = false;
 return false;
+}
+
+function HelpBox (name) {
+ajax('GET', window.root + '/editor/' + name + '/infobox', null, function(text){
+MessageBox(msgs.Help, text, [msgs.OK]);
+});//##
 }
 
 function FileTree_init (e) {
@@ -446,6 +452,12 @@ this.setAttribute('aria-expanded', !collapsed);
 return false;
 }
 
+function HelpBox_BtnInit (btn) {
+var name = btn.getAttribute('data-infobox');
+btn.setAttribute('tabindex', 0);
+btn.onclick = HelpBox.bind(btn, name);
+}
+
 function LeftPanelAJAXLoad (url) {
 window.onloads ={push:function(f){ try { f(); } catch(e){alert(e.message);} }}; // Catch functions that normally have to be called when the page loads (window.onload) and call them immediately
 ajax('POST', url, '', function(html){
@@ -475,6 +487,7 @@ if (e&&e.state) LeftPanelAJAXLoad(e.state);
 
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
+$('.infobox').each(HelpBox_BtnInit);
 $('.fileTree').each(FileTree_init);
 $('form[data-track-changes]').each(FormTrackChanges_init);
 $('*[data-expands]').each(Accordion_init);

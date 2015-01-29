@@ -37,8 +37,9 @@ return <<<END
 <head>
 <title>{$info['title']}</title>
 </head><body>
-<h1>{$info['title']}</h1>
+<h1>{$t('autoIntro0')}</h1>
 <p>{$info['introText']}</p>
+<p>{$t('autoIntro3')}</p>
 </body></html>
 END;
 }

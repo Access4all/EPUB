@@ -9,6 +9,13 @@ function index ($bookName, $pageName) {
 $this->editorMain('tv', 'editor', $bookName, $pageName);
 }
 
+function infobox ($infoboxName) {
+global $lang;
+if (!ctype_alnum($infoboxName)) exit404();
+$text = @file_get_contents("lang/$lang/help-$infoboxName.txt");
+die($text);
+}
+
 public function save ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
@@ -136,11 +143,17 @@ $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
 if (!$b->canWrite()) exit403();
 if (empty($_GET['src']) || empty($_GET['ref'])) exit404();
-$moveItem = $b->getItemByFileName( $_GET['src'] );
-$refItem = $b->getItemByFileName( $_GET['ref'] );
+$src = $_GET['src'];
+$ref = $_GET['ref'];
+$srcParam = null;
+$refParam = null;
+if (strpos($src,'#')) list($src, $srcParam) = explode('#', $src, 2);
+if (strpos($ref,'#')) list($ref, $refParam) = explode('#', $ref, 2);
+$moveItem = $b->getItemByFileName( $src );
+$refItem = $b->getItemByFileName( $ref );
 if (!$moveItem || !$refItem) exit404();
-$b->$actionName($moveItem, $refItem);
-die('OK');
+$b->$actionName($moveItem, $refItem, $srcParam, $refParam);
+ie('OK');
 }
 
 public function __call ($name, $args) {

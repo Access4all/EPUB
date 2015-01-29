@@ -2,7 +2,7 @@
 DirectUpload=Envoi de fichiers
 FileName=Chemin du fichier
 PageIdentifier=Identifiant
-PageTitle=Titre de la page
+PageTitle=Titre du fichier
 CbLinear=NE pas inclure cette page dans la table des matières et dans le fil conducteur
 PageType=Type de page
 PageType_document=Document normal

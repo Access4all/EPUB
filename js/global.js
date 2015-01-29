@@ -27,7 +27,7 @@ if (!xhr) return null;
 xhr.onreadystatechange = function () {
 if (xhr.readyState==4) {
 if (xhr.status==200) success(xhr.responseText, {}, xhr);
-else failure(xhr.status, xhr);
+else if (failure) failure(xhr.status, xhr);
 }};
 xhr.onerror = xhr.onabort = function () { 
 failure(-1, xhr); 
