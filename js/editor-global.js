@@ -178,7 +178,7 @@ return false;
 function HelpBox (name) {
 ajax('GET', window.root + '/editor/' + name + '/infobox', null, function(text){
 MessageBox(msgs.Help, text, [msgs.OK]);
-});//##
+});//
 }
 
 function FileTree_init (e) {

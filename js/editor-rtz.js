@@ -138,7 +138,7 @@ this.zone.onmousedown = function(){ setInterval(RTZ_selectionTimer.bind(this), 1
 this.toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action'), text = o.textContent;
 o.onclick = RTZ_toolbarButtonClick.bind(this, action); 
-if (keys[action] && keys[action]<vk.impossible) text += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
+if (keys[action] && keys[action]<vk.impossible && text.indexOf('\t')<0) text += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
 o.textContent = text;
 o.setAttribute('title', text);
 }.bind(this));
@@ -157,21 +157,16 @@ o.removeAttribute('disabled');
 }
 this.loadStyles();
 if (this.debug){
+if (!this.htmlCodePreview && !this.zone.hasAttribute('data-debughtmlcode')) {
 var div = document.createElement('div');
-var div2 = document.getElementById('debugdiv2');
-if (!div2) {
-div2 = document.createElement2('div', {id:'debugdiv2'});
-div2.appendElement('h1').appendText('Debug messages');
-//document.body.appendChild(div2);
-}
 div.appendElement('h1').appendText('Debug HTML code');
 this.htmlCodePreview = div.appendElement('pre');
-this.zone.onkeyup = RTZ_debug_updateHTMLPreview.bind(this);
 this.zone.parentNode.insertBefore(div, this.zone.nextSibling);
-this.zone.onkeyup(null);
-this.debug = function(str){ div2.insertAdjacentHTML('beforeEnd', str+'<br />'); };
+this.zone.setAttribute('data-debughtmlcode', true);
 }
-else this.debug = function(str) {};
+this.zone.onkeyup = RTZ_debug_updateHTMLPreview.bind(this);
+this.zone.onkeyup(null);
+}
 this.cleanHTML();
 this.startRecordDOMChanges();
 if (window.onRTZCreate) window.onRTZCreate(this);
@@ -1930,6 +1925,7 @@ return "RTZ"+JSON.stringify(this);
 }
 
 function RTZ_debug_updateHTMLPreview () {
+if (!this.htmlCodePreview) return;
 var code = this.zone.innerHTML;
 code = code.replace(/>[ \r\n\t]*</g, '>\r\n<');
 code = code.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('\r\n|\n|\r').join('<br />');
