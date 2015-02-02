@@ -4,6 +4,7 @@ $h = 'htmlspecialchars';
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('CreateNewPage')}</h1>
+<p><a href="#" class="infobox" data-infobox="newpage"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <form action="" method="post">
 <h2 data-expands="partGeneral">{$t('General')}</h2>
 <div id="partGeneral">

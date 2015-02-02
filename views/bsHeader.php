@@ -13,6 +13,7 @@ echo <<<END
 <link rel="stylesheet" href="$root/css/bookshelf.css" />
 </head><body>
 <main role="main" id="main">
+<div id="fullWrapper">
 <h1>$pageTitle</h1>
 END;
 ?>

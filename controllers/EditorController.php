@@ -11,7 +11,7 @@ $this->editorMain('tv', 'editor', $bookName, $pageName);
 
 function infobox ($infoboxName) {
 global $lang;
-if (!ctype_alnum($infoboxName)) exit404();
+if (!preg_match('/^[-a-zA-Z_0-9]+$/', $infoboxName)) exit404();
 $text = @file_get_contents("lang/$lang/help-$infoboxName.txt");
 die($text);
 }

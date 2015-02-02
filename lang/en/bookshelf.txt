@@ -33,3 +33,4 @@ btnView=View
 btnExport=Export
 BtnCreate=Create
 BtnAdd=Add
+btnHelp=Help

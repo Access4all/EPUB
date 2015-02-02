@@ -107,6 +107,7 @@ function HelpBox (name) {
 ajax('GET', window.root + '/editor/' + name + '/infobox', null, function(text){
 MessageBox(msgs.Help, text, [msgs.OK]);
 });//
+return false;
 }
 
 function HelpBox_BtnInit (btn) {

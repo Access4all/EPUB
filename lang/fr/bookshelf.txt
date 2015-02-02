@@ -34,3 +34,4 @@ btnView=Lire
 btnExport=Exporter
 BtnCreate=Créer
 BtnAdd=Ajouter
+btnHelp=Aide

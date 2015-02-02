@@ -4,6 +4,7 @@ $h = 'htmlspecialchars';
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('AddFiles')}</h1>
+<p><a href="#" class="infobox" data-infobox="addfiles"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <form action="" method="post" enctype="multipart/form-data">
 <h2 data-expands="partUpload">{$t('DirectUpload')}</h2>
 <div id="partUpload">

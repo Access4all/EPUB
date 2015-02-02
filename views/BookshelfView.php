@@ -69,13 +69,17 @@ END;
 }
 echo <<<END
 </tbody></table>
-<p><a href="$root/bookshelf/$templates">{$t("showTemplates_$templates")}</a></p>
+<p>
+<a href="$root/bookshelf/$templates">{$t("showTemplates_$templates")}</a>
+<a href="#" class="infobox" data-infobox="template"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
+</p>
 <h2>{$t('AddToBookshelf')}</h2>
 <form action="$root/bookshelf/upload" method="post" enctype="multipart/form-data">
 <p><label for="upload">{$t('UploadFile')} : </label>
 <input type="file" id="upload" name="upload" />
 <button type="submit">{$t('BtnAdd')}</button>
-</form>
+<a href="#" class="infobox" data-infobox="addbook"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
+</p></form>
 <h2>{$t('CreateNewBook')}</h2>
 <form action="$root/bookshelf/newBook" method="post">
 <p><label for="title">{$t('BookTitle')}: </label>
@@ -91,6 +95,7 @@ echo "<option value=\"$name\">$label</option>";
 echo <<<END
 </select>
 <button type="submit">{$t('BtnCreate')}</button>
+<a href="#" class="infobox" data-infobox="createbook"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
 </p></form>
 END;
 require('bsFooter.php');
