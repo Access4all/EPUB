@@ -17,6 +17,7 @@ window.readOnly = $readOnlyFlag;
 </script>
 <script type="text/javascript" src="$root/js/global.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/stringTable.php?modules=editor,editor-rtz,editor-styling$otherStringTable&amp;lang=$lang&amp;rnd=$rnd"></script>
+<script type="text/javascript" src="$root/js/dialogs.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/editor-global.js?rnd=$rnd"></script>
 </body></html>
 END;

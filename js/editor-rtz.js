@@ -1848,7 +1848,6 @@ data.append('noredir', '1');
 if (forcedir) data.append('forcedir', '1');
 data.append('id', '');
 data.append('fileName', '');
-debug(files.length + ' files');
 for (var i=0; i<files.length; i++) data.append('uploads[]', files[i], files[i].name);
 ajax('POST', url, data, function(re){
 debug(re);
