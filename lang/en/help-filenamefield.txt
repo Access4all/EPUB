@@ -1,0 +1,3 @@
+﻿<p>Filename is optional. If omited, it is automatically derived from the given document title.
+You can give an explicit one to avoid an automatic assignment, or if you want to organize yourself more precisely, by giving also another path.</p>
+<p>You will be able to find again the resource under the name given here, in the « Files » tab; This is also the name under it will appear if the exported book is uncompressed</p>

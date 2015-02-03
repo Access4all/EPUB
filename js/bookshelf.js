@@ -4,4 +4,4 @@ $('.infobox').each(HelpBox_BtnInit);
 });//onload
 
 
-alert('Bookshelf loaded');
+//alert('Bookshelf loaded');

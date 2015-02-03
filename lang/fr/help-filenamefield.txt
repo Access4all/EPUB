@@ -1,0 +1,3 @@
+﻿<p>Le nom du fichier est optionnel. S'il n'est pas précisé, il est automatiquement dérivé à partir du titre du document fourni.
+Vous pouvez en préciser un pour éviter un assignement automatique, ou si vous souhaitez vous organiser plus finement, en indiquant également un chemin différent.</p>
+<p>Vous pourrez retrouver la ressource sous le nom indiqué ici dans l'onglet « Fichiers »; c'est également le nom sous lequel elle apparaîtra si le livre exporté est décompressé.</p>

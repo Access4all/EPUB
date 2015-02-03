@@ -1,1 +1,7 @@
-Book options sharing help
+﻿<p>You can share your book, so that other users of the system could read and edit it, in a team working spirit.</p>
+<p>To give access to other users, simply add them in the list. For each of them, you can give three kinds of access: </p>
+<ul>
+<li>Rea: user can read the contents of your book and open it in the editor, but is unable to save changes</li>
+<li>Write: the user can open the book in the editor and save his changes; be careful not to be several users modifying the same file at the same time, this might cause unexpected overwrites.</li>
+<li>Manage sharing: the user can read and write, but also add other users; Without this right, he's not allowed to.</li>
+</ul>

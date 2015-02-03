@@ -1,1 +1,9 @@
-New HTML file help
+﻿<p>C'est grâce à l'onglet « Nouveau fichier HTML » que vous pouvez ajouter des nouveaux documents, et donc du contenu, à votre livre.
+En réalité, un livre est constitué d'un ensemble de fichiers et de documents qui en forment son contenu.</p>
+<p>Si vous cherchez à ajouter des images et non pas des documents, voyez du côté de l'onglet « importer des fichiers ».</p>
+<p>Pour ajouter un nouveau fichier, vous devez notamment choisir un titre pour celui-ci et le type de contenu qu'il va renfermer.</p>
+<p>Le titre du fichier est celui qui est suceptible d'aparaître sur l'interface du lecteur, en tant que titre de la fenêtre par exemple, lorsqu'il sera en train de lire son contenu.
+En général, ce titre devrait aussi être celui qui  commence le contenu textuel du document; ce devrait être le cas si vous créez un fichier distinct par chapitre ou sous-chapitre, ce que nous vous recommandons. Mais il peut arriver que ce ne soit pas le cas, particulièrement si un même document contient plusieurs chapitres à la suite.
+</p><p> Le titre que vous choisissez est utilisé pour dériver automatiquement un nom de fichier et un identifiant si vous n'en précisez pas (voir sous « avancé » pour plus d'informations à ce sujet).</p>
+<p>Le type de document détermine le genre de contenu que vous allez y mettre. La plupart des fichiers seront des documents normaux: ils pourront contenir du texte et des illustrations.
+Les autres types vous permettent de créer des contenus interactifs, un questionnaire à choix multiple par exemple.</p>

@@ -1,1 +1,7 @@
-Book options sharing help
+﻿<p>Vous pouvez partager votre livre, de sorte à ce que d'autres utilisateurs du système puissent le lire et l'éditer, dans l'esprit d'un travail de groupe.</p>
+<p>Pour donner des accès à d'autres utilisateurs, ajoutez-les simplement dans la liste. Pour chacun, vous pouvez donner trois sortes d'accès : </p>
+<ul>
+<li>Lecture: l'utilisateur peut lire le contenu de votre livre et l'ouvrir dans l'éditeur, mais il ne peut pas sauvegarder ses modifications</li>
+<li>Écriture: l'utilisateur peut ouvrir le livre dans l'éditeur et enregistrer ses modifications; faites toute de même attention de ne pas être plusieurs à travailler sur le même fichier en même temps, cela peut occasionner des pertes inattendues.</li>
+<li>Gérer le partage: l'utilisateur peut lire et écrire, mais également ajouter d'autres utilisateurs; sans ce droit, cela n'est pas permis.</li>
+</ul>

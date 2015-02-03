@@ -135,4 +135,9 @@ for ($i=0; $i<count($parts1); $i++) array_unshift($parts2, '..');
 return implode('/', $parts2);
 }
 
+function killUtf8bom ($str) {
+if (substr($str,0,3)=='﻿') return substr($str,3);
+else return $str;
+}
+
 ?>

@@ -37,8 +37,10 @@ echo '</ul>';
 }
 
 //echo '<h2>', getTranslation('FileView'), '</h2>';
-echo '<div class="leftPanelTab">';
-
+echo <<<END
+<div class="leftPanelTab">
+<p class="helpicon"><a href="#" class="infobox" data-infobox="tab-files"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+END;
 global $booksdir;
 $base = "$booksdir/{$b->name}";
 listFiles($base, '', $b, $p, $leftView, $rightView, 0, true);

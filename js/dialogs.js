@@ -104,7 +104,8 @@ return false;
 }
 
 function HelpBox (name) {
-ajax('GET', window.root + '/editor/' + name + '/infobox', null, function(text){
+var rnd = Math.random();
+ajax('GET', window.root + '/editor/' + name + '/infobox?rnd='+rnd, null, function(text){
 MessageBox(msgs.Help, text, [msgs.OK]);
 });//
 return false;

@@ -1,1 +1,9 @@
-New HTML file help
+﻿<p>Thank to the « New HTML file » tab, you can add new documents, and therefore contents, to your book.
+In reality, a book is composed of a set of documents and files which forms its contents.</p>
+<p>If you want to add images and not documents, see the « Import files » tab.</p>
+<p>To add a new file, you have essentially to choose a title and the type of contents it is going to contain.</p>
+<p>The title of the file is the one that may appear in the reader's interface, as window title when he's reading this file for example.
+In general, this title should also be the one that starts the textual contents of the document; this should be the case if you create a distinct file for each chapter or each subchapter of your book, what is recommanded; but it may not be the case, for example if the document contains several chapters one after eachother.
+</p><p> The title you choose here is used to derive a file name and an identifier if you don't define them explicitely, too (see under « Advanced » for more info on the topic).</p>
+<p>The type of document determines the kind of contents you are going to put it in. Most of files will be regular documents: they will contain text and illustrations.
+Other types allow you to create interactive contents, such as a multiple choice quiz.</p>

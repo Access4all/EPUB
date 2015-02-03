@@ -1,1 +1,9 @@
-Book options general help
+﻿<p>Ici, vous pouvez modifier des paramètres qui ont un effet sur l'ensemble du livre que vous êtes en train d'éditer.
+Vous trouverez notamment : </p>
+<ul>
+<li>Le titre du livre</li>
+<li>La liste de ses auteurs</li>
+<li>La langue dans lequel il est écrit (la langue principale ou celle du public visé s'il y en a plusieurs)</li>
+<li>Un numéro de référence qui permet de l'identifier de manière unique. Au cas où il est publié ou édité il peut s'agir du numéro ISBN/ISSN par exemple. Pour une distribution plus restreinte, cela peut être simplement un nom de code, un numéro de version ou toute autre manière de le reconnaître.</li>
+</ul>
+<p>Outre ces informations de base, c'est également ici que vous paramétrerez comment les contenus sont organisés, comment la table des matières doit être générée, ainsi que les options de partage avec d'autres utilisateurs.</p>

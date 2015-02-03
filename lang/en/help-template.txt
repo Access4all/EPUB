@@ -1,1 +1,6 @@
-Template help
+﻿<p>Templates are special books, which serves as base for creating new books. When a new book is created, an existing template is used as starting content.
+Templates are good places to store styles and contents which you would like to reuse in several books.</p>
+<ul>
+<li>To add a template to the list under « Create new book » (in the bookshelf), define a book as a template; you will find this option in the advanced part, in book settings.</li>
+<li>To edit a template, click on « show templates » in the bookshelf, then choose the template book to edit. They can be modified just like normal books.</li>
+</ul>

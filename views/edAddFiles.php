@@ -4,7 +4,7 @@ $h = 'htmlspecialchars';
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('AddFiles')}</h1>
-<p><a href="#" class="infobox" data-infobox="addfiles"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+<p class="helpicon"><a href="#" class="infobox" data-infobox="addfiles"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <form action="" method="post" enctype="multipart/form-data">
 <h2 data-expands="partUpload">{$t('DirectUpload')}</h2>
 <div id="partUpload">
@@ -15,9 +15,13 @@ echo <<<END
 <h2 data-expands="partAdvanced">{$t('Advanced')}</h2>
 <div id="partAdvanced">
 <p><label for="filename">{$t('FileName')}: </label>
-<input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" /></p>
+<input type="text" id="filename" name="fileName" value="{$h(@$_POST['fileName'])}" />
+<a href="#" class="infobox" data-infobox="filenamefield"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
+</p>
 <p><label for="id">{$t('PageIdentifier')}: </label>
-<input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" /></p>
+<input type="text" id="id" name="id" value="{$h(@$_POST['id'])}" />
+<a href="#" class="infobox" data-infobox="pageidfield"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
+</p>
 </div>
 <p>
 <input type="hidden" name="addfiles" value="true" />

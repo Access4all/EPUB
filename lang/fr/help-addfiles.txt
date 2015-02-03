@@ -1,1 +1,14 @@
-Import files help
+﻿<p>Ici, vous pourrez importer des fichiers pour les ajouter à votre livre. </p>
+<ul>
+<li>Vous pouvez importer des documents texte, ils seront convertis en HTML et ajoutés en tant que documents normaux, de la même manière que si vous aviez créé un nouveau fichier HTML puis saisi le contenu.
+<br />Vous pouvez importer des documents texte aux formats suivants: HTML
+</li>
+<li>Vous pouvez envoyer des images, des sons ou des vidéos. Vous pourrez les retrouver dans l'onglet « Fichiers », et à partir de là, les glisser-déposer dans vos documents pour les y incorporer.
+<br />Formats d'image supportés: PNG, JPG, GIF
+<br />Formats audio supportés: MP3, OGG, WAV
+<br />Formats vidéo reconnus: MP4
+</li>
+<li>Vous pouvez envoyer des fichiers de police de caractères. Les polices ainsi ajoutées seront ensuite disponibles pour styler vos contenus, dans l'onglet « Mise en forme ».
+<br />Formats de police reconnus: TTF, OTF
+</li>
+</ul>

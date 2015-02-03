@@ -1,1 +1,1 @@
-Create new book help
+﻿%{template}

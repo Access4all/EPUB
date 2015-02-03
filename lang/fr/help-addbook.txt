@@ -1,1 +1,8 @@
-Add book help
+﻿<p>Envoyez des livres pour les ajouter à votre bibliothèque. Vous pouvez bien sûr envoyer des livres complets au format .epub.</p>
+<p>Vous pouvez également envoyer des fichiers dans les formats suivants. Ils seront convertis en livres epub3, en utilisant le modèle par défaut.
+Le même résultat peut être obtenu en créant un nouveau livre puis en important les fichiers à l'intérieur de celui-ci.</p>
+<ul>
+<li>Un livre au format epub2</li>
+<li>Un document au format HTML</li>
+<li>Une archive zip contenant un ou plusieurs documents dans des formats supportés (éventuellement éthérogènes), mais pas des livres complets ni d'autres archives</li>
+</ul>

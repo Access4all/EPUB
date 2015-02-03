@@ -9,11 +9,14 @@ function index ($bookName, $pageName) {
 $this->editorMain('tv', 'editor', $bookName, $pageName);
 }
 
-function infobox ($infoboxName) {
+function infobox ($infoboxName, $retrn=false) {
 global $lang;
 if (!preg_match('/^[-a-zA-Z_0-9]+$/', $infoboxName)) exit404();
-$text = @file_get_contents("lang/$lang/help-$infoboxName.txt");
-die($text);
+$text = @killUtf8bom(file_get_contents("lang/$lang/help-$infoboxName.txt"));
+$_this = $this;
+$text = preg_replace_callback('/%\{([-a-zA-Z_0-9]+)\}/', function($m) use($_this) { return $_this->infobox($m[1],true); }, $text);
+if ($retrn) return $text;
+else die($text);
 }
 
 public function save ($bookName, $pageName) {

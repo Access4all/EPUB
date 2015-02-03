@@ -1,1 +1,8 @@
-Add book help
+﻿<p>Send books to add them to your bookshelf. You can of course send complete books in .epub format.</p>
+<p>You can also send files in the following formats. They will be converted into epub3 books, using the default template.
+The same result can be obtained by creating a new book and then importing the files into it.</p>
+<ul>
+<li>A book in epub2 format</li>
+<li>A document in HTML format</li>
+<li>A zip archive containing one or more documents in supported formats (possibly etherogeneous), but not entire books nor other archives</li>
+</ul>

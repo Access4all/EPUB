@@ -1,0 +1,3 @@
+﻿L'identifiant est un moyen pour le système de reconnaître cette ressource de manière unique au sein du livre. 
+Si vous ne précisez pas d'identifiant, il sera automatiquement généré en se basant sur le titre du document fourni. En général, vous n'avez pas besoin d'en préciser un car ce nom n'est utilisé que de manière interne.
+Vous pourriez avoir besoin de le préciser explicitement en cas de conflit, ou si vous éditez manuellement le fichier epub3. 

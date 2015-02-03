@@ -1,1 +1,9 @@
-Book options general help
+﻿<p>Here, you can modify parameters that have an effect on the whole book.
+Most notabliy, you will find : </p>
+<ul>
+<li>The title of the book</li>
+<li>The list of its authors</li>
+<li>The language it is written in (the main language or the one of targetted audience if there are more than one)</li>
+<li>A reference number that allows to uniquely identify the book. If it is published, this could be ISBN/ISSN for example. For a more restricted distribution, this can simply be a code name, a version number, or any other mean to recognize it.</li>
+</ul>
+<p>Additionally to basics mentionned above, you will also set here how contents must be organized, how the table of contents has to be generated, as well as sharing options with other users of the system.</p>

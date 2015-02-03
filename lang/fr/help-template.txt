@@ -1,1 +1,6 @@
-Template help
+﻿<p>Les modèles sont des livres spéciaux qui servent de base à la création de nouveaux livres. Lorsqu'un livre est créé, un modèle existant est utilisé comme contenu de départ.
+Les modèles sont les bons endroits pour enregistrer des styles et des contenus que vous voulez réutiliser dans plusieurs livres.</p>
+<ul>
+<li>Pour ajouter un modèle dans la liste sous « créer un nouveau livre », définissez un livre comme modèle; vous trouverez cette option dans les paramètres avancés du livre en question.</li>
+<li>Pour éditer un modèle, cliquez sur « afficher les modèles » dans la bibliothèque, puis choisissez le livre modèle à éditer. Il se modifie exactement de la même manière qu'un livre ordinaire.</li>
+</ul>

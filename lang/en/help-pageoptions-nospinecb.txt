@@ -1,0 +1,2 @@
+﻿<p>If this box is checked, the contents of this document wont be taken into account in the table of contents, and it wont be reached when navigating in the book in the normal way by using « Next » and « Back » buttons of the reading system.</p>
+<p>This can be useful for documents for which the reading is optional, or those which need to be there for particular reasons but don't give real information, such as the cover page for example.</p>

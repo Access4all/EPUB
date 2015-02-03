@@ -1,6 +1,7 @@
 <?php
 if ($b->getOption('tocNeedRegen', false)) $b->updateTOC();
 
+$t = 'getTranslation';
 $toc = null;
 $doc = DOM::loadXMLString( $b->getContentsByFileName( $b->getNavFileName() ));
 if ($doc && $doc->documentElement) $toc = $doc->documentElement->getFirstElement(function($e){  return $e->getAttribute('epub:type')=='toc'; });
@@ -25,7 +26,12 @@ $a->setAttribute('href', $href);
 //echo '<h2>', getTranslation('TocView'), '</h2>';
 echo '<div class="leftPanelTab">';
 if ($toc && $toc->hasChildNodes()) echo $toc->saveHTML();
-else if ($toc) echo '<p><strong>', getTranslation('ErrTocEmpty'), '</strong></p>';
+else if ($toc) {
+echo <<<END
+<p><strong>{$t('ErrTocEmpty')}</strong></p>
+<p class="helpicon"><a href="#" class="infobox" data-infobox="newpage"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+END;
+}
 else echo '<p><strong>', getTranslation('ErrTocNotAvail'), '</strong></p>';
 echo '</div><!--leftPanelTab-->';
 ?>

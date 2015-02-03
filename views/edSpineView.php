@@ -1,7 +1,10 @@
 <?php
 //echo '<h2>', getTranslation('SpineView'), '</h2>';
-echo '<div class="leftPanelTab">';
-echo '<ol class="fileTree" data-ctxtype="spine">';
+echo <<<END
+<div class="leftPanelTab">
+<p class="helpicon"><a href="#" class="infobox" data-infobox="tab-spine"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+<ol class="fileTree" data-ctxtype="spine">
+END;
 foreach($b->getSpine() as $id) {
 $item = $b->getItemById($id);
 if (!$item) continue;

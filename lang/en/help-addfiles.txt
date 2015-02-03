@@ -1,1 +1,14 @@
-Import files help
+﻿<p>Here, you can import files to add to your book. </p>
+<ul>
+<li>You can import text documents, they will be converted into HTML and added as regular documents, like if you had created a new HTML file and then typed the contents in.
+<br />You can import text documents in the following formats: HTML
+</li>
+<li>You can send images, sounds or videos. You will be able to find them in the « Files » tab, and from there drag &amp; drop them to your documents in order to embed them.
+<br />Supported image formats: PNG, JPG, GIF
+<br />Supported audio formats: MP3, OGG, WAV
+<br />Supported video formats: MP4
+</li>
+<li>You can send fonts. Fonts so imported will then be available to style your contents, in the « Styling » tab.
+<br />Supported font formats: TTF, OTF
+</li>
+</ul>

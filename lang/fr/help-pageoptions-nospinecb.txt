@@ -1,0 +1,2 @@
+﻿<p>Si vous cochez cette case, le contenu de ce document ne sera pas inclus dans la table des matières, et il ne sera pas atteint en naviguant de manière normale dans le livre en utilisant les boutons « Suivant » et « Précédent » du système de lecture.</p>
+<p>Cela est notamment utile pour les documents dont la lecture est optionnelle, ou ceux qui doivent être présents pour des raisons particulières mais qui n'apportent pas de réelle information, comme la page de couverture par exemple.</p>

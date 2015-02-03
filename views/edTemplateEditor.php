@@ -6,6 +6,7 @@ $t = 'getTranslation';
 //echo '<h2>{$t('TemplateEditorView')}</h2>';
 echo <<<END
 <div class="leftPanelTab">
+<p class="helpicon"><a href="#" class="infobox" data-infobox="tab-styling"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <form id="styleEditor">
 <p>
 <button id="saveTplBtn" type="button">{$t('Save')}</button>

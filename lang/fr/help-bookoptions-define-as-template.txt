@@ -1,1 +1,1 @@
-Book options define as template checkbox help
+%{template}

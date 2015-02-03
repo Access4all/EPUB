@@ -8,7 +8,7 @@ $istemplate = !!($b->bflags&BF_TEMPLATE)? 'checked="checked" ':'';
 echo <<<END
 <div id="rightPanel">
 <h1>{$t('BookOptions')}</h1>
-<p><a href="#" class="infobox" data-infobox="bookoptions"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+<p class="helpicon"><a href="#" class="infobox" data-infobox="bookoptions"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <form action="" method="post" data-track-changes>
 <h2 data-expands="partGeneral">{$t('General')}</h2>
 <div id="partGeneral">
@@ -64,7 +64,7 @@ END;
 if (@$b->eflags&BF_ADMIN) {
 echo <<<END
 <h2 data-expands="partUsers">{$t('SharedEdition')}</h2>
-<p><a href="#" class="infobox" data-infobox="bookoptions-sharing"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
+<p class="helpicon"><a href="#" class="infobox" data-infobox="bookoptions-sharing"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a></p>
 <div id="partUsers">
 <table id="rightstable">
 <thead><tr>
