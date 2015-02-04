@@ -2000,6 +2000,7 @@ if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
 $('#topPanel a[href], #leftPanel a[href], #pageTabs a[href]').each(function(a){
 if (a.textContent.trim().length<=1) return;
+if (a.hasAttribute('data-nosavecfm')) return;
 var oldonclick  = a.onclick;
 if (a.hasAttribute('data-ajax')) a.onclick = function(e){
 if (oldonclick) oldonclick.call(a,e);

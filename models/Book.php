@@ -500,10 +500,10 @@ $navdoc = $navItem->getDoc();
 $body = $navdoc->getFirstElementByTagName('body');
 $body->removeAllChilds();
 $nav = $body->appendElement('nav', array('role'=>'navigation', 'epub:type'=>'toc'));
-$nav->appendElement('h2', array('role'=>'heading', 'aria-level'=>2))
+$nav->appendElement('h1', array('role'=>'heading', 'aria-level'=>1, 'data-notoc'=>true))
 ->appendText($this->getOption('tocHeadingText', getTranslation('TableOfContents')));
 $ol = $nav->appendElement('ol');
-//$nav->appendElement('h2', array('role'=>'heading', 'aria-level'=>2))
+//$nav->appendElement('h1', array('role'=>'heading', 'aria-level'=>1, 'data-notoc'=>true))
 //->appendText($this->getOption('tocLofText', getTranslation('ListOfFigures')));
 //$lof = $nav->appendElement('ol');
 $curLevel = -1;

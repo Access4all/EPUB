@@ -41,6 +41,7 @@ var a = ol.appendElement('li').appendElement('a', {href:file?window.rootUrl2+'ax
 a.innerHTML = (file? sFile+': ':'') + 
 msgs['MsgType_'+err.type] + ': ' + err.msg + ': ' + msgs.Near + ' ' + text.escapeHTML();
 a.onclick = A11Y_msgClick.bind(a,err);
+if (!file) a.setAttribute('data-nosavecfm',true);
 }}
 else errdiv.innerHTML = '<p>' + msgs.A11YNoLocalError + '</p>';
 }
@@ -52,8 +53,10 @@ try {
 if (err.target.hasChildNodes()) sel.selectNodeContents(err.target);
 else sel.selectNode(err.target);
 } catch(e) { debug(e.message); }
-err.zone.focus();
+try {
+if (err.zone&&err.zone.focus) err.zone.focus();
 RTZ_select(sel);
+} catch(e) { debug(e.message); }
 return false;
 }
 
@@ -109,7 +112,7 @@ _this.errors.push({msg:msgs.HnBadStructure.replace('%1', l1).replace('%2', l2), 
 // Usually, a document should start with an heading
 {
 var node = zone.firstElementChild;
-while(node.matches('section, header, footer, main, div')) node = node.firstElementChild;
+while(node.matches('section, header, footer, main, nav, aside, div')) node = node.firstElementChild;
 if (!node.matches('h1, h2, h3, h4, h5, h6')) _this.errors.push({msg:msgs.HnStartingHeading, type:'warn', target:zone.getFirstTextNode(), 'zone':zone}); 
 }
 
