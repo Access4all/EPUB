@@ -1,0 +1,6 @@
+﻿<p>Here, you can define the visual appearance of the book.</p>
+<p>To style a particular element, choose it in the list, or click on one such element in the edition area.
+A set of parameters will then appear, allowing you to to choose color, font, size, borders, margins, etc. Only relevant parameters for the selected element are shown.
+The « Save » button will definitely save modifications made to styles, they aren't automatically, even if your changes are visible immediately.</p>
+<p>You can add custom box or positionning styles by clicking on the « Add style » button. Then you will have to specify the name of an HTML element and choose a class name.</p>
+<p>Buttons « Export » and « Import » allow you respectively to export the set of whole styles of the book in a CSS file, et to import in another book styles previously exported.</p>

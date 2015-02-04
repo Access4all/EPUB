@@ -1,1 +1,9 @@
-Accessibility checker tab help
+﻿<p>L'onglet « Accessibilité » analyse l'ensemble de votre livre et vous indique où il pourrait y avoir des problèmes d'accessibilité potentiels pour vos futur lecteurs.</p>
+<p>Un clic sur un message vous conduit immédiatement à l'emplacement correspondant. IL existe trois types de messages : </p>
+<ul>
+<li>Erreurs: ce sont des erreurs d'après les spécifications HTML5 ou WCAG 2.0; vous devez les corriger ou alors la lecture de votre livre pourrait être très fortement compromise pour un nombre non négligeable d'utilisateurs.</li>
+<li>Attention: ce sont des problèmes potentiellement importants, mais ce ne sont pas des erreurs au sens des normes techniques; vous devriez aussi  vous en occuper, car ils peuvent gêner tout autant d'utilisateurs que les véritables erreurs. 
+IL peut parfois s'agir de faux positifs ou de quelque chose qui a de fortes chances d'être mauvais mais qui ne l'est pas nécessairement; dans ce cas assurez-vous bien de connaître les conséquences d'une non correction ou pour quelle raison le message apparaît.</li>
+<li>Info: ce sont des messages moins importants, mais ce serait quand même bien si vous pouviez y jeter un oeil. Il s'agit en général de problèmes moins graves, plus difficiles à corriger ou affectant moins d'utilisateurs.
+Parfois, les infos peuvent aussi être de simples conseils. Ne les prenez pas à la légère, ils pourraient bien vous dépanner.</li>
+</ul>

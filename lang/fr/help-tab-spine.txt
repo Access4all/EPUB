@@ -1,1 +1,4 @@
-Spine tab help
+﻿<p>Le fil conducteur liste les fichiers HTML dans leur ordre de lecture naturel. IL s'agit de l'ordre dans lequel les fichiers seront successivement présentés au lecteur par un logiciel de lecture de livres au format epub3.
+Cet onglet vous permet de bien visualiser cet ordre, et de le changer si besoin est.</p>
+<p>Pour modifier l'ordre de lecture naturel, glissez-déposez un fichier sur un autre, ou utiliser l'option « Déplacer » du menu contextuel.</p>
+<p>Plus simple que la table des matières complète, cet onglet vous permet également de passer plus rapidement d'un fichier à l'autre.</p>

@@ -1,1 +1,4 @@
-Spine tab help
+﻿<p>The spine lists the HTML files of the book in their natural reading order.  This is the order in which the files will be successively presented to the reader by an epub3 book reading program.
+This tab allows you to well visualize this order, and to change it if needed.</p>
+<p>To modify the natural reading order, drag and drop files upon eachother or use the « Move » option of the context menu.</p>
+<p>Simpler than the full table of contents, this tab also allows you to switch quickier from a file to the other.</p>

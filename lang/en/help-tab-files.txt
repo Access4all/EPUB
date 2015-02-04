@@ -1,1 +1,14 @@
-Files tab help
+﻿<p>The « Files » tab lists files present within the epub3 book in a tree view. 
+You will find there your text HTML documents, but also images, videos, fonts, and other resources that make up the whole book
+You can here simply find and open one of the files, but also make other typical operations: rename, move, delete, and send new files.</p>
+<ul>
+<li>To rename, move or delete a file, use the context menu.
+You can also move files by drag and drop.</li>
+<li>You can send new files into the book by dragging files from the explorer and dropping them onto this tab.
+Alternatively, you can use the « Import files » tab to do it without mouse.</li>
+</ul>
+<p>From this tab, you can also insert images and videos to the currently loaded document.
+To do that, drag and drop a file from this tab to the edition area. A dialog box will ask you additional information to complete the insertion, such as alternative text for images for example. 
+You can do this operation without mouse using the option « Copy URL address » in the context menu, and then pasting it into the document at the desired location.
+</p><p>You can also drag and drop or paste a file or a link directly in the edition area to insert it into the current document; if needed, a file will be uploaded and placed in the file tree view at an appropriate location depending on the file type.</p>
+<p>Tipp: during a drag and drop operation, stay still a few seconds on a folder to open or close it.</p>

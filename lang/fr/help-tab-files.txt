@@ -1,1 +1,13 @@
-Files tab help
+﻿<p>Ll'onglet « Fichiers » liste l'arborescence des fichiers présents à l'intérieur du livre epub3. Vous y trouverez vos documents texte HTML, mais aussi les images, vidéos, polices, et autres ressources qui constituent l'ensemble du livre.
+Vous pouvez ici simplement trouver et ouvrir un des fichiers, mais aussi effectuer d'autres opérations classiques: renommer, déplacer, supprimer, et envoyer de nouveaux fichiers.</p>
+<ul>
+<li>Pour renommer, déplacer ou supprimer un fichier, utilisez le menu contextuel.
+Vous pouvez aussi déplacer des fichiers en les glissant-déposant.</li>
+<li>Vous pouvez envoyer des nouveaux fichiers à l'intérieur du livre en glissant-déposant des fichiers depuis l'explorateur vers cet onglet.
+Alternativement, vous pouvez utiliser l'onglet « Importer des fichiers » pour le faire sans souris.</li>
+</ul>
+<p>Depuis cet onglet, vous pouvez également incorporer des images ou des vidéos dans le document actuellement chargé.
+Pour ce faire, glissez-déposez un fichier depuis cet onglet vers la zone d'édition. Une boîte de dialogue vous demandera des informations supplémentaires pour l'incorporation, comme par exemple le texte alternatif pour les images.
+Vous pouvez faire cette opération sans souris en utilisant l'option « Copier l'adresse » dans le menu contextuel, puis en la collant dans le document à l'endroit souhaité.
+</p><p>Vous pouvez aussi glisser-déposer ou coller un fichier ou un lien directement dans la zone d'édition pour l'incorporer dans le document actif; si besoin, un fichier sera envoyé dans le livre et placé dans l'arborescence à un endroit adéquat selon son type.</p>
+<p>Astuce: lors d'une opération de glisser-déplacer, restez immobile quelques secondes au-dessus d'un dossier pour l'ouvrir ou le refermer.</p>

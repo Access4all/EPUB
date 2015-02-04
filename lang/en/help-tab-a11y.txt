@@ -1,1 +1,9 @@
-Accessibility checker tab help
+<p>The « Accessibility » tab analyses your whole book and tells you where there could be potential accessibility issues for your future readers.</p>
+<p>A click on a particular message leads you directly to the corresponding place. There exist three types of messages : </p>
+<ul>
+<li>Errors: they are errors according to HTML5 and/or WCAG 2.0 specifications; you should really fix them, or reading your book might be completely impossible or very painful for a non negligeable part of users.</li>
+<li>Warnigns: these are problems still potentially important, though they aren't errors in the sens of technical standards. You should also seriously take them into account, as they can be as problematic as real errors. 
+Sometimes, they can be false positives or something that as great chances to be wrong but is not effectively; in that case, make sure that you know the consequences of not fixing it, or for which reason the message appears.</li>
+<li>Info: they are less important messages, but it would be nice if you could still handle them. It is mostly less grave issues, harder to fix or probably causing problems to fewer users as errors and warnings. 
+Sometims, infos can be simple advices. Don't ignore them, they could be useful to you.</li>
+</ul>

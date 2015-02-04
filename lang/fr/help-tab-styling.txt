@@ -1,0 +1,6 @@
+﻿<p>Ici, vous pouvez définir l'apparence visuelle du livre.</p>
+<p>Pour styler un élément en particulier, choisissez-le dans la liste, ou cliquez dessus dans la zone d'édition.
+Une série de paramètres apparaîtront ensuite vous permettant de choisir couleur, police, taille, bordures, marges, etc. Seuls les paramètres pertinents pour un élément donné sont affichés.
+Le bouton « Enregistrer » sauvegardera les modifications apportés aux styles définitivement, elles ne le sont pas automatiquement même si les changements que vous effectuez sont visibles en direct.</p>
+<p>Vous pouvez ajouter des styles de boîte ou de positionnement personnalisés en cliquant sur le bouton « Ajouter un style ». Il fautdra ensuite indiquer un nom d'élément HTML et choisir un nom de classe.</p>
+<p>Les boutons « exporter un modèle » et « Importer un modèle » vous permettent respectivement d'exporter l'ensemble des styles du livre dans un fichier CSS, et d'importer dans un autre livre des styles précédemment exportés.</p>
