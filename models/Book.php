@@ -514,7 +514,7 @@ if (@$item->linear===false) continue;
 $modified = false;
 $doc = $item->getDoc();
 $url = pathRelativize($navItem->fileName, $item->fileName);
-foreach($doc->getElements(function($e){ return !!preg_match('/^h\d$/i', $e->nodeName); }) as $heading) {
+foreach($doc->getHeadingOutline() as $heading) {
 if ($heading->hasAttribute('data-notoc')) continue;
 $level = 0+substr($heading->nodeName,1);
 if ($level>$maxDepth) continue;
