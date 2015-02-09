@@ -6,7 +6,7 @@
     <dc:language>en</dc:language>
     <meta property="dcterms:modified">2015-01-27T09:34:12+01:00</meta>
     <link rel="cc:license" href="http://creativecommons.org/licenses/by-nd/3.0/"/>
-    <dc:creator>New book</dc:creator>
+    <dc:creator>Anonymous</dc:creator>
   </metadata>
   <manifest>
     <item id="css" media-type="text/css" href="css/epub3.css"/>

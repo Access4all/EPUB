@@ -147,7 +147,7 @@ o.onchange = RTZ_toolbarStyleSelect.bind(this, o);
 o.$('option').each(function (opt){
 var action = opt.getAttribute('value');
 var text = opt.firstChild;
-if (keys[action] && keys[action]<vk.impossible) text.appendData('\t(' + RTZ_keyCodeToString(keys[action]) + ')');
+if (keys[action] && keys[action]<vk.impossible && text.textContent.indexOf('\t')<0) text.appendData('\t(' + RTZ_keyCodeToString(keys[action]) + ')');
 });
 }.bind(this));
 if (this.mutationObserver) this.toolbar.$('*[data-action=undo], *[data-action=redo]').each(function(o){
