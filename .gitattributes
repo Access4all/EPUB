@@ -1,0 +1,15 @@
+*.txt text
+*.md text
+*.php text
+*.js text
+*.css text
+*.xml text
+*.opf text
+*.ini text
+*.htaccess text
+*.dat binary
+*.png binary
+*.gif binary
+*.jpg binary
+*.zip binary
+*.epub binary
