@@ -110,7 +110,7 @@ border-left: solid 3px #436200;
 border-right: solid 3px #436200;
 border-bottom: solid 3px #436200;
 margin-bottom: .2em;
-padding: 1em 2em;
+padding: 1em;
 height: auto;
 }
 
@@ -127,8 +127,6 @@ border-left: 2px solid #aaa;
 margin-top: -2.4em;
 border-bottom: 3px solid #aaa;
 }
-
-.fileTree ul { margin-left: 4em; }
 
 .collapsed { display: none; }
 
@@ -198,17 +196,42 @@ button[data-action=table] { background-image: URL('../images/24px/table.png'); }
 button[data-action=box] { background-image: URL('../images/24px/box.png'); }
 button[data-action=mark] { background-image: URL('../images/24px/gap.png'); }
 
+.leftPanelTab .infobox img{
+	float: right;
+	right: 0em;
+	position: relative;
+	clear: left;
+}
+
+.rightPanelTab p.infobox {
+	display: inline;
+}
+
 .dialogBox {
    position:fixed;
    top:33%;
    left:25%;
    z-index:200;
-   width: auto;
+   width: 50%;
    height: auto;
    min-height:200px;
    background-color:#fff;
    padding: 1em;
    border: 3px solid #86B918;
+}
+
+.dialogBox h1 {
+	margin: .5em .5em .4em .5em;
+}
+.dialogBox p {
+	margin: .3em .5em .3em .5em;
+}
+.dialogBox ul {
+	margin: .3em 1.6em .3em 1.6em;
+}
+.dialogBox button {
+	margin: .4em auto .5em auto;
+	width: auto;
 }
 
 .overlay {
@@ -220,6 +243,17 @@ height: 100%;
 background-color: black;
 opacity: 0.7;
 } 
+/*
+ol {
+	margin: 0 0 0 2em;
+}
+
+ul {
+	margin: 0 0 0 2em;
+}
+*/
+ol.fileTree, .fileTree ol { margin-left: 1.5em; }
+ul.fileTree, .fileTree ul { margin-left: 1.5em; }
 
 .contextmenu {
    width: auto;

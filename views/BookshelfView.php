@@ -22,7 +22,7 @@ echo <<<END
 END;
 }
 echo <<<END
-<ul>
+<ul id="usernav">
 <li><a href="$root/user">{$t('GoToUserProfile')}</a></li>
 END;
 if ($user&&$user->isAdmin()) echo "<li><a href=\"$root/admin\">{$t('GoToAdminPanel')}</a></li>";

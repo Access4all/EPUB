@@ -24,6 +24,15 @@ h2 {
 margin: 1.1em 0 .4em 0em;
 }
 
+ul#usernav  {
+	list-style-type; none;
+}
+
+ul#usernav li {
+	display: inline;
+	margin: 0 .5em 0 .5em;
+}
+
 table {
 margin: 1em 0 1em 0;
 border: solid 3px #86B918;
@@ -62,3 +71,57 @@ a[role=button] {
 display: inline-block;
 margin-left: 7px;
 }
+
+.infobox {
+	margin: 0 0 0 1em;
+}
+
+.dialogBox {
+    background-color: #fff;
+    border: 3px solid #86b918;
+    height: auto;
+    left: 25%;
+    min-height: 200px;
+    padding: 1em;
+	width: 50%;
+    position: fixed;
+    top: 33%;
+    z-index: 200;
+}
+
+.dialogBox h1 {
+	margin: .5em .5em .4em .5em;
+}
+.dialogBox p {
+	margin: .3em .5em .3em .5em;
+}
+.dialogBox ul {
+	margin: .3em 1.6em .3em 1.6em;
+}
+.dialogBox button {
+	margin: .4em auto .5em auto;
+	width: auto;
+}
+
+.overlay {
+    background-color: black;
+    height: 100%;
+    left: 0;
+    opacity: 0.7;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+form.dialogBox label {
+min-width: 16em;
+text-align: right;
+vertical-align: top;
+margin: 1em 1em 0 0;
+}
+
+form.dialogBox button {
+width: auto;
+vertical-align: bottom;
+margin: 2em 1em 0 0;
+} 

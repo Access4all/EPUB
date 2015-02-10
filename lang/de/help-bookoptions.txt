@@ -1,0 +1,9 @@
+﻿<p>An dieser Stellelassen sich Eigenschaften anpassen, welche das ganze Buch betreffen.
+Insbesondere : </p>
+<ul>
+<li>Den Titel des Buches</li>
+<li>Die Liste der Autoren</li>
+<li>Die Sprache, in der das Buch geschriegen ist. (Diese Angabe ist wichtig für assistive Technologien) </li>
+<li>Die Referenznumme, welche die eindeutige Identifizierung Ihres Buchs erlaubt. Für publizierte Bücher bieten sich hier die ISBN/ISSN Nummern an. Für wengier offizielle Erzeugnisse dürfen auch selbst kreiierte Codenamen oder Nummern zur erleichterten Identifikation verwendet werden.</li>
+</ul>
+<p>Weiter lässt sich hier festlegen, wie die Inhalte in der Ordnerstruktur organisiert werden sollen, wie Inhaltsverzeichnisse generiert werden und welchen anderen Benutzern Zugriff auf spezifische Bücher gewährt werden soll.</p>

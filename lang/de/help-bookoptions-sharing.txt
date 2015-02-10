@@ -1,0 +1,7 @@
+<p>Sie können anderen Nutzern das Recht erteilen an Ihrem Buch mit zu schreiben oder Ihr Buch direkt im Editor zu lesen. Diese Möglichkeit ist besonders wichtig für Dokumente die in der Gruppe erarbeitet werden.</p>
+<p>Um anderen Nutzern Zugangsberchtigungen zu erteilen, fügen Sie diese der liste hinzu. Jedem solchen Gast lassen sich drei verschieden umfangreiche Rechte: </p>
+<ul>
+<li>Lesen: Der Gast-Benutzer kann alle Inhalte Ihres Buches lesen, sie sogar bearbeiten aber er kann keine Änderungen speichern.</li>
+<li>Schreiben: Der Gast-Benutzer kann das Buch lesen, bearbeiten und wieder speichern. Hier muss gut aufgepasst werden, dass nicht zwei oder mehrere Nutzer gleichzeitig am Dokument arbeiten. Dies könnte zu Datenverlust führen.</li>
+<li>Rechteverwaltung: Der Gast-Benutzer kann lesen und schreiben und zusätzlich weitere Gast-Benutzer zur Mitareit einladen und weitere Rechte ausstellen.</li>
+</ul>

@@ -1,0 +1,8 @@
+﻿<p>Fügen Sie Ihrer Bibliothek neue Bücher im ePub3-Format hinzu. </p>
+<p>Untenstehend finden Sie eine Liste weiterer Formate, welche sich auf diesem Weg in Ihre Bibliothek laden lassen. Bücher in diesen Formaten werden unter Verwendung der Standardvorlage automatisch in ePub3 konvertiert.
+Sie erreichen dasselbe Resultat wenn Sie ein neues Buch erstellen und von dort die einzelenen Dateien importieren.</p>
+<ul>
+<li>ePub2 Bücher</li>
+<li>HTML Dokumente</li>
+<li>Ganze ZIP-Archive mit einer oder mehreren Dateien in den unterstützten Formaten</li>
+</ul>

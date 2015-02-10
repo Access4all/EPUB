@@ -1,0 +1,14 @@
+<p>Hier können Sie Dateien importieren und in Ihre Bücher einbinden. </p>
+<ul>
+<li>Importierte Textdateien (.txt) werden in html konvertiert und als in die Lesereihenfolge (Spine) eingegliedert.
+<br />Selbstverständnlich können auch HTML-Dateien direkt eingelesen werden.
+</li>
+<li>Auch Bilder, Audio- und Videodateien können hier importiert werden. Alle importierten Dateien lassen sich in der Ansicht «Dateien» in der linken Spalte des Editors (Akkordeon) auffinden.  Von dort, und übrigens auch direkt vom Dateisystem Ihres Computers, lassen sich die Dateien mittels Drag &amp; Drop  in Ihre Dokumente einbetten.
+<br />Unterstützte Bildformate: PNG, JPG, GIF
+<br />Unterstützte Audioformate: MP3, OGG, WAV
+<br />Unterstützte Videoformate: MP4
+</li>
+<li>Auch Schriftarten lassen sich auf diese Weise in Bücher integrieren. Importierte Schriften werden in der Ausklappliste «Schrift» in der Ansicht «Styling» im Akkordeon sicht- und wählbar.
+<br />Unterstützte Fontformate: TTF, OTF
+</li>
+</ul>
