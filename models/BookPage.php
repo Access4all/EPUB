@@ -48,9 +48,15 @@ foreach(array('script', 'iframe') as $tgn) {
 foreach($doc->getElementsByTagName($tgn) as $el) {
 if (!$el->hasChildNodes()) $el->appendText('');
 }}
+$xml = $doc->saveXML();
+// Php default namespace hack: make sure there is no superfluous default namespace explicitely named default. This happens sometimes when fragments are imported (DOMNode::importNode)
+$xml = preg_replace('@xmlns:default=".*?"@', '', $xml);
+$xml = str_replace('<default:', '<', $xml);
+$xml=str_replace('</default:', '</', $xml);
+// Normalize line endings to CRLF
+$xml = preg_replace('@\r\n|\n|\r@', "\r\n", $xml);
 $this->book->getFileSystem()->addFromString(
-$this->fileName,
-$doc->saveXML()
+$this->fileName, $xml
 );//
 }
 

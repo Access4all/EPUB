@@ -28,7 +28,7 @@ primary key(user,book) );
 
 insert into %Books 
 (name, title, authors, bflags) values
-('template', 'Default template', 'Default template', 1);
+('template', 'Default template', 'Anonymous', 1);
 
 insert into %BookUsers
 (book, user, flags) values

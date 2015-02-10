@@ -19,6 +19,15 @@ if ($retrn) return $text;
 else die($text);
 }
 
+public function refreshTOC ($bookName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
+if (!$b->canWrite()) exit403();
+$b->updateTOC();
+header("Location:{$_SERVER['HTTP_REFERER']}");
+exit();
+}
+
 public function save ($bookName, $pageName) {
 $b = Book::getWorkingBook($bookName);
 if (!$b || !$bookName || !$b->ensureExtracted() || !$b->exists()) exit404();
@@ -156,7 +165,7 @@ $moveItem = $b->getItemByFileName( $src );
 $refItem = $b->getItemByFileName( $ref );
 if (!$moveItem || !$refItem) exit404();
 $b->$actionName($moveItem, $refItem, $srcParam, $refParam);
-ie('OK');
+die('OK');
 }
 
 public function __call ($name, $args) {
