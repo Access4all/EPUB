@@ -4,6 +4,7 @@ loadTranslation('editor');
 class BookPageFactory {
 
 function createEmptyPage ($b, &$info) {
+$t = 'getTranslation';
 switch($info['type']){
 case 'qcm':
 $info['className'] = 'BookPageMCQ';

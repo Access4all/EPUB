@@ -175,7 +175,7 @@ return null;
 }
 
 function getHeadingLevel () {
-if (preg_match('/^h(\d)$/i', $this->nodeName, $m)) return floor($m[1]);
+if (preg_match('/h(\d)$/i', $this->nodeName, $m)) return floor($m[1]);
 else return 0;
 }
 

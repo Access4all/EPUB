@@ -56,6 +56,7 @@ Ctrl=Ctrl
 Shift=Maj
 Alt=Alt
 Cancel=Annuler
+Refresh=Actualiser
 OK=OK
 Yes=Oui
 No=Non

@@ -514,7 +514,7 @@ if (@$item->linear===false) continue;
 $modified = false;
 $doc = $item->getDoc();
 $url = pathRelativize($navItem->fileName, $item->fileName);
-foreach($doc->getHeadingOutline() as $heading) {
+foreach($doc->getOutline() as $heading) {
 if ($heading->hasAttribute('data-notoc')) continue;
 $level = 0+substr($heading->nodeName,1);
 if ($level>$maxDepth) continue;
@@ -640,7 +640,7 @@ $doc = $item->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $div = $gBody->appendElement('div', array('data-page-file'=>$item->fileName, 'id'=>"___{$item->id}__top"));
 foreach($body->childNodes as $child) {
-$child = $gDoc->importNode($child,true);
+$child = $gDoc->importNode($child);
 $div->appendChild($child);
 }
 $item->closeDoc();
@@ -704,6 +704,7 @@ array_splice($this->spine, $insertPos, 0, $it->id);
 array_splice($this->spine, $removePos, 1);
 $this->spineModified=true;
 $this->saveOpf();
+return true;
 }
 
 function moveSpineAFter  ($it, $ref, $_=null, $__=null) {
@@ -715,23 +716,124 @@ array_splice($this->spine, $insertPos, 0, $it->id);
 array_splice($this->spine, $removePos, 1);
 $this->spineModified=true;
 $this->saveOpf();
+return true;
 }
 
 function moveTocAfter ($src, $ref, $srcHash, $refHash) {
-die("srcH=$srcHash, refH=$refHash");
+$srcDoc = $src->getDoc();
+$refDoc = $ref->getDoc();
+$srcEl = $srcDoc->getElementById($srcHash);
+$refEl = $refDoc->getElementById($refHash);
+if ($srcEl->isPageMainHeading() && $refEl->isPageMainHeading() ) {
+// The user is trying to move two page main headings; in that case it's easier to simply move the files in the spine, the result is identical
+$re = $this->moveSpineAfter($src, $ref);
+$this->updateTOC();
+return $re;
+}
+else if (get_class($src)!='BookPage' || get_class($ref)!='BookPage') {
+// If the pages being moved aren't exactly BookPage (i.e. activities), then the move isn't supported
+// This is because complicated casts are required in order to do it really right
+return false;
+}
+$ldiff = $refEl->getHeadingLevel() - $srcEl->getHeadingLevel();
+if ($srcEl->isSectionMainHeading()) {
+$srcEl = $srcEl->parentNode;
+$srcNext = $srcEl->nextSibling;
+}
+else {
+$srcNext = $srcEl->getNextHeading();
+if ($srcNext&&$srcNext->isSectionMainHeading()) $srcNext=null;
+}
+$refNext = $refEl->getNextHeading();
+if ($refNext&&$refNext->isSectionMainHeading()) $refNext = $refNext->parentNode;
+$frag = $srcEl->parentNode->extractPartialNodeContents($srcEl, $srcNext);
+$frag->shiftHeadingLevels( $ldiff );
+if ($srcDoc!==$refDoc) $frag = $refDoc->importNode($frag,true);
+if ($refNext) $refNext->parentNode->insertBefore($frag, $refNext);
+else $refEl->parentNode->appendChild($frag);
+$ref->saveCloseDoc();
+if ($srcDoc!==$refDoc) $src->saveCloseDoc();
+$this->updateTOC();
+return true;
 }
 
 function moveTocBefore ($src, $ref, $srcHash, $refHash) {
-die("srcH=$srcHash, refH=$refHash");
+$srcDoc = $src->getDoc();
+$refDoc = $ref->getDoc();
+$srcEl = $srcDoc->getElementById($srcHash);
+$refEl = $refDoc->getElementById($refHash);
+if ($srcEl->isPageMainHeading() && $refEl->isPageMainHeading() ) {
+// The user is trying to move two page main headings; in that case it's easier to simply move the files in the spine, the result is identical
+$re = $this->moveSpineBefore($src, $ref);
+$this->updateTOC();
+return $re;
+}
+else if (get_class($src)!='BookPage' || get_class($ref)!='BookPage') {
+// If the pages being moved aren't exactly BookPage (i.e. activities), then the move isn't supported
+// This is because complicated casts are required in order to do it really right
+return false;
+}
+$ldiff = $refEl->getHeadingLevel() - $srcEl->getHeadingLevel();
+if ($srcEl->isSectionMainHeading()) {
+$srcEl = $srcEl->parentNode;
+$srcNext = $srcEl->nextSibling;
+}
+else {
+$srcNext = $srcEl->getNextHeading();
+if ($srcNext&&$srcNext->isSectionMainHeading()) $srcNext=null;
+}
+if ($refEl->isSectionMainHeading()) $refEl = $refEl->parentNode;
+$frag = $srcEl->parentNode->extractPartialNodeContents($srcEl, $srcNext);
+$frag->shiftHeadingLevels( $ldiff );
+if ($srcDoc!==$refDoc) $frag = $refDoc->importNode($frag, true);
+$refEl->parentNode->insertBefore($frag, $refEl);
+$ref->saveCloseDoc();
+if ($srcDoc!==$refDoc) $src->saveCloseDoc();
+$this->updateTOC();
+return true;
 }
 
 function moveTocUnder ($src, $ref, $srcHash, $refHash) {
-die("srcH=$srcHash, refH=$refHash");
+$srcDoc = $src->getDoc();
+$refDoc = $ref->getDoc();
+$srcEl = $srcDoc->getElementById($srcHash);
+$refEl = $refDoc->getElementById($refHash);
+if ($srcEl->isPageMainHeading() && $refEl->isPageMainHeading() ) {
+// The user is trying to move two page main headings; in that case it's easier to simply move the files in the spine, the result is identical
+$re = $this->moveSpineAfter($src, $ref);
+$this->updateTOC();
+return $re;
+}
+else if (get_class($src)!='BookPage' || get_class($ref)!='BookPage') {
+// If the pages being moved aren't exactly BookPage (i.e. activities), then the move isn't supported
+// This is because complicated casts are required in order to do it really right
+return false;
+}
+$ldiff = 1 + $refEl->getHeadingLevel() - $srcEl->getHeadingLevel();
+if ($srcEl->isSectionMainHeading()) {
+$srcEl = $srcEl->parentNode;
+$srcNext = $srcEl->nextSibling;
+}
+else {
+$srcNext = $srcEl->getNextHeading();
+if ($srcNext&&$srcNext->isSectionMainHeading()) $srcNext=null;
+}
+$refNext = $refEl->getNextHeading();
+if ($refNext&&$refNext->isSectionMainHeading()) $refNext = $refNext->parentNode;
+$frag = $srcEl->parentNode->extractPartialNodeContents($srcEl, $srcNext);
+$frag->shiftHeadingLevels( $ldiff );
+if ($srcDoc!==$refDoc) $frag = $refDoc->importNode($frag,true);
+if ($refNext) $refNext->parentNode->insertBefore($frag, $refNext);
+else $refEl->parentNode->appendChild($frag);
+$ref->saveCloseDoc();
+if ($srcDoc!==$refDoc) $src->saveCloseDoc();
+$this->updateTOC();
+return true;
 }
 
 function moveFile ($it, $ref, $_=null, $__=null) {
 $newFileName = dirname($ref->fileName) .'/' .basename($it->fileName);
-$this->implMoveFile($it, $newFileName);
+return $this->implMoveFile($it, $newFileName);
 }
 
 function renameFile ($it, $newName) {
@@ -757,6 +859,7 @@ $this->saveBO();
 $this->manifestModified = true;
 $this->spineModified = true;
 $this->saveOpf();
+return true;
 }
 
 private function implMoveFile ($it, $newFileName) {

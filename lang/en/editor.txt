@@ -50,6 +50,7 @@ Redo=Redo
 Submit=Submit
 Clear=Clear
 Reset=Reset
+Refresh=Refresh
 Unspecified=Unspecified
 Help=Help
 Ctrl=Ctrl

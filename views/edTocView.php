@@ -24,7 +24,10 @@ $a->setAttribute('href', $href);
 }}//if toc
 
 //echo '<h2>', getTranslation('TocView'), '</h2>';
-echo '<div class="leftPanelTab">';
+echo <<<END
+<div class="leftPanelTab">
+<p><a role="button" class="button" href="$root/editor/{$b->name}/refreshTOC">{$t('Refresh')}</a></p>
+END;
 if ($toc && $toc->hasChildNodes()) echo $toc->saveHTML();
 else if ($toc) {
 echo <<<END
