@@ -1,0 +1,4 @@
+﻿<p>Spine (en: Wirbelsäule) ist ein Spezialbegriff für ePUB3 Dokumente. Die Spine definiert die natürliche Lesereihenfolge der einzelnen HTML-Dateien für ePub3-Lesesysteme.
+Die Spine Ansicht erlaubt Ihnen diese Reihenfolge anzusehen sowie zu bearbeiten.</p>
+<p>Die Lesereihenfolge lässt sich sowohl mittels Drag &amp; Drop als auch über die Funktion «Verschieben» im kontext-Menü anpassen.</p>
+<p>Ausserdem dient diese Ansicht auch zur schnellen Navigation zwischen HTML-Dateien.</p>

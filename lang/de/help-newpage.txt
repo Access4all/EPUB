@@ -1,0 +1,8 @@
+﻿<p>Über den Reiter «Neue HTML Datei» tab, fügen Sie Ihrem Buch neue Inhalte hinzu. EPUB Dateien sind vereinfacht gesagt gezippte/komprimierte HTML5-Ordnerstrukturen. Die Inhalte sind dabei auf verschiedene HTML Dateien verteilt. Neue HTML Dateien sollten mit Vorteil mit neuen Kapiteln oder Unterkapiteln zusammenfallen. Dies hat den grossen Vorteil, dass die verschiedenen HTML Dateien leicht reorganisiert oder gar aus dem Buch extrahiert werden können.</p>
+<p>Beim Hinzufügen neuer Inhalte (neuer HTML Dateien) muss ein Titel für die Datei angegeben und die Art der Datei gewählt werden.</p>
+<p>Der Titel wird bei vielen Lesesystemen angezeigt. Er sollte deshalb jenem des Kapitels oder des Unterkaptitels, welches den Inhalt der HTML Datei ausmacht, entsprechen. 
+Falls die HTML-Datei mehrere Kapitel zusammenfasst (nicht empfohlen) kann ein übergeordneter Titel vergeben werden: Z.B. «Kapitel 4-6». </p>
+<p>Ausserdem wird der hier genannte Titel verwendet um einen Dateinamen für die HTML-Datei zu vergeben, wenn dieser nicht explizit definiert wird. (Siehe unter «Erweitert» für weiter Informationen hierzu).</p>
+<p>Die «Art der Datei» bestimmt, welche Art von Inhalten die Datei enthalten wird. In den allermeisten Fällen werden Sie Text und Multimedia einsetzen wollen. Wählen Sie dazu «Standard-Dokument». 
+Alle anderen Optionen erlauben Ihnen interaktive Inhalte spezifischer Übungstypen zu erstellen.</p>
+

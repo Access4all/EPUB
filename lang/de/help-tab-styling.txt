@@ -1,0 +1,6 @@
+﻿<p>Über die Ansicht «Styling» steuern Sie die visuelle Gestaltung Ihrer Dokumente und Bücher.</p>
+<p>Um die Darstellung eines bestimmten Elements  anzupassen, wählen Sie dieses aus der untenstehenden Liste aus oder klicken Sie auf entsprechenden Inhalt im Editor-Fenster. Z.B. Überschrift Ebene 1, Absatz oder auf ein Bild.
+ In der Folge werden unterhalb der Liste die relevanten Parameter für das gewählte Element angezeigt. Z.B. Farbe, Schriftart, Grösse, Rahmen, Innen- und Aussenabstände.
+Alle Änderungen müssen über den «Speichern» Button (oben) gesichert werden. Sie werden nicht automatisch gespeichert, obwohl die die Änderungen im Editor in Echtzeit umgesetzt werden.</p>
+<p>Über den «Style hinzufügen» Button lassen sich neue Styles für Kästen (Box) oder Positionierungen erstellen. Wählen Sie hirzu das gewünschte HMTL-Element und versehen Sie dieses mit einer Klassenbezeichnung. Z.B.: Marginalie</p>
+<p>Die Buttons «Vorlage importieren» und «Vorlage herunterladen» erlauben Ihnen Ihre Gestaltungsregeln in Form von CSS Dateien zwischen Büchern auszutauschen.</p>
