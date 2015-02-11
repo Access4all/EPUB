@@ -1,0 +1,5 @@
+﻿<p>Une première question vierge avec deux propositions de réponses également vierges sont déjà présentes pour vous aider à démarrer la saisie de votre questionnaire.
+</p><p>
+En appuyant sur tab, vous pouvez naviguer entre les champs contenant les questions, les textes des réponses, et les cases à cocher. De nouvelles propositions de réponse sont automatiquement ajoutés à mesure que vous appuyez sur tab lorsque vous vous trouvez à la dernière d'entres-elles.
+Si la dernière proposition était vide, alors tab ajoutera une nouvelle question et supprimera la réponse vide, au lieu d'ajouter une nouvelle réponse.
+</p><p>Vous pouvez aussi utiliser le menu contextuel pour ajouter des réponses et des questions.</p>

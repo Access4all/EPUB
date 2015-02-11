@@ -1,0 +1,5 @@
+﻿<p>A first empty question with two answers also empty are already present to help you start writing your quiz.
+</p><p>
+By pressing tab, you can navigate through the fields containing the questions, answers, et checkboxes. New answers are automatically added when you press tab while being at the last one.
+If the last answer was empty, pressing tab will add a new question and delete the answer left empty, instead of adding a new answer.
+</p><p>You can also use the context menu to add questions and answers.</p>

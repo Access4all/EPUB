@@ -5,10 +5,13 @@ function getEditorType () { return 'HTML+MCQ'; }
 function getAdditionalPageOptions() { return 'MCQ'; }
 
 function createDataDoc ($doc) {
+global $lang;
 $quiz = $doc->appendElement('quiz', array('type'=>'simple', 'submission'=>'local'));
 $intro = $quiz->appendElement('intro');
 $intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
+$intro->appendElement('p')->appendText(getTranslation('autoIntro3'));
+$intro->appendXML(@killUtf8bom(file_get_contents("lang/$lang/intro-mcq.txt")));
 $q = $quiz->appendElement('question');
 $q->appendElement('q');
 $q->appendElement('c');
