@@ -105,6 +105,10 @@ color: black;
 color: white;
 }
 
+.scrollable {
+overflow-y: auto;
+}
+
 .leftPanelTab {
 border-left: solid 3px #436200;
 border-right: solid 3px #436200;

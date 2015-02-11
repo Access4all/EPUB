@@ -63,7 +63,7 @@ function MessageBox (title, msg, btns, okFunc, readyFunc) {
 var lastFocus = document.activeElement;
 var first=null, overlay = document.createElement2('div', {'class':'overlay'}), form = document.createElement2('div', {'role':'alertdialog', 'class':'dialogBox'});
 form.appendElement('h1').appendText(title);
-var p = form.appendElement(msg.indexOf('<p>')>0?'div':'p', {id:'MessageBoxLabel', 'aria-live':'assertive'});
+var p = form.appendElement(msg.indexOf('<p>')>0?'div':'p', {id:'MessageBoxLabel', 'class':'scrollable', 'aria-live':'assertive'});
 p.innerHTML = msg;
 p = form.appendElement('p');
 var btnClick = function(btnIndex, btnLabel){ 
