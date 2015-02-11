@@ -875,6 +875,33 @@ $this->saveOpf();
 return true;
 }
 
+function deleteTocItem ($item, $hash) {
+$doc = $item->getDoc();
+$el = $doc->getElementById($hash);
+if ($el->isPageMainHeading()) {
+// The user is trying to delete the main heading of a page; it's the same as delete the whole file then
+$re = $this->deleteFile($item);
+$this->updateTOC();
+return $re;
+}
+else if (get_class($item)!='BookPage') {
+// If the pages on which we are deleting isn't exactly BookPage (i.e. activities), then the move isn't supported
+return false;
+}
+if ($el->isSectionMainHeading()) {
+$el = $el->parentNode;
+$next = $el->nextSibling;
+}
+else {
+$next = $el->getNextHeading();
+if ($next&&$next->isSectionMainHeading()) $next=null;
+}
+$frag = $el->parentNode->extractPartialNodeContents($el, $next);
+$item->saveCloseDoc();
+$this->updateTOC();
+return true;
+}
+
 
 public function getRightsTable () {
 $bs = Bookshelf::getInstance();

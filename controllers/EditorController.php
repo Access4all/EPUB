@@ -113,6 +113,19 @@ $b->deleteFile($item);
 die('OK');
 }
 
+public function deleteTocItem ($bookName) {
+$b = Book::getWorkingBook($bookName);
+if (!$b || !$bookName || !$b->exists()) exit404();
+if (empty($_GET['file'])) exit404();
+if (!strpos($_GET['file'], '#')) exit404();
+if (!$b->canWrite()) exit403();
+list($file, $hash) = explode('#', $_GET['file'], 2);
+$item = $b->getItemByFileName($file);
+if (!$item) exit404();
+$b->deleteTocItem($item, $hash);
+die('OK');
+}
+
 public function moveSpineAfter ($bookName) {
 $this->moveOperation($bookName, __FUNCTION__);
 }

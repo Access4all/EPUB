@@ -18,8 +18,10 @@ $toc->setAttribute('data-ctxtype', 'toc');
 foreach($toc->getElements(function($e){ return $e->hasAttribute('href'); }) as $a) {
 $href = $a->getAttribute('href');
 $href = $b->getNavRelativeFileName($href);
+$relativeUrl = $p? pathrelativize($p->fileName, $href) : '';
 $href = "$root/editor/{$b->name}/{$leftView}_{$rightView}/$href";
 $a->setAttribute('href', $href);
+$a->setAttribute('data-relative-url', $relativeUrl);
 }
 }}//if toc
 

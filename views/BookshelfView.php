@@ -29,6 +29,7 @@ if ($user&&$user->isAdmin()) echo "<li><a href=\"$root/admin\">{$t('GoToAdminPan
 echo <<<END
 <li><a href="$root/user/signoff">{$t('Signoff')}</a></li>
 </ul>
+<h2>{$t("bsh2_$templates")}</h2>
 <table>
 <thead><tr>
 <th scope="col">{$t('BookTitle')}</th>

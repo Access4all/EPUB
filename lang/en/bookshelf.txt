@@ -1,4 +1,6 @@
 Bookshelf=Bookshelf
+bsh2_templates=Books
+bsh2_index=Templates
 Language=Language
 ChangeLanguage=Change language
 GoToUserProfile=Settings of your account

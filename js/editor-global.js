@@ -149,10 +149,11 @@ else debug('Return!'+re.length+'!'+re+'!');
 return false;
 }
 
-function FileTree_deleteDialog  (link) {
+function FileTree_deleteDialog  (link, actionName) {
 var src = link.href.substring(window.rootUrl.length);
-var url = window.rootUrl2 + 'deleteFile' + '/?file=' + encodeURIComponent(src);
-MessageBox(msgs.MBDeleteSpineItemT, msgs.MBDeleteSpineItem.replace('%1', src), [msgs.Yes, msgs.No], function(btnIndex){
+var dispsrc = link.textContent.trim() || src;
+var url = window.rootUrl2 + actionName + '/?file=' + encodeURIComponent(src);
+MessageBox(msgs.MBDeleteSpineItemT, msgs.MBDeleteSpineItem.replace('%1', dispsrc), [msgs.Yes, msgs.No], function(btnIndex){
 if (btnIndex==0) ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else alert('Return! '+re);}, function(){alert('Failed!3');});
 });//MessageBox
 }
@@ -175,7 +176,7 @@ this.firstChild.nodeValue = (!collapsed? '-' : '+');
 function FileTree_CtxMenuItemList_file (items, link) {
 items.merge([
 msgs.Rename, FileTree_RenameDialog.bind(null, link),
-msgs.Delete, FileTree_deleteDialog.bind(null,link),
+msgs.Delete, FileTree_deleteDialog.bind(null,link, 'deleteFile'),
 ]);//
 if (window.tmpMoveName) items.merge([
 msgs.MoveHere.replace('%1', window.tmpMoveName), FileTree_SpineMove.bind(null, link, 'moveFile'),
@@ -194,7 +195,9 @@ msgs.MoveUnder.replace('%1', window.tmpMoveName).replace('%2', link.innerHTML), 
 else items.merge([
 msgs.Move, FileTree_MoveInitiate.bind(null,link),
 ]);//
-//suite
+items.merge([
+msgs.Delete, FileTree_deleteDialog.bind(null,link, 'deleteTocItem'),
+]);//
 }
 
 function FileTree_CtxMenuItemList_spine (items, link) {
@@ -206,7 +209,7 @@ else items.merge([
 msgs.Move, FileTree_MoveInitiate.bind(null,link),
 ]);//
 items.merge([
-msgs.Delete, FileTree_deleteDialog.bind(null,link), 
+msgs.Delete, FileTree_deleteDialog.bind(null,link, 'deleteFile'), 
 ]);//
 //suite
 }
@@ -217,7 +220,7 @@ e = e || window.event;
 var x = e.pageX || e.clientX;
 var y = e.pageY || e.clientY;
 var items = [];
-if (/\.(?:xhtml|xml|txt|js|css)$/i .test(this.href)) items.merge([msgs.Edit, this.href]);
+if (/\.xhtml(?:#.*)?$/i .test(this.href)) items.merge([msgs.Edit, this.href]);
 if (/\.xhtml$/i .test(this.href)) items.merge([msgs.PageOptions, this.href.replace('_editor', '_options')]);
 if (this.hasAttribute('data-relative-url')) {
 var rel = this.getAttribute('data-relative-url');

@@ -1,5 +1,7 @@
 ﻿
 Bookshelf=Bibliothèque
+bsh2_templates=Livres
+bsh2_index=Modèles
 Language=Langue
 ChangeLanguage=Changer la langue
 GoToUserProfile=Paramètres de votre compte
