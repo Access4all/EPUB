@@ -1,0 +1,3 @@
+﻿<p>Die Kennzeichnung der Seite dient dem System zur eindeutigen Identifikation der Datei innerhalb des Buches.</p>
+<p>Die Angabe ist optional. Im Normalfall wird die Kennzeichnung, basierend auf dem Titel, automisch vergeben, und braucht nicht expliziert zu werden.</p>
+<p>Die Vergabe ist notwendig bei Namenskonflikten, z.B. wenn Sie eine Datei mit derselben Kennzeichnung importieren wollen.</p> 

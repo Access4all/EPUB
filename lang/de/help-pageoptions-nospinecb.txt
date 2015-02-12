@@ -1,0 +1,2 @@
+﻿<p>Wenn diese Checkbox aktiviert ist, werden die Inhalte der Datei nicht in das Inahltsverzeichnis aufgenommen. Ausserdem wird die Seite auch bei serieller Navigation von Lesesystemen, durch «Weiter» und «Zurück» nicht erreicht.</p>
+<p>Diese Funktion kann nützlich sein für Dateien mit Inhalten, welche nicht zum eigentlichen Lesefluss gehören. Dies können verlinkte Inhalte sein, wie z.B. Glossare, aber auch Dateien, welche aus irgendwelchen Gründen da sind aber keine wirklichen Informationen enthalten, wie z.B. eine Umschlagseite (cover page). </p>

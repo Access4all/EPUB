@@ -4,19 +4,19 @@ FileName=Dateipfad
 PageIdentifier=Kennzeichnung
 PageTitle=Seitentitel
 CbLinear=Verberge diese Seite vom Inhaltsverzeichnis und von der seriellen Navigation.
-PageType=Art der Seite
-PageType_document=Standard dokument
-PageTypeDesc_document=Ein Standard Dokument welches text, Bilder, und Multimedia Objekte enthält. Benutzen Sie diese Vorlage, um den aktuellen Inhalt Ihres Kurses oder presentation zu schreiben.
+PageType=Art der Datei
+PageType_document=Standard-Dokument
+PageTypeDesc_document=Ein Standarddokument kann Text, Bilder und Multimediaobjekte enthalten. In den allermeisten Fällen ist dies Ihre richtige Wahl.
 PageType_freequestions=Einfacher Fragebogen
 PageTypeDesc_freequestions=Eine Serie von Fragen bei denen willkürlicher freier Text als Antwort erwartet wird. Benutzen Sie diese für offene Fragen.
-PageType_truefalse=Auswertungsspiel
+PageType_truefalse=Wahr-/Falsch-Fragen
 PageTypeDesc_truefalse=Eine Serie von Fragen bei denen jede einzelne immer die gleiche Gruppe von 2-5 Antworten erlaubt. Sie können diese benutzen um Fragen zu erstellen bei denen richtig/falsch Antworten erwartet werden.
-PageType_qcm=Mehrfachauswahl Spiel
-PageTypeDesc_qcm=Eine Serie von Fragen bei denen jede einzelne eine vordefinierte Gruppe von möglichen Antworten ausgewählt werden kann. 
-Einfache Mehrfachauswahl Spiele haben immer eine einzelne korrekte Antwort oder geeignete Auswahl für jede Frage, 
-während fortgeschrittenere Spiele erlauben eine grössere Anzahl korrekter Antworten (including alle oder keine).
-PageType_fillgaps=Fülle die Lücken aus.
-PageTypeDesc_fillgaps=Eine Aufgabenstellung bei der ein Lückentextausgefüllt werden soll, mit 1 oder mehreren Wörter. Sie können optional eine festgelegte Auswahlliste definieren, eine hinweisende Liste mit Vorschlägen angeben oder keine Vorschläge zur Verfügung stellen.PageType_matching=Matching
+PageType_qcm=Mehrfachauswahl / Multiple Choice
+PageTypeDesc_qcm=Eine Serie von Fragen auf die aus einer vordefinierten Antwortenmöglichkeiten ausgewählt werden kann. 
+In einfachen Multiple Choice Aufgaben ist immer genau eine vordefinierte Antwort korrekt. Komplexe Aufgaben erlauben auch eine beliebige Anzahl korrekter Antworten. Von keiner bis zu allen.
+PageType_fillgaps=Lückentexte
+PageTypeDesc_fillgaps=Erstellen Sie Lückentexte mit einem oder mehreren Wörtern. Sie können optional eine festgelegte Auswahlliste definieren, eine hinweisende Liste mit Vorschlägen angeben oder keine Vorschläge zur Verfügung stellen.
+PageType_matching=Matching
 PageTypeDesc_matching=A type of activity where you have to map items from a first list to items contained in a second list. Matches are always 1:1 but there could be additional unused items that are unmatched.
 PageType_ordering=Ordering
 PageTypeDesc_ordering=An activity where you have to arrange a serie of items so that it appears in the correct order.

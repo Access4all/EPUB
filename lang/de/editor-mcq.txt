@@ -9,6 +9,6 @@ MCQLong=Mehrfachauswahl Spiel
 QuizType=Spieltyp
 QuizType_simple=Einfach
 QuizTypeDesc_simple=In einem Mehrauswahl Spiel gibt es immer eine korrekte Antwort für jede Frage.
-QuizType_complex=Complex
+QuizType_complex=Komplex
 QuizTypeDesc_complex=In einem fortgeschrittenen Mehrfachauswahl Spiel, erlaubt jede Frage mehrere korrekte Antworten, bei denen alle oder keine richtig sein kann.
 QuizResult=Sie haben %1 fragen von %2 korrekt beantwortet.

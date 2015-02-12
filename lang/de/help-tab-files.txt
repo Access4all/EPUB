@@ -1,0 +1,14 @@
+﻿<p>Die Ansicht «Dateien» liefert eine sogenannte TreeView (Baumansicht) der Dateistruktur des gesamten eBooks. 
+Sie finden darin Ihre HTML-Dateien, Ihre Bilder, Videos, Schriftarten, sowie die Style Sheets (CSS) wo die gestalterischen Eigenschaften des Buchs festgehalten werden. Jegliche Dateien, welche den Inhalte Ihrtes Buches ausmachen.
+Die Dateien lassen sich von hier aus öffnen, umbenennen, verschieben, löschen …..</p>
+<ul>
+<li>Um Dateien umzubenennen, zu verschieben und zu löschen benutzen Sie das Kontext-Menü (rechte Maustaste).
+Verschieben lassen sich die Dateien ausserdem mittels Drag &amp; Drop.</li>
+<li>Mittels Drag &amp; Drop lassen sich Dateien hier auch aus dem OS-Explorer in das Buch importieren.
+Alternativ lassen sich Dateien auch über den Reiter «Datei importieren» importieren.</li>
+</ul>
+<p>Bilder, Audio und Video lassen sich von hier aus mittels Drag &amp; Drop in die im Editor angezeigte HTML-Datei einbetten.
+Eine Dialogbox wird Sie in der Folge auffordern die benötigten Informationen wie z.B. Alternativtexte zu komplettieren.  
+</p>
+<p>Ausserdem ist es auch möglich Dateien mittels Drag &amp; Drop direkt an der gewünschten Stelle im Editor zu platzieren. Die Datei wird automatisch in das Buch importiert und in der TreeView positioniert.</p>
+<p>Tipp: Verbleiben Sie während einer Drag &amp; Drop Aktion einige Sekunden auf dem gewünschten Ordner, um diesen zu öffnen.</p>

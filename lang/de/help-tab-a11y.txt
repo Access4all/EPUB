@@ -1,0 +1,8 @@
+<p>Der vorliegende ePub3-Editor führt regelmässige Accessibility-Tests innerhalb der geladenen Datei und über das ganze Buch (Überschriftenhierarchie) durch. Die entsprechenden Hinweise werden in der Ansicht «Accessibility» im Akkordeon angezeigt.</p>
+<p>Mittels Klicks auf die einzelnen Accessibility-Hinweise gelangen Sie direkt zur problematischen Stelle. Es existieren drei verschiedene Typen von Hinweisen: </p>
+<ul>
+<li>Errors / Fehler: Hierbei handelt es sich um Verstösse gegen die internationalen Richtlinien für barrierefreie Webinhalte WCAG 2.0; Sie sollten diese Fehler unbedingt beheben wenn Sie nicht riskieren wollen, dass Ihr Buch für viele Menschen nicht oder nur sehr schwer lesbar sein wird. </li>
+<li>Warnings / Warnungen: Warnungen sind wichtige Hinweise, welche nicht ignoriert werden sollen, auch wenn Ihnen keine Verstösse gegen automaisch testbare Verstösse gegen technische Standrds zugrunde liegen. Nehmen Sie diese Warnungen ernst und überprüfen Sie ob die Warnung durch geeignete Massnahmen entschärft werden kann. Warnungen können auf Probleme hinweisen, die für Betroffene ebenso ernsthafte Konsequenzen mitbringen wie Fehler. 
+Warnungen können falsche Alarme sein. Bitte vergewissern Sie sich in jedem Fall ob der Warnung nicht doch ein ernsthaftes Accessibility-Problem zugrunde liegt.</li>
+<li>Info: Info-Hinweisen liegen keine wirklich schwerwiegenden Accessibility-Probleme zugrunde. Manchmal handelt es sich dabei um einfache Tipps. Beachten und behandeln Sie sie trotzdem. </li>
+</ul>

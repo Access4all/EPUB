@@ -1,0 +1,4 @@
+<p>Die Angabe des Dateinamen ist optional. Wenn kein Dateiname angegeben wird wird ein Dateiname aus dem Dokument-Titel generiert.
+Optional kann hier auch der Dateipfad direkt angepasst werden.</p>
+<p>In der Editoransicht finden Sie diese Datei wiederum unter der Ansicht «Dateien» im Akkordeon (linke Spalte)</p> 
+<p>EPUB Dateien sind vereinfacht gesagt gezippte/komprimierte HTML5-Ordnerstrukturen. Unter diesem Namen finden  Sie die Datei ausserdem in der entpackten/dekomprimierten Ordnerstruktur Ihres Buches.</p>

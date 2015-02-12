@@ -1,0 +1,6 @@
+﻿<p>Vorlagen (templates) sind ePub3-Dokumente, welche betreffend Struktur und Darstellung als Grundlage zu Erstellung neuer Bücher und Dokumente dienen. Wenn ein neuen Buch erstellt wird, wird eine solche Vorlage als Gerüst geladen.
+Vorlagen eignen sich um Styling und Inhalte aufzuheben die man für weitere Dokumente und Bücher gerne wiederverwenden will.</p>
+<ul>
+<li>Um eine neue Vorlage in die Liste «Styling Vorlage» unter «Neues Buch erstellen» (Bibliothek) aufzunehmen, können Sie jedes selbst gestaltete Buch als Vorlage defieren. Sie finden diese Option unter «Erweitert» in den «Bucheigenschaften».</li>
+<li>Um Vorlagen zu bearbeiten ändern sie die Ansicht der Büchertabelle in der Bibliothek über den Link «Vorlagen anzeigen ->» zur Vorlagentabelle. Vorlagen können genau wie normale Bücher bearbeitet werden.</li>
+</ul>
