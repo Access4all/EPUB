@@ -1,0 +1,4 @@
+﻿<p>Press tab to navigate between the texts of the elements and the dropdowns allowing to choose associations.
+A new element is automatically added when you press tab while being on the last item of the left list. A second press on tab at that moment, leaving the last item empty, allow you to go to the right list.
+When you are on the last element on the right, a new one is also automatically added when pressing tab.</p>
+<p>When modifying an association on the left, your change is automatically made on the implied items on the right, in order to always keep consist matches.</p>

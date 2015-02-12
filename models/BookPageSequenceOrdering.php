@@ -5,10 +5,12 @@ function getEditorType () { return 'HTML+SequenceOrdering'; }
 function getAdditionalPageOptions() { return 'SequenceOrdering'; }
 
 function createDataDoc ($doc) {
+global $lang;
 $quiz = $doc->appendElement('sequenceordering', array('submission'=>'local'));
 $intro = $quiz->appendElement('intro');
 $intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
+$intro->appendXML(@killUtf8bom(file_get_contents("lang/$lang/intro-ordering.txt")));
 $quiz->appendElement('item');
 }
 

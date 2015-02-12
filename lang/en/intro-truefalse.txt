@@ -1,0 +1,4 @@
+﻿<p>A first empty question is already present to help you start writing your quiz.
+</p><p>
+By pressing tab, you can navigate between the fields containing the texts of the questions, and the checkboxes. New questions are automatically added while pressing tab when you are at the last one.
+To add a new possible answer, « I don't know » for example, click on the « Add a column » button.</p>

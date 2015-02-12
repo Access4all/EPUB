@@ -1,0 +1,3 @@
+﻿<p>Indiquez ci-dessous les différents éléments que le lecteur devra remettre en ordre, dans l'ordre correct.
+Lorsque l'exercice est consulté, les éléments sont mélangés automatiquement.</p>
+<p>En appuyant sur tab, vous naviguez d'élément en élément; de nouvaux éléments sont créés lorsque le dernier est atteint.</p>

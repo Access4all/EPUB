@@ -1,0 +1,4 @@
+﻿<p>This zone contains effectively the gapped text exercise.</p>
+<p>You can type in text her normally. To add a gap, select the answer text, then press Ctrl+G or click on the button 
+<img src="/images/24px/gap.png" alt="Add a gap" /> in the toolbar.
+</p>

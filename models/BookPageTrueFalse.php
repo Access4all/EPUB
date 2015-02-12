@@ -5,11 +5,13 @@ function getEditorType () { return 'HTML+TrueFalse'; }
 function getAdditionalPageOptions() { return 'TrueFalse'; }
 
 function createDataDoc ($doc) {
+global $lang;
 loadTranslation('editor-truefalse');
 $quiz = $doc->appendElement('quiz', array('type'=>'simple', 'submission'=>'local'));
 $intro = $quiz->appendElement('intro');
 $intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
+$intro->appendXML(@killUtf8bom(file_get_contents("lang/$lang/intro-truefalse.txt")));
 $choices = $quiz->appendElement('choices');
 $choices->appendElement('c')->appendText(getTranslation('True'));
 $choices->appendElement('c')->appendText(getTranslation('False'));

@@ -1,0 +1,4 @@
+﻿<p>Appuyez sur tab pour naviguer entre les textes des éléments et les listes déroulantes permettant de choisir les associations.
+Un nouvel élément est automatiquement ajouté lorsque vous appuyez sur tab en étant au dernier élément de gauche. Un second appui sur tab à ce moment, en laissant le dernier élément vierge, vous permet de passer à la liste de droite.
+Lorsque vous êtes au dernier élément de droite, un nouveau est également ajouté automatiquement si vous appuyez sur tab.</p>
+<p>Quand vous modifiez des associations dans la liste de gauche, la liste de droite est automatiquement mise à jour, de sorte que toutes les associations soient toujours cohérentes et correctes.</p>

@@ -246,7 +246,9 @@ if (this.isAtNonEditablePoint()) {
 if (e.preventDefault) e.preventDefault();
 if (e.stopPropagation) e.stopPropagation();
 return false;
-}}
+}
+return true;
+}
 
 function RTZ_onSelChanged (sel) {
 var structCb = document.getElementById('structureDropDown');
@@ -483,7 +485,8 @@ sel.collapse(true);
 sel.setEndAfter(this.zone.lastChild);
 this.select(sel);
 }break;
-default: return true;
+default: 
+return true;
 }
 return false;
 }

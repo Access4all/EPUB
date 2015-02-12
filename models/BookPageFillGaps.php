@@ -5,11 +5,13 @@ function getEditorType () { return 'HTML+FillGaps'; }
 function getAdditionalPageOptions() { return 'FillGaps'; }
 
 function createDataDoc ($doc) {
+global $lang;
 $ftg = $doc->appendElement('fillthegaps', array('type'=>'simple', 'submission'=>'local'));
 $intro = $ftg->appendElement('intro');
 $intro->appendElement('h1')->appendText($this->title);
 $intro->appendElement('p')->appendText(getTranslation('autoIntro2'));
-$ftg->appendElement('gaptext');
+$gt = $ftg->appendElement('gaptext');
+$gt->appendXML(@killUtf8bom(file_get_contents("lang/$lang/intro-fillgaps.txt")));
 }
 
 function updatePageSettings (&$info) {

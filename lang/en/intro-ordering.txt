@@ -1,0 +1,3 @@
+﻿<p>Indicate belwo the different elements that the user will have to reorder, in the correct order. 
+When the exercise is opened, elements are automatically shuffled.</p>
+<p>By pressing tab, you navigate from element to element; new ones are added when the last one is reached.</p>

@@ -1,0 +1,4 @@
+﻿<p>Une première question vierge est déjà présente pour vous aider à démarrer la saisie de votre questionnaire.
+</p><p>
+En appuyant sur tab, vous pouvez naviguer entre les champs contenant les questions et les cases à cocher. De nouvelles questions sont automatiquement ajoutés à mesure que vous appuyez sur tab lorsque vous vous trouvez à la dernière d'entres-elles.
+Pour ajouter des nouvelles propositions de réponses, par exemple « Je ne sais pas », cliquez sur le bouton « Ajouter une colonne ».</p>

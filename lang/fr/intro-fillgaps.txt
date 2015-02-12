@@ -1,0 +1,4 @@
+﻿<p>Cette zone contient l'exercice à trous proprement dit.</p>
+<p>Vous pouvez y taper votre texte normalement. Pour ajouter un trou, sélectionnez le texte constituant la réponse puis appuyez sur Ctrl+G ou cliquez sur le bouton
+<img src="/images/24px/gap.png" alt="Ajouter un trou" /> dans la barre d'outils.
+</p>
