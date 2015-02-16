@@ -6,17 +6,17 @@ rtz.oncontextmenu = RTZ_MCQ_contextMenu;
 }
 
 function RTZ_MCQ_onenter () {
-if (this.zone.tagName.toLowerCase()!='label') return;
+if (this.zone.parentNode.tagName.toLowerCase()!='label') return;
 this.ontab();
 return false;
 }
 
 function RTZ_MCQ_onTab () {
-if (this.zone.tagName.toLowerCase()!='label') return true;
-if (this.zone.parentNode.nextElementSibling) return true;
-if (this.zone.textContent.trim()) return MCQ_createNewAnswer(this.zone);
-var thisFieldset = this.zone.parentNode.parentNode, nextFieldset = thisFieldset.nextElementSibling;
-if(this.zone.parentNode.parentNode.querySelectorAll('p').length>2) MCQ_deleteAnswer(this.zone);
+if (this.zone.parentNode.tagName.toLowerCase()!='label') return true;
+if (this.zone.parentNode.parentNode.nextElementSibling) return true;
+if (this.zone.textContent.trim()) return MCQ_createNewAnswer(this.zone.parentNode);
+var thisFieldset = this.zone.parentNode.parentNode.parentNode, nextFieldset = thisFieldset.nextElementSibling;
+if(this.zone.parentNode.parentNode.parentNode.querySelectorAll('p').length>2) MCQ_deleteAnswer(this.zone);
 if (nextFieldset) { nextFieldset.querySelector('*[contenteditable]').focus(); return false; }
 return MCQ_createNewQuestion(thisFieldset);
 }
@@ -28,7 +28,7 @@ quiz.$('fieldset').each(function(f){
 var questionText = f.$('.questionText')[0].innerHTML;
 var choices = [];
 var answers = [];
-f.$('label').each(function(l){ choices.push(l.innerHTML); });
+f.$('label').each(function(l){ choices.push(l.firstElementChild.innerHTML); });
 f.$('input').each(function(input,index){ if (input.checked) answers.push(index); });
 data.questions.push({q:questionText, c:choices, a:answers});
 });//each fieldset
@@ -40,13 +40,14 @@ function RTZ_MCQ_contextMenu (items, sel) {
 var qt = this.zone.queryAncestor('.questionText');
 var fieldset = this.zone.queryAncestor('fieldset');
 if (!qt&&!fieldset) return;
-var qr = this.zone.tagName.toLowerCase()=='label'?  this.zone : fieldset.querySelectorLast('label');
+var qr = this.zone.parentNode.tagName.toLowerCase()=='label'?  this.zone.parentNode : fieldset.querySelectorLast('label');
 items.merge([msgs.InsertNewQuestion, MCQ_createNewQuestion.bind(this, fieldset)]);
 if (qr) items.merge([msgs.InsertNewAnswer, MCQ_createNewAnswer.bind(this, qr)]);
 if (qr) items.merge([msgs.DeleteAnswer, MCQ_deleteAnswer.bind(this, qr)]);
 }
 
 function MCQ_createNewQuestion (last) {
+try {
 var fieldset = last.cloneNode(true);
 var qNumSpan = fieldset.querySelector('span.questionNumber');
 var qNum = parseInt(qNumSpan.textContent);
@@ -59,7 +60,7 @@ var id = 'q' + qNum + '_' + i;
 var name = 'q[' + qNum + (input.getAttribute('type')=='radio'? ']' : '][]');
 input.setAttribute('name', name);
 input.setAttribute('id', id);
-label.setAttribute('for', id);
+//label.setAttribute('for', id);
 }
 qNumSpan.innerHTML = (1+qNum);
 fieldset.$('*[contenteditable]').each(function(f){
@@ -67,15 +68,18 @@ f.innerHTML='';
 var rtz = new RTZ(f,null);
 rtz.init();
 if (!firstContentEditable) firstContentEditable = f;
+if (f.getAttribute('aria-label')) f.setAttribute('aria-label', f.getAttribute('aria-label').replace(/(\d+)/, function(m){return 1+parseInt(m);}));
 });//each contenteditable
 last.parentNode.insertBefore(fieldset, last.nextElementSibling);
 while (fieldset = fieldset.nextElementSibling) {
 fieldset.$('.questionNumber').each(function(l){ l.innerHTML  = l.innerHTML.toString().replace(/(\d+)/, function(n){ return 1+parseInt(n); }); });
-fieldset.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
+fieldset.$('.questionText').each(function(q){ q.setAttribute('aria-label', q.getAttribute('aria-label').replace(/(\d+)/, function(m){return 1+parseInt(m); })); });
+//fieldset.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
 fieldset.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
 fieldset.$('input').each(function(i){ i.setAttribute('name', i.getAttribute('name').replace(/(\d+)/, function(n){ return 1+parseInt(n); })); });
 }
 firstContentEditable.focus();
+}catch(e){alert(e.message);}
 return false;
 }
 
@@ -87,26 +91,26 @@ var id = input.getAttribute('id');
 var num = id.lastIndexOf('_');
 id = id.substring(0, num+1) + (1+parseInt(id.substring(num+1)));
 input.setAttribute('id', id);
-label.setAttribute('for', id);
-label.innerHTML = '';
-label.setAttribute('aria-label', label.getAttribute('aria-label').replace(/\d+$/g, function(m){ return 1+parseInt(m); }));
+//label.setAttribute('for', id);
+label.firstElementChild.innerHTML = '';
+label.firstElementChild.setAttribute('aria-label', label.firstElementChild.getAttribute('aria-label').replace(/\d+$/g, function(m){ return 1+parseInt(m); }));
 last.parentNode.parentNode.insertBefore(p, last.parentNode.nextSibling);
-var rtz = new RTZ(label, null);
+var rtz = new RTZ(label.firstElementChild, null);
 rtz.init();
 while(p = p.nextElementSibling) {	
 p.$('label').each(function(l){ l.setAttribute('aria-label', l.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
-p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
+//p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
 p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
 }
-label.focus();
+label.firstElementChild.focus();
 return false;
 }
 
 function MCQ_deleteAnswer (ref) {
 var p = ref.parentNode, p0=p;
 while(p = p.nextElementSibling) {	
-p.$('label').each(function(l){ l.setAttribute('aria-label', l.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
-p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+p.$('label').each(function(l){ l.firstElementChild.setAttribute('aria-label', l.firstElementChild.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+//p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
 p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
 }
 p0.parentNode.removeChild(p0);

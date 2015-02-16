@@ -25,8 +25,8 @@ $count = ++$i+1;
 $text = $q->getFirstElementByTagName('q')->saveInnerHTML();
 echo <<<END
 <fieldset>
-<legend><span id="qlbl$i">{$t('Question')} <span class="questionNumber">$count</span></span>:
-<span class="questionText" contenteditable="true" aria-labelledby="qlbl$i">$text</span></legend>
+<legend><span>{$t('Question')} <span class="questionNumber">$count</span></span>:
+<span class="questionText" contenteditable="true" aria-label="{$t('Question')} $count">$text</span></legend>
 END;
 $j= -1;
 foreach($q->getElementsByTagName('c') as $a) {
@@ -37,7 +37,7 @@ $itype = $simple? 'radio' : 'checkbox';
 $checked = $a->hasAttribute('checked')? ' checked="checked"' : '';
 echo <<<END
 <p><input tabindex="0" type="$itype" name="$name" id="$id" value="$j"$checked />
-<label for="$id" contenteditable="true" aria-label="{$t('Question')} $count {$t('Answer')} $jj">$a</label></p>
+<label><span contenteditable="true" aria-label="{$t('Question')} $count {$t('Answer')} $jj">$a</span></label></p>
 END;
 }
 echo '</fieldset>';

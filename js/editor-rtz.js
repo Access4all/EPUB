@@ -1738,7 +1738,7 @@ debug(e, true);
 
 function RTZ_contextmenu (e) {
 e = e || window.event;
-//if (e.ctrlKey || e.shiftKey) return true; // Allow original OS/browser context menu if shift and/or Ctrl are held down; 
+if (e.ctrlKey || e.shiftKey) return true; // Allow original OS/browser context menu if shift and/or Ctrl are held down; 
 // finally OS/browser menu is always disabled because undo/redo is customized, and copy/cut/paste are only working when invoked via Ctrl+C/X/V; there is usually no other indispensable command in the OS/browser context menu.
 var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
