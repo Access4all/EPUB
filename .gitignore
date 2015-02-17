@@ -3,7 +3,7 @@
 data/*
 !data/template
 !data/template.epub
-!data/admin-tutorial
+!data/admin__tutorial
 cache/*
 *test*
 out*

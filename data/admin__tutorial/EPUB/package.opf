@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="uid" prefix="cc: http://creativecommons.org/ns#">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title id="title">Tutorial</dc:title>
+    <dc:identifier id="uid">epub3.tutorial.123-12345-56</dc:identifier>
+    <dc:language>en</dc:language>
+    <meta property="dcterms:modified">2015-02-17T14:39:02+01:00</meta>
+    <link rel="cc:license" href="http://creativecommons.org/licenses/by-nd/3.0/"/>
+    <dc:creator>Quentin Cosendey</dc:creator>
+    <dc:creator>Anton Bolfing</dc:creator>
+  </metadata>
+  <manifest>
+    <item id="css" media-type="text/css" href="css/epub3.css"/>
+    <item id="toc" media-type="application/xhtml+xml" href="xhtml/toc.xhtml" properties="nav"/>
+    <item id="part-i-introduction" media-type="application/xhtml+xml" href="xhtml/introduction.xhtml"/>
+    <item id="chapter-1-getting-started-with-the-wysiwyg-editor" media-type="application/xhtml+xml" href="xhtml/chapter1.xhtml"/>
+  </manifest>
+  <spine>
+    <itemref idref="toc"/>
+    <itemref idref="part-i-introduction"/>
+    <itemref idref="chapter-1-getting-started-with-the-wysiwyg-editor"/>
+  </spine>
+</package>

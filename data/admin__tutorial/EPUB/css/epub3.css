@@ -1,0 +1,140 @@
+/*<fonts>*/
+
+/*</fonts>*/
+
+/*<main>*/
+body {
+background-color: #eeeeee;
+color: #000000;
+font-size: 1em;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+font-size: 2em;
+color: #000080;
+}
+
+h2 {
+font-size: 1.4em;
+color: #000050;
+}
+
+h3 {
+font-size: 1.25em;
+color: #000030;
+}
+
+h4 {
+font-size: 1.2em;
+color: #000020;
+}
+
+h5 {
+font-size: 1.15em;
+color: #000010;
+}
+
+h6 {
+font-size: 1.1em;
+color: #000010;
+}
+
+blockquote {
+margin-left: 8em;
+}
+
+pre {
+margin-left: 8em;
+}
+
+table {
+table-layout: fixed;
+caption-side: bottom;
+}
+
+ol {
+margin-left: 8em;
+}
+
+ul {
+margin-left: 8em;
+list-style-type: disc;
+}
+
+aside.info {
+background-color: #ccddff;
+border: solid 3px #88ccff;
+}
+
+aside.warn {
+background-color: #ffdddd;
+border: solid 3px #ff8888;
+}
+
+aside.help {
+background-color: #ddffdd;
+border: solid 3px #99ff66;
+}
+
+section.chapter { }
+section.part { }
+section.volume { }
+section.introduction { }
+section.preface { }
+section.abstract { }
+section.foreword { }
+section.afterword { }
+section.appendix { }
+section.conclusion { }
+section.questionsAnswers { }
+
+.normal {
+float: none;
+width: 100%;
+}
+
+.left50 {
+float: left;
+width: 50%;
+}
+
+.right50 {
+float: right;
+width: 50%;
+}
+
+.left33 {
+float: left;
+width: 33.3%;
+}
+
+.right33 {
+float: right;
+width: 33.3%;
+}
+
+.left25 {
+float: left;
+width: 25%;
+}
+
+.right25 {
+float: right;
+width: 25%;
+}
+
+h1, h2, h3, h4, h5, h6, hr {
+clear: both;
+page-break-after: avoid;
+}
+
+figure, aside {
+page-break-inside: avoid;
+}
+
+a, a:link { color: blue; }
+a:visited { color: purple; }
+a:focus, a:hover, a:active { background-color: #cccccc; }
+
+/*</main>*/
