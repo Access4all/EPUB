@@ -110,7 +110,14 @@ if ($title=='Untitled document') $title=null;
 }
 if (!$title) $title = substr($file->getRealFileName(), 0, -4);
 $name = Misc::toValidName("{$uprefix}__{$title}");
+$name2 = $name;
 $epubFile = "$booksdir/$name.epub";
+$epubDir = "$booksdir/$name/";
+for($i=2; file_exists($epubFile) || is_dir($epubDir); $i++) {
+$name = "$name2$i";
+$epubFile = "$booksdir/$name.epub";
+$epubDir = "$booksdir/$name/";
+} 
 $info['title'] = $title;
 copy($file->getRealFileName(), $epubFile);
 return new Book(array('name'=>$name, 'title'=>$title));

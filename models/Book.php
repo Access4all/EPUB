@@ -359,7 +359,11 @@ if (empty($info['title'])) $info['title'] = 'untitled'.time();
 if (empty($info['fileName'])) {
 $defdir = $this->getOption('defaultDirByType:text', '');
 $path = ($pageFrom? $pageFrom->fileName : ($defdir? "$defdir/#" : $this->getOpfFileName() ));
-$fn = Misc::toValidName($info['title']).'.xhtml' ;
+$fn = $info['title'];
+$fn = preg_replace('@^(.*?)(?:[-,;:]\s.+)?$@i', '$1', $fn); // When the title is long, i.e. 'chapter 1: something', we prefer generally have chapter1.xhtml rather than chapter1-something.xhtml.
+$fn = Misc::toValidName($fn); // Remove unwanted characters and accents from the file name
+$fn = preg_replace('@(?<=[a-z])[-_](?=\d)@', '', $fn); // We generally prefer chapter1.xhtml as chapter-1.xhtml
+$fn.='.xhtml' ;
 $info['fileName'] = pathResolve($path, $fn);
 }
 else if (!preg_match('/\.xhtml$/i', $info['fileName'])) {

@@ -36,3 +36,5 @@ btnExport=Export
 BtnCreate=Create
 BtnAdd=Add
 btnHelp=Help
+Duplicate=Copy
+Duplicated=Copied

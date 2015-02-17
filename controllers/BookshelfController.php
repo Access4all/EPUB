@@ -91,5 +91,11 @@ else header("Location: $root/editor/{$book->name}/index/");
 exit();
 }
 
+function duplicate ($bookName, $bookTitle) {
+$_POST['template'] = $bookName;
+$_POST['title'] = $bookTitle . ' (' .getTranslation('Duplicated') .')';
+$this->newBook();
+}
+
 }
 ?>

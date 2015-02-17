@@ -43,6 +43,7 @@ $viewUrl = "$root/book/{$b->name}/view/";
 $exportUrl = "$root/book/{$b->name}/export/epub3";
 $deleteUrl = "$root/bookshelf/{$b->id}/delete";
 $editUrl = "$root/editor/{$b->name}/index/";
+$duplicateUrl = "$root/bookshelf/{$b->name}/duplicate/" .urlencode($b->getTitle());
 echo <<<END
 <tr>
 <th scope="row"><a href="$viewUrl">{$b->title}</a></th>
@@ -64,6 +65,7 @@ echo <<<END
 <a href="$editUrl" role="button">{$t('btnEdit')}</a>
 <a href="$exportUrl" role="button">{$t('btnExport')}</a>
 <a href="$deleteUrl" role="button">{$t('btnDelete')}</a>
+<a href="$duplicateUrl" role="button">{$t('Duplicate')}</a>
 </td>
 </tr>
 END;
