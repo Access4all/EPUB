@@ -111,6 +111,8 @@ illustration: vk.ctrl+vk.shift+vk.g,
 multimediaClip: vk.ctrl+vk.shift+vk.m,
 table: vk.ctrl+vk.shift+vk.t,
 footnote: vk.ctrl+vk.shift+vk.f,
+superscript: vk.ctrl+vk.shift+vk.y,
+subscript: vk.ctrl+vk.y,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
 };
@@ -381,6 +383,12 @@ this.inlineFormat('em', false);
 break;
 case keys.strikethrough:
 this.inlineFormat('s', false);
+break;
+case keys.subscript:
+this.inlineFormat('sub', false);
+break;
+case keys.superscript:
+this.inlineFormat('sup', false);
 break;
 case keys.abbreviation:
 this.insertAbbrDialog();
@@ -1726,6 +1734,7 @@ var saveBtn = document.querySelector('button[data-action=save]');
 saveBtn.addClass('disabled');
 saveBtn.setAttribute('aria-disabled', true);
 this.saveBtn = saveBtn;
+window.changed=false;
 }
 
 function RTZ_defaultSave (code, sync) {
