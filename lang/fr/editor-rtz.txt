@@ -40,6 +40,7 @@ InsertBox=Boîte
 BoxModify=Propriétés de la boîte...
 IBoxType=Type de boîte
 IBoxPosition=Position
+MultimediaClip=Clip multimédia
 InsertMM=Ajouter un clip multimédia
 MMURLs=URL(s) du clip
 MMAlt=Texte alternatif

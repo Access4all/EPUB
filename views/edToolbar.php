@@ -38,6 +38,7 @@ echo <<<END
 </span>
 <span class="buttonGroup">
 <button type="button" data-action="illustration">{$t('Illustration')}</button>
+<button type="button" data-action="multimediaClip">{$t('MultimediaClip')}</button>
 <button type="button" data-action="table">{$t('Table')}</button>
 <button type="button" data-action="box">{$t('Box')}</button>
 </span><span class="buttonGroup">

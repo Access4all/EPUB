@@ -39,6 +39,7 @@ InsertBox=Make a box
 BoxModify=Box properties...
 IBoxType=Box type
 IBoxPosition=Position
+MultimediaClip=Multimedia clip
 InsertMM=Insert multimedia clip
 MMURLs=Clip URL(s)
 MMAlt=Alternate text
