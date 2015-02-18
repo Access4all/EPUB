@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<quiz type="simple" submission="local">
+  <intro>
+    <h1>Quiz time!</h1>
+    <p>This is an example multiple choice quiz. Use the tab key to navigate through questions, answers, and checkboxes. New answers and questions are automatically added if you press tab when you are at the end.</p>
+    <p>You could try to do the following things :</p>
+    <ul>
+      <li>The correct answer of the first question is absent and a wrong one is checked.&#xA0;Add it as its last proposition and mark it as being the real answer.</li>
+      <li>Add a new question&#xA0;<em>What is the color of the sky</em>, three wrong answers as well as the correct one; the right answer should be the 3<sub>rd</sub> one.</li>
+      <li>People living in Basel are furious with the second question; they want their city to be proposed even if it's the wrong answer. Add it after Geneva but before Lausanne.</li>
+      <li>We would like to add a new question <em>Ammong the following animals, which ones are mammals</em>, with the following answers: elephant, butterfly, cat, frog, bee, girafe. Do you see where is the problem? You can solve it by going to <strong>Page options </strong>and change the type of quiz.</li>
+      <li>You can also add icons and inline formatting such as bold within the text of questions and answers if you like to. However, in that case it's better to use keyboard shortcuts rather than use the toolbar or drag and drop. To prove it, add a question <em>On which of these sentances the subject is unproperly emphasized</em>, write 4 different sentances as answers and mark each time the subject of the sentance in italic, as the question suggests. There are much better ways to ask such a question, but that's just an exercise.</li>
+    </ul>
+    <p>Have fun !</p>
+  </intro>
+  <question>
+    <q>What is the color of Napoleon's white horse ?</q>
+    <c checked="true">Black</c>
+    <c>Brown</c>
+    <c>Beige</c>
+    <c>Yellow</c>
+  </question>
+  <question>
+    <q>What is the capital city of Switzerland ?</q>
+    <c>Z&#xFC;rich</c>
+    <c checked="true">Bern</c>
+    <c>Geneva</c>
+    <c>Lausanne</c>
+  </question>
+</quiz>

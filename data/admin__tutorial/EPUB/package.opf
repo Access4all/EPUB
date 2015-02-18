@@ -4,7 +4,7 @@
     <dc:title id="title">Tutorial</dc:title>
     <dc:identifier id="uid">epub3.tutorial.123-12345-56</dc:identifier>
     <dc:language>en</dc:language>
-    <meta property="dcterms:modified">2015-02-18T13:58:13+01:00</meta>
+    <meta property="dcterms:modified">2015-02-18T16:06:52+01:00</meta>
     <link rel="cc:license" href="http://creativecommons.org/licenses/by-nd/3.0/"/>
     <dc:creator>Quentin Cosendey</dc:creator>
     <dc:creator>Anton Bolfing</dc:creator>
@@ -16,6 +16,10 @@
     <item id="chapter-1-getting-started-with-the-wysiwyg-editor" media-type="application/xhtml+xml" href="xhtml/chapter1.xhtml"/>
     <item id="chapter-2-links-images-and-multimedia" media-type="application/xhtml+xml" href="xhtml/chapter2.xhtml"/>
     <item id="chapter-4-tables-and-boxes" media-type="application/xhtml+xml" href="xhtml/chapter4.xhtml"/>
+    <item id="chapter-5-interactive-activities" media-type="application/xhtml+xml" href="xhtml/chapter5.xhtml"/>
+    <item id="quiz-time" media-type="application/xhtml+xml" href="xhtml/quiz-time.xhtml" properties="scripted"/>
+    <item id="privateBookResource_js_global" media-type="application/x-javascript" href="js/global.js"/>
+    <item id="privateBookResource_js_book-mcq" media-type="application/x-javascript" href="js/book-mcq.js"/>
   </manifest>
   <spine>
     <itemref idref="toc"/>
@@ -23,5 +27,7 @@
     <itemref idref="chapter-1-getting-started-with-the-wysiwyg-editor"/>
     <itemref idref="chapter-2-links-images-and-multimedia"/>
     <itemref idref="chapter-4-tables-and-boxes"/>
+    <itemref idref="chapter-5-interactive-activities"/>
+    <itemref idref="quiz-time"/>
   </spine>
 </package>

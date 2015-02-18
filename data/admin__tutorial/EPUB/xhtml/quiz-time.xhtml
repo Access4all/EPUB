@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+  <head>
+    <title>Quiz time!</title>
+    <link rel="stylesheet" href="../css/epub3.css"/>
+  </head>
+  <body>
+    <section epub:type="assessment">
+      <h1 id="h1_2015_02_18_16_40_58_1294_1" role="heading" aria-level="1">Quiz time!</h1>
+      <p>This is an example multiple choice quiz. Use the tab key to navigate through questions, answers, and checkboxes. New answers and questions are automatically added if you press tab when you are at the end.</p>
+      <p>You could try to do the following things :</p>
+      <ul>
+        <li>The correct answer of the first question is absent and a wrong one is checked. Add it as its last proposition and mark it as being the real answer.</li>
+        <li>Add a new question <em>What is the color of the sky</em>, three wrong answers as well as the correct one; the right answer should be the 3<sub>rd</sub> one.</li>
+        <li>People living in Basel are furious with the second question; they want their city to be proposed even if it's the wrong answer. Add it after Geneva but before Lausanne.</li>
+        <li>We would like to add a new question <em>Ammong the following animals, which ones are mammals</em>, with the following answers: elephant, butterfly, cat, frog, bee, girafe. Do you see where is the problem? You can solve it by going to <strong>Page options </strong>and change the type of quiz.</li>
+        <li>You can also add icons and inline formatting such as bold within the text of questions and answers if you like to. However, in that case it's better to use keyboard shortcuts rather than use the toolbar or drag and drop. To prove it, add a question <em>On which of these sentances the subject is unproperly emphasized</em>, write 4 different sentances as answers and mark each time the subject of the sentance in italic, as the question suggests. There are much better ways to ask such a question, but that's just an exercise.</li>
+      </ul>
+      <p>Have fun !</p>
+      <form id="quiz" data-submissionMode="local">
+        <fieldset epub:type="multiple-choice-problem">
+          <legend epub:type="question">Question 1: What is the color of Napoleon's white horse ?</legend>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[0]" id="q0_0" value="0" data-checked="true"/>
+            <label for="q0_0">Black</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[0]" id="q0_1" value="1" data-checked="false"/>
+            <label for="q0_1">Brown</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[0]" id="q0_2" value="2" data-checked="false"/>
+            <label for="q0_2">Beige</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[0]" id="q0_3" value="3" data-checked="false"/>
+            <label for="q0_3">Yellow</label>
+          </p>
+        </fieldset>
+        <fieldset epub:type="multiple-choice-problem">
+          <legend epub:type="question">Question 2: What is the capital city of Switzerland ?</legend>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[1]" id="q1_0" value="0" data-checked="false"/>
+            <label for="q1_0">Zürich</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[1]" id="q1_1" value="1" data-checked="true"/>
+            <label for="q1_1">Bern</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[1]" id="q1_2" value="2" data-checked="false"/>
+            <label for="q1_2">Geneva</label>
+          </p>
+          <p epub:type="answer-choice">
+            <input type="radio" name="q[1]" id="q1_3" value="3" data-checked="false"/>
+            <label for="q1_3">Lausanne</label>
+          </p>
+        </fieldset>
+        <p>
+          <button type="submit">Soumettre</button>
+          <button type="reset">Effacer</button>
+        </p>
+      </form>
+    </section>
+    <script type="text/javascript" src="../js/global.js">/* */</script>
+    <script type="text/javascript" src="../js/book-mcq.js">/* */</script>
+  </body>
+</html>
