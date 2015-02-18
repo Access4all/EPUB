@@ -198,6 +198,7 @@ button[data-action=icon] { background-image: URL('../images/24px/icon.png'); }
 button[data-action=illustration] { background-image: URL('../images/24px/illustration.png'); }
 button[data-action=table] { background-image: URL('../images/24px/table.png'); }
 button[data-action=box] { background-image: URL('../images/24px/box.png'); }
+button[data-action=multimediaClip] { background-image: URL('../images/24px/multimedia.png'); }
 button[data-action=mark] { background-image: URL('../images/24px/gap.png'); }
 
 .leftPanelTab .infobox img{

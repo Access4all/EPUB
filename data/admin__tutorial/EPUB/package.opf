@@ -4,7 +4,7 @@
     <dc:title id="title">Tutorial</dc:title>
     <dc:identifier id="uid">epub3.tutorial.123-12345-56</dc:identifier>
     <dc:language>en</dc:language>
-    <meta property="dcterms:modified">2015-02-18T08:55:02+01:00</meta>
+    <meta property="dcterms:modified">2015-02-18T13:58:13+01:00</meta>
     <link rel="cc:license" href="http://creativecommons.org/licenses/by-nd/3.0/"/>
     <dc:creator>Quentin Cosendey</dc:creator>
     <dc:creator>Anton Bolfing</dc:creator>
@@ -15,11 +15,13 @@
     <item id="part-i-introduction" media-type="application/xhtml+xml" href="xhtml/introduction.xhtml"/>
     <item id="chapter-1-getting-started-with-the-wysiwyg-editor" media-type="application/xhtml+xml" href="xhtml/chapter1.xhtml"/>
     <item id="chapter-2-links-images-and-multimedia" media-type="application/xhtml+xml" href="xhtml/chapter2.xhtml"/>
+    <item id="chapter-4-tables-and-boxes" media-type="application/xhtml+xml" href="xhtml/chapter4.xhtml"/>
   </manifest>
   <spine>
     <itemref idref="toc"/>
     <itemref idref="part-i-introduction"/>
     <itemref idref="chapter-1-getting-started-with-the-wysiwyg-editor"/>
     <itemref idref="chapter-2-links-images-and-multimedia"/>
+    <itemref idref="chapter-4-tables-and-boxes"/>
   </spine>
 </package>

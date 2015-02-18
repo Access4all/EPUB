@@ -4,7 +4,7 @@
 
 /*<main>*/
 #StyleData {
- Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help", "part":"part", "chapter":"chapter", "volume":"volume", "appendix":"appendix", "abstract":"abstract", "preface":"preface", "foreword":"foreword", "afterword":"afterword", "introduction":"introduction", "questionsAnswers":"qna", "conclusion":"conclusion"}}';
+ Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help", "part":"part", "chapter":"chapter", "volume":"volume", "appendix":"appendix", "abstract":"abstract", "preface":"preface", "foreword":"foreword", "afterword":"afterword", "introduction":"introduction", "questionsAnswers":"qna", "conclusion":"conclusion", "copyright":"acknowledgments", "dedication":"dedication", "practice":"practice"}}';
  }
 
 .editor {
@@ -92,6 +92,10 @@ border: solid 3px #99ff66;
 .editor section.appendix { }
 .editor section.conclusion { }
 .editor section.questionsAnswers { }
+.editor section.credits { }
+.editor section.copyright { }
+.editor section.dedication { }
+.editor section.practice{ }
 
 .editor .normal {
 float: none;
