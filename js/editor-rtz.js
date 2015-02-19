@@ -47,6 +47,7 @@ this.insertMultimediaClipDialog = RTZ_insertMultimediaClipDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
+this.moreTagsMenu = RTZ_moreTagsMenu;
 this.quickUploadDialog = RTZ_quickUploadDialog;
 this.openPreview = RTZ_openPreview;
 this.save = RTZ_save;
@@ -102,8 +103,8 @@ h5alt: vk.alt+vk.n5,
 h6alt: vk.alt+vk.n6,
 orderedList: vk.ctrl+vk.l,
 unorderedList: vk.ctrl+vk.u,
-definitionList: vk.ctrl+vk.shift+vk.d,
-codeListing: vk.ctrl+vk.shift+vk.p,
+definitionList: vk.ctrl+vk.d,
+codeListing: vk.ctrl+vk.shift+vk.l,
 blockquote: vk.ctrl+vk.q,
 box: vk.ctrl+vk.shift+vk.a,
 icon: vk.ctrl+vk.shift+vk.i,
@@ -115,6 +116,13 @@ superscript: vk.ctrl+vk.shift+vk.y,
 subscript: vk.ctrl+vk.y,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
+moreTags: vk.ctrl+vk.shift+vk.j,
+/*Note: shortcuts to avoid definitely
+Ctrl+P = Print
+Ctrl+O = Open
+Ctrl+W = Close tab
+Ctrl+J = Download manager
+*/
 };
 }
 
@@ -468,6 +476,9 @@ this.quickUploadDialog();
 break;
 case keys.cleanHTML:
 this.cleanHTML();
+break;
+case keys.moreTags:
+this.moreTagsMenu(null);
 break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
@@ -1506,6 +1517,34 @@ RTZ_uploadFiles(this.elements.upload.files);
 });//DialogBox
 }
 
+function RTZ_moreTagsMenu (e) {
+var actions = ['superscript', 'subscript'];
+var items = [];
+e = e || window.event || {};
+var sel = this.getSelection(), ca = sel.commonAncestorContainer, sNode = sel.startContainer, eNode = sel.endContainer, sOffset = sel.startOffset, eOffset = sel.endOffset;
+var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
+var x = e.pageX || e.clientX || br.left || 0;
+var y = e.pageY || e.clientY || br.top || 0;
+var performAction = function(_this, a){
+debug('perform action ' + action);
+try {
+debug(sNode + sOffset + ', ' + eNode + eOffset + ', ' + sNode.textContent + ', ' + eNode.textContent);
+sel.setStart(sNode, sOffset);
+sel.setEnd(eNode, eOffset);
+_this.implKeyDown(keys[a]);
+_this.zone.focus();
+} catch(e){debug(e.message);}
+};
+for (var i=0; i<actions.length; i++) {
+var action = actions[i];
+var str = msgs[action.substring(0,1).toUpperCase()+action.substring(1)];
+if (keys[action] && keys[action]<vk.impossible) str += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
+items.merge([str, performAction.bind(null, this, action)]);
+}
+items.merge([msgs.Cancel, null]);
+Menu_show(items, this.zone, x+7, y+7);
+}
+
 function RTZ_openPreview () {
 var previewBtn = document.getElementById('previewBtn');
 if (!previewBtn || !previewBtn.hasAttribute('data-href')) return;
@@ -1748,7 +1787,6 @@ debug(e, true);
 function RTZ_contextmenu (e) {
 e = e || window.event;
 if (e.ctrlKey || e.shiftKey) return true; // Allow original OS/browser context menu if shift and/or Ctrl are held down; 
-// finally OS/browser menu is always disabled because undo/redo is customized, and copy/cut/paste are only working when invoked via Ctrl+C/X/V; there is usually no other indispensable command in the OS/browser context menu.
 var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
 var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
@@ -2029,4 +2067,4 @@ return false;
 };});//each link
 });
 
-//alert('RTZ13 loaded');
+alert('RTZ13 loaded');

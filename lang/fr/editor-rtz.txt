@@ -82,3 +82,6 @@ Table=Tableau
 Copy=Copier
 Cut=Couper
 Paste=Coller
+BtnMoreTags=Plus...
+Superscript=Exposant
+Subscript=Indice

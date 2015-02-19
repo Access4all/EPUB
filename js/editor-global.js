@@ -29,14 +29,15 @@ document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 }
 
 function Menu_click (action, originator, ul) {
-return function(e){ 
+return function(e){
 Menu_close.call(ul,originator); 
-action.call(this,e); 
+if (action) action.call(this,e);
+action=null;
 return false;
 }}
 
 function Menu_close (originator) {
-this.parentNode.removeChild(this);
+if (this&&this.parentNode) this.parentNode.removeChild(this);
 document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (originator) originator.focus();
 return false;

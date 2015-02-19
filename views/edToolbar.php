@@ -49,6 +49,7 @@ echo <<<END
 <button type="button" data-action="abbreviation">{$t('Abbreviation')}</button>
 <button type="button" data-action="strikethrough">{$t('Strikeout')}</button>
 </span>$theToolbarAdditionalItems
+<button type="button" data-action="moreTags">{$t('BtnMoreTags')}</button>
 </p>
 </div><!--toolbar-->
 END;
