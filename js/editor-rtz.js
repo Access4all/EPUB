@@ -102,8 +102,8 @@ h5alt: vk.alt+vk.n5,
 h6alt: vk.alt+vk.n6,
 orderedList: vk.ctrl+vk.l,
 unorderedList: vk.ctrl+vk.u,
-definitionList: vk.ctrl+vk.shift+vk.d,
-codeListing: vk.ctrl+vk.shift+vk.p,
+definitionList: vk.ctrl+vk.d,
+codeListing: vk.ctrl+vk.shift+vk.l,
 blockquote: vk.ctrl+vk.q,
 box: vk.ctrl+vk.shift+vk.a,
 icon: vk.ctrl+vk.shift+vk.i,
@@ -115,6 +115,21 @@ superscript: vk.ctrl+vk.shift+vk.y,
 subscript: vk.ctrl+vk.y,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
+insTag: vk.ctrl+vk.shift+vk.e,
+delTag: vk.ctrl+vk.shift+vk.d,
+qTag: vk.ctrl+vk.shift+vk.q,
+dfnTag: vk.ctrl+vk.n8,
+smallPrint: vk.ctrl+vk.n9,
+codeTag: vk.ctrl+vk.t,
+varTag: vk.ctrl+vk.shift+vk.n7,
+sampTag: vk.ctrl+vk.shift+vk.n8,
+kbdTag: vk.ctrl+vk.shift+vk.n9,
+/*Note: shortcuts to avoid definitely
+Ctrl+P = Print
+Ctrl+O = Open
+Ctrl+W = Close tab
+Ctrl+J = Download manager
+*/
 };
 }
 
@@ -392,6 +407,33 @@ this.inlineFormat('sup', false);
 break;
 case keys.abbreviation:
 this.insertAbbrDialog();
+break;
+case keys.qTag:
+this.inlineFormat('q', false);
+break;
+case keys.varTag:
+this.inlineFormat('var', false);
+break;
+case keys.dfnTag:
+this.inlineFormat('dfn', false);
+break;
+case keys.kbdTag:
+this.inlineFormat('kbd', false);
+break;
+case keys.sampTag:
+this.inlineFormat('samp', false);
+break;
+case keys.codeTag:
+this.inlineFormat('code', false);
+break;
+case keys.insTag:
+this.inlineFormat('ins', false);
+break;
+case keys.delTag:
+this.inlineFormat('del', false);
+break;
+case keys.smallPrint:
+this.inlineFormat('small', false);
 break;
 case keys.unorderedList:
 this.formatAsList('ul', 'li', 'li');
@@ -1537,7 +1579,7 @@ this.select(cursel);
 }
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track iframe object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track iframe object param section aside header footer figure figcaption mark var samp kbd dfn cite span div'.split(' ');
 var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.split(' ');
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'source', 'track', 'iframe'];
@@ -1748,7 +1790,6 @@ debug(e, true);
 function RTZ_contextmenu (e) {
 e = e || window.event;
 if (e.ctrlKey || e.shiftKey) return true; // Allow original OS/browser context menu if shift and/or Ctrl are held down; 
-// finally OS/browser menu is always disabled because undo/redo is customized, and copy/cut/paste are only working when invoked via Ctrl+C/X/V; there is usually no other indispensable command in the OS/browser context menu.
 var items = [];
 var sel = this.getSelection(), ca = sel.commonAncestorContainer;
 var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
@@ -2029,4 +2070,4 @@ return false;
 };});//each link
 });
 
-//alert('RTZ13 loaded');
+alert('RTZ13 loaded');
