@@ -72,6 +72,10 @@ $templateName = trim($_POST['template']);
 $failed = true;
 $bs = new Bookshelf();
 $tplFile = "./data/$templateName.epub";
+if (!file_exists($tplFile)) {
+$b1 = $bs->getBookByName($templateName);
+if ($b1) $b1->export('epub3');
+}
 if (file_exists($tplFile)) {
 $book = $bs->createBookFromFile(new LocalFile($tplFile), array('title'=>$title));
 if ($book &&is_object($book)) {
