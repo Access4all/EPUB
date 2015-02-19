@@ -47,7 +47,6 @@ this.insertMultimediaClipDialog = RTZ_insertMultimediaClipDialog;
 this.insertTableDialog = RTZ_insertTableDialog;
 this.insertAbbrDialog = RTZ_insertAbbrDialog;
 this.insertBoxDialog = RTZ_insertBoxDialog;
-this.moreTagsMenu = RTZ_moreTagsMenu;
 this.quickUploadDialog = RTZ_quickUploadDialog;
 this.openPreview = RTZ_openPreview;
 this.save = RTZ_save;
@@ -116,7 +115,15 @@ superscript: vk.ctrl+vk.shift+vk.y,
 subscript: vk.ctrl+vk.y,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
-moreTags: vk.ctrl+vk.shift+vk.j,
+insTag: vk.ctrl+vk.shift+vk.e,
+delTag: vk.ctrl+vk.shift+vk.d,
+qTag: vk.ctrl+vk.shift+vk.q,
+dfnTag: vk.ctrl+vk.n8,
+smallPrint: vk.ctrl+vk.n9,
+codeTag: vk.ctrl+vk.t,
+varTag: vk.ctrl+vk.shift+vk.n7,
+sampTag: vk.ctrl+vk.shift+vk.n8,
+kbdTag: vk.ctrl+vk.shift+vk.n9,
 /*Note: shortcuts to avoid definitely
 Ctrl+P = Print
 Ctrl+O = Open
@@ -401,6 +408,33 @@ break;
 case keys.abbreviation:
 this.insertAbbrDialog();
 break;
+case keys.qTag:
+this.inlineFormat('q', false);
+break;
+case keys.varTag:
+this.inlineFormat('var', false);
+break;
+case keys.dfnTag:
+this.inlineFormat('dfn', false);
+break;
+case keys.kbdTag:
+this.inlineFormat('kbd', false);
+break;
+case keys.sampTag:
+this.inlineFormat('samp', false);
+break;
+case keys.codeTag:
+this.inlineFormat('code', false);
+break;
+case keys.insTag:
+this.inlineFormat('ins', false);
+break;
+case keys.delTag:
+this.inlineFormat('del', false);
+break;
+case keys.smallPrint:
+this.inlineFormat('small', false);
+break;
 case keys.unorderedList:
 this.formatAsList('ul', 'li', 'li');
 break;
@@ -476,9 +510,6 @@ this.quickUploadDialog();
 break;
 case keys.cleanHTML:
 this.cleanHTML();
-break;
-case keys.moreTags:
-this.moreTagsMenu(null);
 break;
 case keys.goToHome: { // Some browsers don't support Ctrl+Home to go to the beginning of the document
 var sel = this.getSelection();
@@ -1517,34 +1548,6 @@ RTZ_uploadFiles(this.elements.upload.files);
 });//DialogBox
 }
 
-function RTZ_moreTagsMenu (e) {
-var actions = ['superscript', 'subscript'];
-var items = [];
-e = e || window.event || {};
-var sel = this.getSelection(), ca = sel.commonAncestorContainer, sNode = sel.startContainer, eNode = sel.endContainer, sOffset = sel.startOffset, eOffset = sel.endOffset;
-var br = ca.getBoundingClientRect? ca.getBoundingClientRect() : {};
-var x = e.pageX || e.clientX || br.left || 0;
-var y = e.pageY || e.clientY || br.top || 0;
-var performAction = function(_this, a){
-debug('perform action ' + action);
-try {
-debug(sNode + sOffset + ', ' + eNode + eOffset + ', ' + sNode.textContent + ', ' + eNode.textContent);
-sel.setStart(sNode, sOffset);
-sel.setEnd(eNode, eOffset);
-_this.implKeyDown(keys[a]);
-_this.zone.focus();
-} catch(e){debug(e.message);}
-};
-for (var i=0; i<actions.length; i++) {
-var action = actions[i];
-var str = msgs[action.substring(0,1).toUpperCase()+action.substring(1)];
-if (keys[action] && keys[action]<vk.impossible) str += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
-items.merge([str, performAction.bind(null, this, action)]);
-}
-items.merge([msgs.Cancel, null]);
-Menu_show(items, this.zone, x+7, y+7);
-}
-
 function RTZ_openPreview () {
 var previewBtn = document.getElementById('previewBtn');
 if (!previewBtn || !previewBtn.hasAttribute('data-href')) return;
@@ -1576,7 +1579,7 @@ this.select(cursel);
 }
 
 function RTZ_cleanHTMLElement (sel, o, inlineContext) {
-var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track iframe object param section aside header footer figure figcaption mark var samp kbd span div'.split(' ');
+var allowedElements = 'p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd table tbody thead tfoot tr th td caption br a b i q s strong em abbr sup sub ins del code pre hr img audio video source track iframe object param section aside header footer figure figcaption mark var samp kbd dfn cite span div'.split(' ');
 var trimableElements = 'p h1 h2 h3 h4 h5 h6 li dt dd th td caption pre div'.split(' ');
 var ignoreElements = ['math', 'script'];
 var allowedEmptyElements = ['br', 'img', 'hr', 'source', 'track', 'iframe'];

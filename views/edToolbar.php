@@ -49,7 +49,20 @@ echo <<<END
 <button type="button" data-action="abbreviation">{$t('Abbreviation')}</button>
 <button type="button" data-action="strikethrough">{$t('Strikeout')}</button>
 </span>$theToolbarAdditionalItems
-<button type="button" data-action="moreTags">{$t('BtnMoreTags')}</button>
+<select>
+<option value="nothing">{$t('BtnMoreTags')}</option>
+<option value="superscript">{$t('Superscript')}</option>
+<option value="subscript">{$t('Subscript')}</option>
+<option value="insTag">{$t('InsTag')}</option>
+<option value="delTag">{$t('DelTag')}</option>
+<option value="qTag">{$t('QTag')}</option>
+<option value="dfnTag">{$t('DfnTag')}</option>
+<option value="codeTag">{$t('CodeTag')}</option>
+<option value="varTag">{$t('VarTag')}</option>
+<option value="sampTag">{$t('SampTag')}</option>
+<option value="kbdTag">{$t('KbdTag')}</option>
+<option value="smallPrint">{$t('SmallPrint')}</option>
+</select>
 </p>
 </div><!--toolbar-->
 END;
