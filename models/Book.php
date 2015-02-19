@@ -335,7 +335,7 @@ $manifest->appendElement('item', $attrs);
 foreach($opf->getElementsByTagName('meta') as $m) {
 $prop = $m->getAttribute('property');
 if ($prop && $prop=='dcterms:modified') {
-$m->nodeValue = date('c');
+$m->nodeValue = date('Y-m-d\TH:i:s\Z');
 break;
 }}
 $this->getFileSystem()->addFromString($this->getOpfFileName(), $opf->saveXML() );
