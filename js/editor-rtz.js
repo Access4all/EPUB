@@ -1060,6 +1060,7 @@ return false;
 
 function RTZ_insertIcon (url, alt) {
 this.pushUndoState2();
+if (url.indexOf('\u007F')==0) url = url.substring(1, url.indexOf('\u007F',1));
 var img = document.createElement2('img', {'alt':alt, 'src':url});
 var sel = this.getSelection();
 sel.insertNode(img);
@@ -1073,6 +1074,7 @@ setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that Mut
 function RTZ_insertIllustration (url, alt, caption, style) {
 if (this.inlineOnly) return false;
 this.pushUndoState2();
+if (url.indexOf('\u007F')==0) url = url.substring(1, url.indexOf('\u007F',1));
 var figure = this.createObservedElement('figure', {'class':style});
 var img = figure.appendElement('img', {'alt':alt, 'src':url, 'width':'100%', 'height':'auto'});
 var capt=null, captP=null;
