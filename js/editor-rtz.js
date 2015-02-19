@@ -2070,4 +2070,4 @@ return false;
 };});//each link
 });
 
-alert('RTZ13 loaded');
+//alert('RTZ13 loaded');
