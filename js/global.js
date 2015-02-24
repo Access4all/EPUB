@@ -107,6 +107,7 @@ return this.replace(/<.*?>/g, '');
 NodeList.prototype.join = Array.prototype.join;
 NodeList.prototype.reduce = Array.prototype.reduce;
 NodeList.prototype.filter = Array.prototype.filter;
+NodeList.prototype.indexOf = Array.prototype.indexOf;
 
 NodeList.prototype.each = function () {
 var f = arguments[0], args = [];
@@ -157,11 +158,7 @@ this.style.display='block';
 }
 
 HTMLElement.prototype.isVisible = function() {
-if (!this.style || !this.style.display || this.style.display=='') {
-if (this.parentNode) return this.parentNode.isVisible();
-else return true;
-}
-else return this.style.display!='none';
+return !!this.offsetParent;
 }
 
 function domGenerateId () {

@@ -74,27 +74,106 @@ return false;
 function FileTree_init (e) {
 var ctxType = e.getAttribute('data-ctxtype');
 var ctxItemFunc = FileTree_linkContextMenu( window['FileTree_CtxMenuItemList_'+ctxType] ,this);
+var autoid = 0;
+var activeDescendant = null;
+if (!e.id) e.id = 'ftAutoid'+(autoid++);
 e.$('a').each(function(o){
 o.oncontextmenu = ctxItemFunc;
 o.ondragstart = FileTree_link_dragStart;
 o.ondragover = FileTree_link_dragOver;
 o.ondrop = FileTree_link_drop(ctxType);
+o.onkeydown = FileTree_itemKeyDown;
 o.setAttribute('draggable', true);
 o.draggable=true;
+o.addClass('file');
+o.setAttribute('role', 'treeitem');
+o.setAttribute('tabindex', -1);
+o.setAttribute('data-treeRoot', e.id);
+if (!o.id) o.id = 'ftAutoid'+(autoid++);
+if (!activeDescendant && o.isVisible()) activeDescendant=o;
 });
 e.$('ul,ol').each(function(o){
 var li = o.parentNode;
-var a = document.createElement2('a', {'href':'#'}, o.hasClass('collapsed')?'+':'-');
+var item = li.querySelector('a, .directory');
+var a = document.createElement2('a', {href:'#', tabindex:-1, 'class':'treeViewExpandLink'}, o.hasClass('collapsed')?'+':'-');
 a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;
 li.insertBefore(a, li.firstChild);
+//o.setAttribute('role', 'group');
+item.setAttribute('aria-expanded', !o.hasClass('collapsed'));
 });
 e.$('.directory').each(function(o){
 o.ondragenter = FileTree_folderLink_dragEnter;
 o.ondragleave = FileTree_folderLink_dragLeave;
+o.onkeydown = FileTree_itemKeyDown;
+o.setAttribute('role', 'treeitem');
+o.setAttribute('tabindex', -1);
+o.setAttribute('data-treeRoot', e.id);
+if (!o.id) o.id = 'ftAutoid'+(autoid++);
+if ((!activeDescendant || activeDescendant.tagName.toLowerCase()=='a') && o.isVisible()) activeDescendant=o;
 });
+e.setAttribute('role', 'tree');
+e.setAttribute('aria-activedescendant', activeDescendant.id);
+activeDescendant.setAttribute('tabindex',0);
 //suite
+}
+
+function FileTree_getAllItems (e) {
+return e.$('.file, .directory');
+}
+
+function FileTree_itemKeyDown (e){
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (e.ctrlKey) k |= vk.ctrl;
+if (e.shiftKey) k|=vk.shift;
+if (e.altKey) k|=vk.alt;
+if (k==vk.down || k==vk.up) {
+var root = document.getElementById(this.getAttribute('data-treeRoot'));
+var items = FileTree_getAllItems(root);
+var pos = items.indexOf(this), oldpos=pos;
+var incr = (k==vk.down? 1 : -1);
+for (pos+=incr; pos>=0 && pos<items.length && !items[pos].isVisible(); pos+=incr);
+if (pos==oldpos || pos<0 || pos>=items.length) return false;
+var it = items[pos];
+this.setAttribute('tabindex', -1);
+it.setAttribute('tabindex', 0);
+root.setAttribute('aria-activedescendant', it.id);
+it.focus();
+return false;
+}
+else if (k==vk.right) {
+var lk = this.parentNode.querySelector('.treeViewExpandLink');
+if (!lk || lk.parentNode!=this.parentNode) return false;
+if (this.getAttribute('aria-expanded')!='false') return false;
+FileTree_expandLinkClick.call(lk);
+this.focus();
+return false;
+}
+else if (k==vk.left) {
+var ok=true, lk = this.parentNode.querySelector('.treeViewExpandLink');
+if (!lk || lk.parentNode!=this.parentNode) ok=false;
+if (ok && this.getAttribute('aria-expanded')!='true') ok=false;;
+if (ok) {
+FileTree_expandLinkClick.call(lk);
+this.focus();
+return false;
+}
+var ul = this.parentNode.parentNode;
+if (!ul) return false;
+var li = ul.parentNode;
+if (!li || li.tagName.toLowerCase()!='li') return false;
+var firstFile = li.querySelector('.file, .directory');
+if (firstFile) {
+this.setAttribute('tabindex', -1);
+firstFile.setAttribute('tabindex', 0);
+firstFile.focus();
+document.getElementById(this.getAttribute('data-treeRoot')).setAttribute('aria-activedescendant', firstFile.id);
+}
+return false;
+}
+return true;
 }
 
 function FileTree_link_dragStart (e) {
@@ -171,6 +250,8 @@ window.folderLinkTimer=null;
 function FileTree_expandLinkClick () {
 var ul = this.parentNode.querySelector('ul,ol');
 var collapsed = ul.toggleClass('collapsed');
+var lk = this.parentNode.querySelector('.file, .directory');
+lk.setAttribute('aria-expanded', !collapsed);
 this.firstChild.nodeValue = (!collapsed? '-' : '+');
 }
 
