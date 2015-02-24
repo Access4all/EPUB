@@ -91,6 +91,7 @@ var id = input.getAttribute('id');
 var num = id.lastIndexOf('_');
 id = id.substring(0, num+1) + (1+parseInt(id.substring(num+1)));
 input.setAttribute('id', id);
+input.setAttribute('value', 1+parseInt(input.getAttribute('value')));
 //label.setAttribute('for', id);
 label.firstElementChild.innerHTML = '';
 label.firstElementChild.setAttribute('aria-label', label.firstElementChild.getAttribute('aria-label').replace(/\d+$/g, function(m){ return 1+parseInt(m); }));
@@ -100,18 +101,24 @@ rtz.init();
 while(p = p.nextElementSibling) {	
 p.$('label').each(function(l){ l.setAttribute('aria-label', l.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
 //p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
-p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return 1+parseInt(n); })); });
+p.$('input').each(function(i){ 
+i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return 1+parseInt(n); }));
+i.setAttribute('value', 1+parseInt(i.getAttribute('value')));
+});
 }
 label.firstElementChild.focus();
 return false;
 }
 
 function MCQ_deleteAnswer (ref) {
-var p = ref.parentNode, p0=p;
+var p = ref.parentNode.parentNode, p0=p;
 while(p = p.nextElementSibling) {	
 p.$('label').each(function(l){ l.firstElementChild.setAttribute('aria-label', l.firstElementChild.getAttribute('aria-label').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
 //p.$('label').each(function(l){ l.setAttribute('for', l.getAttribute('for').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
-p.$('input').each(function(i){ i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return -1+parseInt(n); })); });
+p.$('input').each(function(i){ 
+i.setAttribute('id', i.getAttribute('id').replace(/(\d+)$/, function(n){ return -1+parseInt(n); }));
+i.setAttribute('value', -1+parseInt(i.getAttribute('value'))); 
+});
 }
 p0.parentNode.removeChild(p0);
 }
