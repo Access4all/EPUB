@@ -114,6 +114,7 @@ table: vk.ctrl+vk.shift+vk.t,
 footnote: vk.ctrl+vk.shift+vk.f,
 superscript: vk.ctrl+vk.shift+vk.y,
 subscript: vk.ctrl+vk.y,
+brTag: vk.shift+vk.enter,
 quickUpload: vk.ctrl+vk.shift+vk.u,
 cleanHTML: vk.f9,
 insTag: vk.ctrl+vk.shift+vk.e,
@@ -359,9 +360,7 @@ this.saveBtn=null;
 }
 switch(k){
 case vk.enter:
-//try {
 this.enterKey();
-//} catch(e){ alert(e.message); }
 break;
 case vk.tab :
 if (this.tabKey()) return true;
@@ -435,6 +434,9 @@ this.inlineFormat('del', false);
 break;
 case keys.smallPrint:
 this.inlineFormat('small', false);
+break;
+case keys.brTag:
+this.insertElement('br');
 break;
 case keys.unorderedList:
 this.formatAsList('ul', 'li', 'li');
@@ -1380,8 +1382,12 @@ if (
 ) { // Youtube 
 url = '//www.youtube.com/embed/' + m[1];
 if (onlyCheck) return true;
-else return document.createElement2('iframe', {width:'100%', height:'auto', src:url});
-}
+else {
+var iframe = document.createElement2('iframe', {src:url});
+var wrapper = document.createElement2('div', {'class':'videoWrapper'});
+wrapper.appendChild(iframe);
+return wrapper;
+}}//end youtube
 // Other recognized video websites should go here
 return null;
 }

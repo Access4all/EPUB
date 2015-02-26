@@ -4,7 +4,7 @@
 
 /*<main>*/
 #StyleData {
- Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help", "part":"part", "chapter":"chapter", "volume":"volume", "appendix":"appendix", "abstract":"abstract", "preface":"preface", "foreword":"foreword", "afterword":"afterword", "introduction":"introduction", "questionsAnswers":"qna", "conclusion":"conclusion"}}';
+ Content: '{"htmlClassesToEpubTypes":{"warn":"notice", "info":"notice", "help":"help", "part":"part", "chapter":"chapter", "volume":"volume", "appendix":"appendix", "abstract":"abstract", "preface":"preface", "foreword":"foreword", "afterword":"afterword", "introduction":"introduction", "questionsAnswers":"qna", "conclusion":"conclusion", "copyright":"acknowledgments", "dedication":"dedication", "practice":"practice"}}';
  }
 
 .editor {
@@ -92,6 +92,10 @@ border: solid 3px #99ff66;
 .editor section.appendix { }
 .editor section.conclusion { }
 .editor section.questionsAnswers { }
+.editor section.credits { }
+.editor section.copyright { }
+.editor section.dedication { }
+.editor section.practice{ }
 
 .editor .normal {
 float: none;
@@ -140,5 +144,24 @@ page-break-inside: avoid;
 .editor a, .editor a:link { color: blue; }
 .editor a:visited { color: purple; }
 .editor a:focus, .editor a:hover, .editor a:active { background-color: #cccccc; }
+
+.editor .correct { background-color: green; }
+.editor .wrong { background-color: red; }
+
+/*Following code copied from https://css-tricks.com/NetMag/FluidWidthVideo/Article-FluidWidthVideo.php*/
+.editor .videoWrapper {
+	position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 25px;
+	height: 0;
+}
+.editor .videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+/*End of copy-paste*/
 
 /*</main>*/
