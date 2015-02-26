@@ -1,4 +1,5 @@
 function Menu_show (items, originator, x, y) {
+if (window.currentOpenedMenu) window.currentOpenedMenu.parentNode.removeChild(window.currentOpenedMenu);
 originator = originator || document.activeElement;
 var ul = document.createElement2('ul', {'class':'contextmenu', role:'menu'});
 var firstA = null;
@@ -19,6 +20,7 @@ if (!firstA) firstA=a;
 var body = document.querySelector('body');
 body.onclick = function(e){ body.onclick=null; Menu_close.call(ul,originator); return true; }; // When the user clicks outside of the context menu, it should be closed
 body.appendChild(ul);
+window.currentOpenedMenu = ul;
 if (x&&y) {
 ul.style.position='absolute';
 ul.style.left=x+'px';
@@ -40,6 +42,7 @@ function Menu_close (originator) {
 if (this&&this.parentNode) this.parentNode.removeChild(this);
 document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (originator) originator.focus();
+window.currentOpenedMenu=null;
 return false;
 }
 
