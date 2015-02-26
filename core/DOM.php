@@ -48,11 +48,15 @@ return $ar;
 }
 
 static function HTMLToXML ($html) {
+// XML doesn't support HTML entities except amp/lt/gt/quot/apos; since we are in UTF-8 all the time, it never hurts to replace them by their effective character
 $html = DOM::decodeEntities(trim($html));
-$html = preg_replace_callback( '#<((?:img|br|source|track)\b.*?)>#ms', function($m){ 
+// Make sure the following tags are in their self-closed form; e.g. <br> without any closing tag is allowed in HTML5, but not in XML
+$html = preg_replace_callback( '#<((?:img|br|hr|wbr|source|track)\b.*?)>#ms', function($m){ 
 if (substr($m[1], -1)!='/') $m[1].=' /';
 return "<$m[1]>";
 }, $html);
+// Similarly, ensure that there is no superfluous closing tag for those which need to be always self-closed, i.e. remove </br>
+$html = preg_replace('@</(?:img|br|hr|wbr|source|track)>@', '', $html);
 return $html;
 }
 

@@ -89,6 +89,7 @@ o.addClass('file');
 o.setAttribute('role', 'treeitem');
 o.setAttribute('tabindex', -1);
 o.setAttribute('data-treeRoot', e.id);
+o.setAttribute('aria-selected', false);
 if (!o.id) o.id = 'ftAutoid'+(autoid++);
 if (!activeDescendant && o.isVisible()) activeDescendant=o;
 });
@@ -100,8 +101,11 @@ a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;
 li.insertBefore(a, li.firstChild);
-//o.setAttribute('role', 'group');
+o.setAttribute('role', 'group');
+if (!o.id) o.id = 'ftAutoid'+(autoid++);
 item.setAttribute('aria-expanded', !o.hasClass('collapsed'));
+item.setAttribute('aria-controls', o.id);
+item.setAttribute('aria-selected', false);
 });
 e.$('.directory').each(function(o){
 o.ondragenter = FileTree_folderLink_dragEnter;
@@ -110,17 +114,21 @@ o.onkeydown = FileTree_itemKeyDown;
 o.setAttribute('role', 'treeitem');
 o.setAttribute('tabindex', -1);
 o.setAttribute('data-treeRoot', e.id);
+o.setAttribute('aria-selected', false);
 if (!o.id) o.id = 'ftAutoid'+(autoid++);
 if ((!activeDescendant || activeDescendant.tagName.toLowerCase()=='a') && o.isVisible()) activeDescendant=o;
 });
 e.setAttribute('role', 'tree');
 e.setAttribute('aria-activedescendant', activeDescendant.id);
 activeDescendant.setAttribute('tabindex',0);
+activeDescendant.setAttribute('aria-selected', true);
 //suite
 }
 
 function FileTree_getAllItems (e) {
-return e.$('.file, .directory');
+var cache = 'ftvDOMCache____'+e.id;
+if (!window[cache]) window[cache] = e.$('.file, .directory');
+return window[cache];
 }
 
 function FileTree_itemKeyDown (e){
@@ -138,7 +146,9 @@ for (pos+=incr; pos>=0 && pos<items.length && !items[pos].isVisible(); pos+=incr
 if (pos==oldpos || pos<0 || pos>=items.length) return false;
 var it = items[pos];
 this.setAttribute('tabindex', -1);
+this.setAttribute('aria-selected', false);
 it.setAttribute('tabindex', 0);
+it.setAttribute('aria-selected', true);
 root.setAttribute('aria-activedescendant', it.id);
 it.focus();
 return false;
@@ -167,7 +177,9 @@ if (!li || li.tagName.toLowerCase()!='li') return false;
 var firstFile = li.querySelector('.file, .directory');
 if (firstFile) {
 this.setAttribute('tabindex', -1);
+this.setAttribute('aria-selected', false);
 firstFile.setAttribute('tabindex', 0);
+firstFile.setAttribute('aria-selected', true);
 firstFile.focus();
 document.getElementById(this.getAttribute('data-treeRoot')).setAttribute('aria-activedescendant', firstFile.id);
 }

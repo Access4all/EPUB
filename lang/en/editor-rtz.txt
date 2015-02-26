@@ -5,6 +5,7 @@ ListsDropDown=Lists
 MakeALink=Make a link
 LinkModify=Link properties...
 LinkURL=Link URL
+LinkText=Link text
 InsertIcon=Insert an icon
 InsertTable=Insert a table
 IconModify=Icon properties...

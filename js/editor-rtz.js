@@ -27,6 +27,7 @@ this.zone = zone;
 this.toolbar = toolbar;
 this.select = RTZ_select;
 this.getSelection = RTZ_getSelection;
+this.moveCaretToPoint = RTZ_moveCaretToPoint;
 this.simpleBlockFormat = RTZ_simpleBlockFormat;
 this.inlineFormat = RTZ_inlineFormat;
 this.superBlockFormat = RTZ_superBlockFormat;
@@ -814,9 +815,15 @@ _this.zone.focus();
 
 function RTZ_modifyLinkDialog (link) {
 var url = link.getAttribute('href') || '#';
+var text = link.textContent || '';
 var _this = this;
-DialogBox(msgs.Link, [{label:msgs.LinkURL, name:'url', value:url}], function(){
+DialogBox(msgs.Link, [
+{label:msgs.LinkURL, name:'url', value:url},
+{label:msgs.LinkText, name:'ltext', value:text}
+], function(){
+var newText = this.elements.ltext.value;
 link.setAttribute('href', this.elements.url.value);
+if (newText!=text) link.innerHTML=newText;
 _this.zone.focus();
 }, null); //DialogBox
 }
@@ -1858,6 +1865,7 @@ if (e&&e.preventDefault) e.preventDefault();
 }
 
 function RTZ_onDrop (e) {
+if (e.clientX && e.clientY) this.moveCaretToPoint(e);
 if (!e.dataTransfer) return;
 if (e.preventDefault) e.preventDefault();
 if (e.dataTransfer.files && e.dataTransfer.files.length>0) RTZ_uploadFiles(e.dataTransfer.files, RTZ_dropFinishedWithFiles.bind(this));
@@ -2024,6 +2032,44 @@ function RTZ_select (sel) {
 var w = window.getSelection();
 w.removeAllRanges();
 w.addRange(sel);
+}
+
+function RTZ_moveCaretToPoint (e) {
+try {
+if (document.caretPositionFromPoint)  { // W3C standart as of 2016-02-26  
+var r = document.caretPositionFromPoint(e.clientX, e.clientY);
+var sel = document.createRange();
+sel.setStart(r.offsetNode, r.offset);
+sel.setEnd(r.offsetNode, r.offset);
+sel.collapse();
+this.select(sel);
+return true;
+}
+else if (document.caretRangeFromPoint) { // Older W3C standard
+var r = document.caretRangeFromPoint(e.clientX, e.clientY);
+var sel = document.createRange();
+sel.setStart(r.startContainer, r.startOffset);
+sel.setEnd(r.startContainer, r.startOffset);
+sel.collapse();
+this.select(sel);
+return true;
+}
+else if (e.rangeParent) { // Firefox alternative method
+var offset = e.rangeOffset || 0;
+var sel = document.createRange();
+sel.setStart(e.rangeParent, offset);
+sel.setEnd(e.rangeParent, offset);
+this.select(sel);
+return true;
+}
+else if (document.body && document.body.createTextRange) { // Internet explorer
+var tr = document.body.createTextRange();
+tr.moveToPoint(e.clientX, e.clientY);
+tr.select();
+return true;
+}
+} catch(ex) { debug(ex.message); }
+return false;
 }
 
 function RTZ_findClonedNode (node, oldRoot, newRoot) {
