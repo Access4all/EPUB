@@ -1,3 +1,6 @@
+
 btnNav=Table of contents
 btnNext=Next
 btnPrev=Previous
+btnPrint=Printable version
+btnBs=Back to bookshelf

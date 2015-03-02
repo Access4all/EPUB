@@ -196,7 +196,7 @@ e = e || window.event;
 var dt = e.dataTransfer || window.clipboardData;
 var relativeUrl = this.getAttribute('data-relative-url');
 if (!dt || !relativeUrl) return;
-try { dt.setData('Text', "\u007F" + relativeUrl + "\u007F\u007F" + this.href.substring(window.rootUrl.length) ); } catch(ex){}
+try { dt.setData('Text', "\u007F" + relativeUrl + "\u007F" + this.href.substring(window.rootUrl.length) + "\u007F" + this.textContent); } catch(ex){}
 }
 
 function FileTree_link_dragOver (e) {
@@ -216,7 +216,7 @@ if (e.dataTransfer.files && window.RTZ_uploadFiles) RTZ_uploadFiles(e.dataTransf
 var data = null;
 try { data = e.dataTransfer.getData('Text'); }catch(ex){}
 if (data && data.startsWith("\u007F")) {
-var src = data.substring(data.indexOf("\u007F\u007F")+2).trim();
+var src = data.split('\u007F')[2].trim();
 var ref = this.href.substring(window.rootUrl.length);
 var url = window.rootUrl2 + actionName + '/?src=' + encodeURIComponent(src) + '&ref=' + encodeURIComponent(ref);
 debug(url);
@@ -346,7 +346,7 @@ ajax('GET', url, null, function(re){if(re=='OK') window.location.reload(); else 
 
 function FileTree_linkCopyRelUrl () {
 var rel = this.getAttribute('data-relative-url');
-var data = "\u007F" + rel + "\u007F\u007F" + this.href.substring(window.rootUrl.length);
+var data = "\u007F" + rel + "\u007F" + this.href.substring(window.rootUrl.length) + "\u007F" + this.textContent;
 if (window.clipboardData) {
 try {
 if (!window.clipboardData.setData('Text', data)) throw new Error('failed');

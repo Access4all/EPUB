@@ -1777,7 +1777,7 @@ else if (e && e.clipboardData && e.clipboardData.getData) {
 var result=false, text = null;
 try { text = e.clipboardData.getData('Text'); } catch(ex){} // a weird security error may occur when retriving the text present in the clipboard, so we need to do it inside try...catch
 if (text && /^https?:/ .test(text)) result = RTZ_dropFinishedWithFiles.call(this, text.trim() ); // We are pasting an URL; we can directly make a link out of it
-else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() ); // We are pasting an element from the file/spine/toc view; this could be a link or an image
+else if (text && text.startsWith("\u007F")) result = RTZ_dropFinishedWithFiles.call(this, text.split('\u007F')[1].trim(), text.split('\u007F')[3].trim() ); // We are pasting an element from the file/spine/toc view; this could be a link or an image
 if (result) { if (e.preventDefault) e.preventDefault(); return false; } // IF the paste opration ahs been handled in one of the case above, cancel the normal behavior
 }
 return true; // the default paste behavior will occur
@@ -1880,11 +1880,11 @@ var text = null;
 try { text = e.dataTransfer.getData('Text'); } catch(ex){}
 if (!text) return;
 if (/^https?:/ .test(text)) RTZ_dropFinishedWithFiles.call(this, text.trim() );
-else if (text.startsWith("\u007F")) RTZ_dropFinishedWithFiles.call(this, text.substring(1, text.indexOf("\u007F\u007F")).trim() );
+else if (text.startsWith("\u007F")) RTZ_dropFinishedWithFiles.call(this, text.split('\u007F')[1].trim(), text.split('\u007F')[3].trim() );
 else this.insertElement(null, null, text);
 }}
 
-function RTZ_dropFinishedWithFiles (url) {
+function RTZ_dropFinishedWithFiles (url, text) {
 this.pushUndoState2();
 var result = false;
 if (!this.inlineOnly && url && RTZ_MMObject_embedding(url,true)) { // Some embedded object can be constructed from this url
@@ -1901,7 +1901,7 @@ this.insertMultimediaClipDialog(url);
 result = true;
 }
 else if (url) { // URL but of unknown type, let's make a link by default
-this.insertElement('a', {href:url}, url);
+this.insertElement('a', {href:url}, text || url);
 result = true;
 }
 setTimeout(function(){this.pushUndoState2()}.bind(this),1); // Remember that MutationObserver is asynchrone; delay the call so that the mutation list is effectively filled with the modifications we have just made

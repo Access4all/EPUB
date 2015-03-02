@@ -2,3 +2,5 @@
 btnNav=Table des matières
 btnNext=Suivant
 btnPrev=Précédent
+btnBs=Retour à la bibliothèque
+btnPrint=Version imprimable

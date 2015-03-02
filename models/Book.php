@@ -644,7 +644,7 @@ $doc = $item->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $div = $gBody->appendElement('div', array('data-page-file'=>$item->fileName, 'id'=>"___{$item->id}__top"));
 foreach($body->childNodes as $child) {
-$child = $gDoc->importNode($child);
+$child = $gDoc->importNode($child, true);
 $div->appendChild($child);
 }
 $item->closeDoc();
