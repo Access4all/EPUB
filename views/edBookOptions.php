@@ -108,6 +108,7 @@ echo <<<END
 <p><input type="checkbox" id="template" name="template" value="1" $istemplate/>
 <label for="template">{$t('DefineAsTemplate')}</label>
 <a href="#" class="infobox" data-infobox="bookoptions-define-as-template"><img src="$root/images/24px/attention.png" alt="{$t('btnHelp')}" /></a>
+<input type="hidden" name="referer" value="{$_SERVER['HTTP_REFERER']}" />
 </p>
 </div><!--partAdvanced-->
 <p>

@@ -227,14 +227,15 @@ else if (isset($_POST['authors'], $_POST['title'])) {
 if (!$b->ensureExtracted()) exit500();
 $b->updateBookSettings($_POST);
 if (isset($_POST['ajax'])) die('OK');
-header("Location:{$_SERVER['REQUEST_URI']}");
+if (!empty($_POST['referer']) && count($b->getSpine())>1) header("Location:{$_POST['referer']}");
+else header("Location: $root/editor/{$b->name}/tv_newpage/");
 exit();
 }
 else if (isset($_POST['id'], $_POST['fileName'])) {
 if (!$b->ensureExtracted()) exit500();
 $p->updatePageSettings($_POST);
 if (isset($_POST['ajax'])) die('OK');
-header("Location:{$_SERVER['REQUEST_URI']}");
+header("Location: $root/editor/{$b->name}/{$leftViewMethod}_editor/{$p->fileName}");
 }
 if ($p && !preg_match('/\.(?:xhtml|htm|html|xml|opf|txt|css|js)$/i', $pageName)) {
 $b->directEchoFile($p->fileName);
