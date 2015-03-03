@@ -12,7 +12,6 @@ IconModify=Propriétés de l'icône...
 IconURL=ADresse de l'icône
 IconAlt=Texte alternatif
 IconDeco=Il s'agit d'une image purement décorative
-IconDeco=This is a purely decorative image
 InsertIllu=Ajouter une illustration
 IlluModify=Propriétés de l'illustration...
 IlluURL=Adresse de l'illustration

@@ -826,6 +826,12 @@ DialogBox(msgs.Link, [
 var newText = this.elements.ltext.value;
 link.setAttribute('href', this.elements.url.value);
 if (newText!=text) link.innerHTML=newText;
+if (this.elements.url.value.length<=0) {
+var sel = document.createRange();
+sel.selectNodeContents(link);
+_this.select(sel);
+_this.inlineFormat('a', false);
+}
 _this.zone.focus();
 }, null); //DialogBox
 }

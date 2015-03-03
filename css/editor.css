@@ -107,6 +107,7 @@ color: white;
 
 .scrollable {
 overflow-y: auto;
+max-height: 15em; 
 }
 
 .leftPanelTab {
