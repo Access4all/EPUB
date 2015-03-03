@@ -1852,6 +1852,7 @@ if (nCols>2) items.merge([msgs.TableDeleteCol, RTZ_tableDeleteColumn.bind(this,t
 if (table && table.isInside(this.zone)) items.merge([msgs.TableModify, RTZ_modifyTableDialog.bind(this,table)]);
 if (box && box.isInside(this.zone)) items.merge([msgs.BoxModify, RTZ_modifyBoxDialog.bind(this,box)]);
 if (this.oncontextmenu) this.oncontextmenu(items,sel);
+if (items.length<=0) return true; // Show default OS context menu in case there is no useful option to present
 items.merge([msgs.Cancel,null]);
 Menu_show(items, this.zone, x+7, y+7);
 if (e.preventDefault) e.preventDefault();
