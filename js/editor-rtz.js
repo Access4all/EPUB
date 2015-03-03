@@ -245,7 +245,7 @@ this.implKeyDown(keys[action], true);
 function RTZ_keyDown (e) {
 e = e || window.event;
 var k = e.keyCode || e.which;
-if (k>=20 || k==vk.tab) {
+if (k>=20 || k==vk.tab || k==vk.enter) {
 if (e.ctrlKey) k |= vk.ctrl;
 if (e.shiftKey) k|=vk.shift;
 if (e.altKey) k|=vk.alt;
