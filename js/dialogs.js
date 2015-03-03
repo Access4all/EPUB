@@ -19,12 +19,15 @@ var exargs = ['min', 'max', 'step', 'pattern', 'maxlength', 'multiple', 'checked
 var args = {'type':type, 'value':value, 'id':item.name, 'name':item.name, 'aria-labelledby':item.name+'Label'};
 for (var j=0; j<exargs.length; j++) if (item[exargs[j]]) args[exargs[j]]=item[exargs[j]];
 input = p.appendElement('input', args);
+input.onkeyup =  DialogBox_generalOnKeyUp;
 }
 if (!first) first=input;
 }
 var p = form.appendElement('p');
 var btnOk = p.appendElement('button', {'type':'submit'}).appendText(msgs.OK);
 var btnCancel = p.appendElement('button', {'type':'reset'}).appendText(msgs.Cancel);
+btnOk.onkeyup =  DialogBox_generalOnKeyUp;
+btnCancel.onkeyup =  DialogBox_generalOnKeyUp;
 form.onsubmit = function(){ 
 var re;
 try {
@@ -57,6 +60,15 @@ if (first.focus) first.focus();
 if (first.select) first.select();
 document.getElementById('fullWrapper').setAttribute('aria-hidden', true);
 if (readyFunc) readyFunc.call(form);
+}
+
+function DialogBox_generalOnKeyUp (e) {
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (k==vk.escape && !e.altKey && !e.shiftKey && !e.ctrlKey) {
+if (this.form.onreset) this.form.onreset();
+}
+return true;
 }
 
 function MessageBox (title, msg, btns, okFunc, readyFunc) {
