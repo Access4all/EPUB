@@ -5,6 +5,7 @@ $doc = $p->getDoc();
 $body = $doc->getFirstElementByTagName('body');
 $contents = $body? $body->saveInnerHTML() : null;
 $pageTitle = $simpleFileName;
+$pageLang = $p->getLanguage();
 require('edRightHeader.php');
 if (!$contents) {
 echo '<p><strong>', getTranslation('ErrBodyFail'), '</strong></p>';
@@ -13,7 +14,7 @@ return;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="document" class="editor" contenteditable="true" role="textbox" data-toolbar="toolbar" data-autofocus="true" aria-label="{$t('RTZLabel')}">
+<div id="document" class="editor" lang="$pageLang" contenteditable="true" role="textbox" data-toolbar="toolbar" data-autofocus="true" aria-label="{$t('RTZLabel')}">
 $contents
 </div></div><!--editor-->
 <!--

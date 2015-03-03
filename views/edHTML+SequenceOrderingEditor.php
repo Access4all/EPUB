@@ -2,6 +2,7 @@
 loadTranslation('editor-ordering');
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
+$pageLang = $p->getLanguage();
 $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
@@ -10,7 +11,7 @@ require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -23,7 +24,7 @@ $text = $q->saveInnerHTML();
 $spanLabel = str_replace('%1', $ii, getTranslation('TheItem'));
 echo <<<END
 <li>
-<span class="itemText" contenteditable="true" aria-label="$spanLabel">$text</span>
+<span class="itemText" lang="$pageLang" contenteditable="true" aria-label="$spanLabel">$text</span>
 </li>
 END;
 }}

@@ -2,6 +2,7 @@
 loadTranslation('editor-fillgaps');
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
+$pageLang = $p->getLanguage();
 $doc = $p->getDataDoc();
 $ftg = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
@@ -14,7 +15,7 @@ global $otherStringTable;
 $otherStringTable = ',editor-fillgaps';
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 END;
@@ -25,7 +26,7 @@ if (!$gaplist) $gaplist = '';
 else $gaplist = implode("\r\n", DOM::nodeListToArray( $gaplist->getElementsByTagName('li') ));
 echo <<<END
 <p><label for="gaplist">{$t('GapList')}:</label>
-<textarea id="gaplist" rows="10" cols="50">
+<textarea id="gaplist" lang="$pageLang" rows="10" cols="50">
 $gaplist
 </textarea>
 </p><p>{$t('GapListTipp')}</p>
@@ -41,7 +42,7 @@ END;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="gaptext" class="editor" contenteditable="true" data-toolbar="toolbar2" aria-label="{$t('GapText')}">
+<div id="gaptext" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar2" aria-label="{$t('GapText')}">
 $gaptext
 </div></div><!--editor-->
 <script type="text/javascript" src="$root/js/editor-fillgaps.js?rnd=$rnd"></script>

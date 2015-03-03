@@ -21,6 +21,9 @@ var body = document.querySelector('body');
 body.onclick = function(e){ body.onclick=null; Menu_close.call(ul,originator); return true; }; // When the user clicks outside of the context menu, it should be closed
 body.appendChild(ul);
 window.currentOpenedMenu = ul;
+if (y && ul.offsetHeight && body.clientHeight && ul.offsetHeight<body.clientHeight -80) {
+if (y+ul.offsetHeight > body.clientHeight) y = body.clientHeight - ul.offsetHeight;
+}
 if (x&&y) {
 ul.style.position='absolute';
 ul.style.left=x+'px';

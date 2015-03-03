@@ -2,6 +2,7 @@
 loadTranslation('editor-truefalse');
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
+$pageLang = $p->getLanguage();
 $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
@@ -14,7 +15,7 @@ global $otherStringTable;
 $otherStringTable = ',editor-truefalse';
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -31,7 +32,7 @@ $choice = $choices[$i];
 $choice = $choice->saveInnerHTML();
 $choices[$i] = $choice;
 echo <<<END
-<th scope="col"><span id="choice$i" class="qchoice" contenteditable="true" aria-label="{$t('Answer')} $ii">$choice</span></th>
+<th scope="col"><span id="choice$i" class="qchoice" lang="$pageLang" contenteditable="true" aria-label="{$t('Answer')} $ii">$choice</span></th>
 END;
 }
 echo <<<END

@@ -2,6 +2,7 @@
 loadTranslation('editor-matching');
 $rnd = substr(md5(time()), 0, 12);
 $simpleFileName = basename($p->fileName);
+$pageLang = $p->getLanguage();
 $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
@@ -12,7 +13,7 @@ global $otherStringTable;
 $otherStringTable = ',editor-matching';
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -33,13 +34,14 @@ foreach($lst->getElementsByTagName('item') as $it) $i++;
 return $i;
 }
 function printList ($lst, $match, $side, $c1, $c2, $f1, $f2, $ltxt) {
+global $pageLang;
 $t = 'getTranslation';
 $listType = $f1(0);
 $className = "matchingActivity_{$side}List";
 $ltxt = $ltxt->saveInnerHTML();
 echo <<<END
 <div class="$className">
-<h2><span contenteditable="true" id="{$side}ListHeading">$ltxt</span></h2>
+<h2><span contenteditable="true" id="{$side}ListHeading" lang="$pageLang">$ltxt</span></h2>
 <ol class="$className" type="$listType" start="1">
 END;
 $i=-1;
@@ -49,7 +51,7 @@ $str = $it->saveInnerHTML();
 $selectLabel = str_replace('%1', $f1($i), getTranslation($side.'SLbl2'));
 echo <<<END
 <li>
-<span contenteditable="true" class="matchingItem" aria-label="{$t($side.'ELbl')} $ii">$str</span>
+<span lang="$pageLang" contenteditable="true" class="matchingItem" aria-label="{$t($side.'ELbl')} $ii">$str</span>
 <select class="$className" id="match$side$i" title="$selectLabel" data-langmsg1="{$t($side.'SLbl2')}">
 <option value="-">---</option>
 END;

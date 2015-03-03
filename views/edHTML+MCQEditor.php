@@ -5,6 +5,7 @@ $rnd = substr(md5(time()), 0, 12);
 global $otherStringTable;
 $otherStringTable = ',editor-mcq';
 $simpleFileName = basename($p->fileName);
+$pageLang = $p->getLanguage();
 $doc = $p->getDataDoc();
 $quiz = $doc->documentElement;
 $contents = $doc->getFirstElementByTagName('intro')->saveInnerHTML();
@@ -14,7 +15,7 @@ require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -26,7 +27,7 @@ $text = $q->getFirstElementByTagName('q')->saveInnerHTML();
 echo <<<END
 <fieldset>
 <legend><span>{$t('Question')} <span class="questionNumber">$count</span></span>:
-<span class="questionText" contenteditable="true" aria-label="{$t('Question')} $count">$text</span></legend>
+<span class="questionText" lang="$pageLang" contenteditable="true" aria-label="{$t('Question')} $count">$text</span></legend>
 END;
 $j= -1;
 foreach($q->getElementsByTagName('c') as $a) {
@@ -37,7 +38,7 @@ $itype = $simple? 'radio' : 'checkbox';
 $checked = $a->hasAttribute('checked')? ' checked="checked"' : '';
 echo <<<END
 <p><input tabindex="0" type="$itype" name="$name" id="$id" value="$j"$checked />
-<label><span contenteditable="true" aria-label="{$t('Question')} $count {$t('Answer')} $jj">$a</span></label></p>
+<label><span lang="$pageLang" contenteditable="true" aria-label="{$t('Question')} $count {$t('Answer')} $jj">$a</span></label></p>
 END;
 }
 echo '</fieldset>';
