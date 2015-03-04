@@ -20,11 +20,11 @@ if (this.nodeType==3) f(this);
 if (this.childNodes) for (var i=this.childNodes.length -1; i>=0; i--) this.childNodes[i].eachTextNode(f);
 }
 
-function RTZ (zone, toolbar) {
+function RTZ (zone, toolbars) {
 if (!window.rtzs) window.rtzs = [];
 window.rtzs.push(this);
 this.zone = zone;
-this.toolbar = toolbar;
+this.toolbars = toolbars;
 this.select = RTZ_select;
 this.getSelection = RTZ_getSelection;
 this.moveCaretToPoint = RTZ_moveCaretToPoint;
@@ -152,16 +152,17 @@ if (!window.MutationObserver) window.MutationObserver = window.WebKitMutationObs
 this.mutationList = [];
 this.mutationObserver = new MutationObserver(RTZ_domchanged.bind(this));
 }
-if (this.toolbar) {
-this.zone.onmousedown = function(){ setInterval(RTZ_selectionTimer.bind(this), 100); this.zone.onmousedown=null; } .bind(this); // we start the automatic style list updater, but only if we ahve a mouse user. It can cause focus troubles for a keyboard-only or screen reader user.
-this.toolbar.$('button').each(function(o){ 
+if (this.toolbars) for (var z=0; z<this.toolbars.length; z++) {
+var toolbar = this.toolbars[z];
+if (z==0) this.zone.onmousedown = function(){ setInterval(RTZ_selectionTimer.bind(this), 100); this.zone.onmousedown=null; } .bind(this); // we start the automatic style list updater, but only if we ahve a mouse user. It can cause focus troubles for a keyboard-only or screen reader user.
+toolbar.$('button').each(function(o){ 
 var action = o.getAttribute('data-action'), text = o.textContent;
 o.onclick = RTZ_toolbarButtonClick.bind(this, action); 
 if (keys[action] && keys[action]<vk.impossible && text.indexOf('\t')<0) text += '\t(' + RTZ_keyCodeToString(keys[action]) + ')';
 o.textContent = text;
 o.setAttribute('title', text);
 }.bind(this));
-this.toolbar.$('select').each(function(o){ 
+toolbar.$('select').each(function(o){ 
 o.onchange = RTZ_toolbarStyleSelect.bind(this, o); 
 o.$('option').each(function (opt){
 var action = opt.getAttribute('value');
@@ -169,7 +170,7 @@ var text = opt.firstChild;
 if (keys[action] && keys[action]<vk.impossible && text.textContent.indexOf('\t')<0) text.appendData('\t(' + RTZ_keyCodeToString(keys[action]) + ')');
 });
 }.bind(this));
-if (this.mutationObserver) this.toolbar.$('*[data-action=undo], *[data-action=redo]').each(function(o){
+if (this.mutationObserver) toolbar.$('*[data-action=undo], *[data-action=redo]').each(function(o){
 o.removeAttribute('disabled');
 }.bind(this));
 //additional toolbar actions
@@ -353,10 +354,12 @@ if (this.onkeydown) {
 var result = this.onkeydown(k,simulated);
 if (result===true || result===false) return result;
 }
-if (this.saveBtn && ((k>=vk.n0&&k<=vk.n9)||k>=vk.a) ) {
-if (!window.readOnly) this.saveBtn.removeClass('disabled');
-if (!window.readOnly) this.saveBtn.removeAttribute('aria-disabled');
-this.saveBtn=null;
+if (this.saveBtns && ((k>=vk.n0&&k<=vk.n9)||k>=vk.a) ) {
+this.saveBtns.each(function(btn){
+if (!window.readOnly) btn.removeClass('disabled');
+if (!window.readOnly) btn.removeAttribute('aria-disabled');
+});
+this.saveBtns=null;
 }
 switch(k){
 case vk.enter:
@@ -1793,10 +1796,12 @@ function RTZ_save () {
 if (window.readOnly) return;
 this.cleanHTML();
 if (this.onsave) this.onsave();
-var saveBtn = document.querySelector('button[data-action=save]');
-saveBtn.addClass('disabled');
-saveBtn.setAttribute('aria-disabled', true);
-this.saveBtn = saveBtn;
+var saveBtns = $('button[data-action=save]');
+saveBtns.each(function(btn){
+btn.addClass('disabled');
+btn.setAttribute('aria-disabled', true);
+});
+this.saveBtns = saveBtns;
 window.changed=false;
 }
 
@@ -2101,18 +2106,45 @@ node = node.childNodes[idx];
 return node;
 }
 
+// Here we need to make a difference for firefox
+// As soon as onbeforeunload function has more than a single instruction, it seems that it doesn't work on firefox anymore.
+window.onbeforeunload =
+navigator.userAgent.match(/firefox/i)?
+function (e) { 
+return window.changed? msgs.SaveChangesDlg5 : null;
+} :
+function(e) {
+if (!window.changed) return;
+if (!window.unloadcfm && confirm(msgs.SaveChangesDlg)) {
+window.unloadcfm = true;
+window.rtzs[0].onsave(null,true);
+}
+else if (!window.unloadcfm) {
+e = e || window.event;
+var rv = msgs.SaveChangesDlg5;
+if(e) e.returnValue = rv;
+return rv;
+}};
+
+window.onunload = function(){
+if (!window.changed) return;
+if (!window.unloadcfm && confirm(msgs.SaveChangesDlg)) {
+window.unloadcfm = true;
+window.rtzs[0].onsave(null,true);
+}}
+
 if (!window.onloads) window.onloads = [];
 window.onloads.push(function(){
 $('.editor, *[contenteditable=true]').each(function(e){
-var toolbarId = e.getAttribute('data-toolbar');
-var toolbar = toolbarId? document.getElementById(toolbarId) : null;
+var toolbarIds = e.getAttribute('data-toolbars');
+var toolbars = toolbarIds? $(toolbarIds) : null;
 e.setAttribute('tabindex',0);
-var rtz = new RTZ( e, toolbar);
+var rtz = new RTZ( e, toolbars);
 rtz.debug = DEBUG && e.tagName.toLowerCase()=='div';
 rtz.init();
 if (!rtz.onsave) rtz.onsave = RTZ_defaultSave;
 });//each .editor/contenteditable
-$('#topPanel a[href], #leftPanel a[href], #pageTabs a[href]').each(function(a){
+$('#topPanel a[href], #leftPanel a[href], #pageTabs a[href], #footToolbar a[href]').each(function(a){
 if (a.textContent.trim().length<=1) return;
 if (a.hasAttribute('data-nosavecfm')) return;
 var oldonclick  = a.onclick;
@@ -2122,9 +2154,12 @@ return LeftPanelAJAXLoad(this.href);
 };
 else a.onclick = function(e){
 if (!window.changed) return true;
-MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No], function(btnIdx){ 
+MessageBox(msgs.Save, msgs.SaveChangesDlg, [msgs.Yes, msgs.No, msgs.Cancel], function(btnIdx){ 
 if (btnIdx==0) window.rtzs[0].onsave(null,true);
+else if (btnIdx==2 || btnIdx==-1) return;
 if (oldonclick) oldonclick.call(a,e);
+window.onunload = null;
+window.onbeforeunload = null;
 window.location.href = a.href;
 });
 return false;

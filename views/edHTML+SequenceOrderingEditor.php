@@ -11,7 +11,7 @@ require('edRightHeader.php');
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbars="#toolbar, #footToolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -28,8 +28,9 @@ echo <<<END
 </li>
 END;
 }}
+echo '</form>';
+require('edFootToolbar.php');
 echo <<<END
-</form>
 <script type="text/javascript" src="$root/js/editor-ordering.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/editor-rtz.js?rnd=$rnd"></script>
 END;

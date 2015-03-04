@@ -13,7 +13,7 @@ global $otherStringTable;
 $otherStringTable = ',editor-matching';
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbars="#toolbar, #footToolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 <form id="quiz">
@@ -73,6 +73,7 @@ $c2 = countItems($lists->item(1));
 $f1 = 'numNum'; $f2 = 'alphaNum';
 printList($lists->item(0), $ltr, 'left', $c1, $c2, $f1, $f2, $lists->item(0)->getFirstElementByTagName('h'));
 printList($lists->item(1), $rtl, 'right', $c2, $c1, $f2, $f1, $lists->item(1)->getFirstElementByTagName('h'));
+require('edFootToolbar.php');
 echo <<<END
 </form>
 <script type="text/javascript" src="$root/js/editor-matching.js?rnd=$rnd"></script>

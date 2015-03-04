@@ -14,9 +14,12 @@ return;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="document" class="editor" lang="$pageLang" contenteditable="true" role="textbox" data-toolbar="toolbar" data-autofocus="true" aria-label="{$t('RTZLabel')}">
+<div id="document" class="editor" lang="$pageLang" contenteditable="true" role="textbox" data-toolbars="#toolbar, #footToolbar" data-autofocus="true" aria-label="{$t('RTZLabel')}">
 $contents
 </div></div><!--editor-->
+END;
+require('edFootToolbar.php');
+echo <<<END
 <!--
 <h2>Keyboard shortcuts</h2>
 <ul>

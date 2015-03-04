@@ -9,6 +9,7 @@ autoIntro1=Vous pouvez saisir du texte dans cette zone, de même qu'y incorporer
 autoIntro2=Vous pouvez saisir du texte libre ici. Profitez-en pour introduire l'activité qui suit !
 autoIntro3=Vous devriez peut-être commencer par changer le contenu du titre de niveau 1 ci-dessus; si nécessaire, vous pouvez aussi choisir un autre niveau de titre.
 SaveChangesDlg=Enregistrer les changements ?
+SaveChangesDlg5=Êtes-vous sûr de vouloir quitter maintenant ? Certains changements n'ont pas été enregistrés.
 BackToBookshelf=Retour à la bibliothèque
 BookOptions=Options du livre
 PageOptions=Options de la page

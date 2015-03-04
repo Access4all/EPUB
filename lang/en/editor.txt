@@ -9,6 +9,7 @@ autoIntro1=You can enter text in this area, as well as add images, sounds and vi
 autoIntro2=You can type in free text here. Use this zone to introduce the following activity !
 autoIntro3=First of all, you may change the content of the above heading level 1; if needed, you can also choose another heading level.
 SaveChangesDlg=Dou you want to save changes ?
+SaveChangesDlg5=Do you really want to quit now ? Some changes haven't yet been saved.
 BackToBookshelf=Back to bookshelf
 BookOptions=Book settings
 PageOptions=Page settings

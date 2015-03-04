@@ -6,7 +6,7 @@ echo <<<END
 <p>
 <span class="buttonGroup">
 <button id="previewBtn" type="button" data-action="preview" data-href="$root/editor/{$b->name}/preview/$pn">{$t('Preview')}</button>
-<button type="button" data-action="save">{$t('Save')}</button>
+<button class="saveBtn" type="button" data-action="save">{$t('Save')}</button>
 <button type="button" data-action="undo" disabled>{$t('Undo')}</button>
 <button type="button" data-action="redo" disabled>{$t('Redo')}</button>
 <button type="button" data-action="copy">{$t('Copy')}</button>

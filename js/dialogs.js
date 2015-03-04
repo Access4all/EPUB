@@ -88,10 +88,17 @@ overlay.parentNode.removeChild(overlay);
 document.getElementById('fullWrapper').removeAttribute('aria-hidden');
 if (lastFocus && lastFocus.focus) lastFocus.focus();
 } }; };
+var btnKeyup = function (f,e) {
+e = e || window.event;
+var k = e.keyCode || e.which;
+if (k==vk.escape && !e.ctrlKey && !e.shiftKey && !e.altKey) f();
+return true;
+};
 for (var i=0; i<btns.length; i++) {
 var btn= p.appendElement('button', {'type':'button'});
 btn.innerHTML = btns[i];
 btn.onclick = btnClick(i, btns[i]).bind(form);
+btn.onkeyup = btnKeyup.bind(null, btnClick(-1,null).bind(form));
 btn.setAttribute('aria-describedby', 'MessageBoxLabel');
 btn.setAttribute('aria-label', btns[i].stripHTML() );
 if (!first) first=btn;

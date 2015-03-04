@@ -15,7 +15,7 @@ global $otherStringTable;
 $otherStringTable = ',editor-fillgaps';
 echo <<<END
 <div class="edWrapper">
-<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
+<div id="intro" class="editor" lang="$pageLang" contenteditable="true" data-toolbars="#toolbar, #footToolbar" DATA-AUTOFOCUS="TRUE" aria-label="{$t('IntroText')}">
 $contents
 </div></div><!--editor-->
 END;
@@ -42,9 +42,12 @@ END;
 require('edToolbar.php');
 echo <<<END
 <div class="edWrapper">
-<div id="gaptext" class="editor" lang="$pageLang" contenteditable="true" data-toolbar="toolbar2" aria-label="{$t('GapText')}">
+<div id="gaptext" class="editor" lang="$pageLang" contenteditable="true" data-toolbars="#toolbar2" aria-label="{$t('GapText')}">
 $gaptext
 </div></div><!--editor-->
+END;
+require('edFootToolbar.php');
+echo <<<END
 <script type="text/javascript" src="$root/js/editor-fillgaps.js?rnd=$rnd"></script>
 <script type="text/javascript" src="$root/js/editor-rtz.js?rnd=$rnd"></script>
 END;

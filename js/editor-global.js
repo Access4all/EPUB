@@ -102,7 +102,7 @@ if (!activeDescendant && o.isVisible()) activeDescendant=o;
 e.$('ul,ol').each(function(o){
 var li = o.parentNode;
 var item = li.querySelector('a, .directory');
-var a = document.createElement2('a', {href:'#', tabindex:-1, 'class':'treeViewExpandLink'}, o.hasClass('collapsed')?'+':'-');
+var a = document.createElement2('a', {href:'#', tabindex:-1, 'class':'treeViewExpandLink'}, o.hasClass('collapsed')?'\u2295':'\u2296');
 a.onclick = FileTree_expandLinkClick;
 a.ondragenter = FileTree_folderLink_dragEnter;
 a.ondragleave = FileTree_folderLink_dragLeave;
@@ -270,7 +270,7 @@ var ul = this.parentNode.querySelector('ul,ol');
 var collapsed = ul.toggleClass('collapsed');
 var lk = this.parentNode.querySelector('.file, .directory');
 lk.setAttribute('aria-expanded', !collapsed);
-this.firstChild.nodeValue = (!collapsed? '-' : '+');
+this.firstChild.nodeValue = (!collapsed? '\u2296' : '\u2295');
 }
 
 function FileTree_CtxMenuItemList_file (items, link) {
