@@ -672,9 +672,17 @@ if (followFrag) newEl.appendChild(followFrag);
 newEl.appendText('\u00A0'); // Chrome: IF we don't add this unbreakable space, the cursor is always incorrectly positionned at beginning of next paragraph
 if (parent==this.zone) parent.replaceChild(newEl, el);
 else {
-parent.removeChild(el);
 var parentTgn = (parent.parentNode? parent.parentNode.tagName.toLowerCase() : '#none');
 if (parentTgn=='li' || parentTgn=='dd') parent = parent.parentNode;
+if (['li', 'dd', 'dt'].indexOf(el.tagName.toLowerCase())>=0 && el.nextSibling) {
+sel.setStartAfter(el);
+sel.setEndAfter(el.parentNode.lastChild);
+var frag = sel.extractContents();
+var newEl2 = document.createElement(el.parentNode.tagName);
+newEl2.appendChild(frag);
+parent.parentNode.insertBefore(newEl2, parent.nextSibling);
+}
+parent.removeChild(el);
 parent.parentNode.insertBefore(newEl, parent.nextSibling);
 }
 sel.selectNodeContents(firstTextNode? firstTextNode : newEl);
