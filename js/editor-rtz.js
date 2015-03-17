@@ -1304,6 +1304,20 @@ _this.zone.focus();
 });//DialogBox
 }
 
+function RTZ_modifyOListDialog (ol) {
+var type = ol.getAttribute('type') || '1';
+var start = ol.getAttribute('start') || 1;
+var _this = this;
+DialogBox(msgs.OList, [
+{label:msgs.OListType, name:'ltype', type:'select', value:type, values:{'1':'1, 2, 3, ...', 'A':'A, B, C, ...', 'a':'a, b, c, ...', 'I':'I, II, III, IV, ...', 'i':'i, ii, iii, iv, ...'}},
+{label:msgs.OListStart, name:'lstart', type:'number', value:start},
+], function(){ 
+ol.setAttribute('type', this.elements.ltype.value);
+ol.setAttribute('start', this.elements.lstart.value);
+_this.zone.focus();
+});//DialogBox
+}
+
 function RTZ_insertIconDialog (imgUrl) {
 imgUrl = imgUrl || '';
 var sel = this.getSelection();
@@ -1843,6 +1857,7 @@ var link = ca.findAncestor(['a']);
 if (link) items.merge([msgs.LinkModify, RTZ_modifyLinkDialog.bind(this,link)]);
 if (abbr) items.merge([msgs.AbbrModify, RTZ_modifyAbbrDialog.bind(this,abbr)]);
 if (ol && ol.isInside(this.zone)){
+items.merge([msgs.OListProps, RTZ_modifyOListDialog.bind(this,ol)]);
 var types = {NumberingArabic:'1', NumberingLowerAlpha:'a', NumberingUpperAlpha:'A', NumberingLowerRoman:'i', NumberingUpperRoman:'I'};
 var curtype = ol.getAttribute('type') || '1';
 for (var t in types) {
